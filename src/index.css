@@ -1,0 +1,353 @@
+@import 'tailwindcss';
+@import './styles/tokens.css';
+@import './styles/goa.css';
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    overflow-x: clip;
+  }
+
+  body {
+    @apply min-w-0 bg-white font-sans text-base text-ink;
+    overflow-x: clip;
+  }
+
+  #root {
+    @apply min-w-0;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-normal tracking-tight text-ink;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible, consistent focus ring for keyboard users only. */
+  :focus-visible {
+    outline: 1px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--color-primary);
+    color: var(--color-cream);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Components                                                          */
+/* ------------------------------------------------------------------ */
+@layer components {
+  /* Small uppercase label used above headings and for metadata. */
+  .eyebrow {
+    @apply font-sans text-xs font-medium uppercase tracking-eyebrow text-ink;
+  }
+
+  /* Large serif headlines: terracotta + charcoal split via EditorialTitle. */
+  .display-title {
+    @apply font-display font-normal leading-[1.12] tracking-tight text-balance;
+  }
+
+  /* Hero copy: readable on photos without a green wash overlay. */
+  .hero-copy {
+    text-shadow: 0 1px 2px rgb(0 0 0 / 0.55), 0 4px 24px rgb(0 0 0 / 0.35);
+  }
+
+  /* Alternating section backgrounds: white (default) + warm cream bands. */
+  .section-cream {
+    @apply bg-cream;
+  }
+  .section-white {
+    @apply bg-white;
+  }
+
+  /* Jewellery: warm cream base with subtle grain + linen weave (female-forward, tactile feel). */
+  .surface-jewellery {
+    @apply relative bg-cream;
+  }
+  .surface-jewellery-body {
+    @apply relative bg-sand;
+  }
+
+  .surface-glassware {
+    @apply relative bg-cream;
+  }
+  .surface-candles {
+    @apply relative bg-ink text-cream;
+  }
+  .surface-kitchen {
+    @apply relative bg-white;
+  }
+
+  .collection-page--glassware {
+    @apply bg-[#f7f4eb];
+  }
+  .collection-page--candles {
+    @apply bg-[#1a1814];
+  }
+  .collection-page--kitchen {
+    @apply bg-sand;
+  }
+  .texture-floral {
+    background-size: 140px 140px;
+    background-repeat: repeat;
+  }
+  .texture-grain {
+    opacity: 0.18;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+  }
+  .texture-weave {
+    opacity: 0.45;
+    background-image:
+      linear-gradient(105deg, rgb(160 93 73 / 0.04) 0.5px, transparent 0.5px),
+      linear-gradient(-105deg, rgb(77 105 78 / 0.035) 0.5px, transparent 0.5px);
+    background-size: 14px 22px;
+  }
+
+  /* Jewellery "coming soon": water on a frosted pane.
+     Wet frosted glass turns clear, so the frost layer is masked away under each
+     bead (see JewelleryComingSoon) and the bead itself only adds the light. */
+  .glass-drop {
+    position: absolute;
+    background:
+      /* sharp window reflection, upper left */
+      radial-gradient(ellipse 22% 15% at 31% 23%, rgb(255 255 255 / 0.98) 0 55%, rgb(255 255 255 / 0) 100%),
+      /* its faint echo */
+      radial-gradient(ellipse 9% 6% at 44% 15%, rgb(255 255 255 / 0.7), rgb(255 255 255 / 0) 100%),
+      /* light gathered by the lens at the bottom edge */
+      radial-gradient(ellipse 62% 30% at 54% 90%, rgb(255 255 255 / 0.7), rgb(255 255 255 / 0) 72%),
+      /* the top of a bead is darker than the glass around it */
+      radial-gradient(ellipse 90% 60% at 50% 12%, rgb(40 30 20 / 0.24), rgb(40 30 20 / 0) 70%);
+    box-shadow:
+      inset 0 0 0 0.5px rgb(255 255 255 / 0.3),
+      inset 0 2px 3px rgb(40 30 20 / 0.38),
+      inset 0 -3px 4px rgb(255 255 255 / 0.75),
+      inset 2px 0 3px rgb(40 30 20 / 0.08),
+      /* contact shadow, then the soft shadow it throws down the glass */
+      0.5px 2px 2px rgb(40 30 20 / 0.28),
+      1.5px 7px 9px rgb(40 30 20 / 0.13);
+    backdrop-filter: brightness(1.08) contrast(1.18) saturate(1.3);
+  }
+  /* Beads too small to hold a reflection: one highlight and a soft edge. */
+  .glass-drop--bead {
+    background: radial-gradient(circle at 34% 28%, rgb(255 255 255 / 0.95) 0 16%, rgb(255 255 255 / 0.12) 42%, rgb(40 30 20 / 0.1) 100%);
+    box-shadow:
+      inset 0 -1px 1.5px rgb(255 255 255 / 0.7),
+      0 1px 1.5px rgb(40 30 20 / 0.3);
+    backdrop-filter: none;
+  }
+  .glass-drop--run {
+    animation-name: glass-drop-run;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  /* The wet track a running drop leaves: clear in the middle, bright at the edges. */
+  .glass-drop--run::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 70%;
+    width: 46%;
+    height: 11rem;
+    transform: translateX(-50%);
+    border-radius: 9999px 9999px 40% 40%;
+    background:
+      linear-gradient(to right, rgb(255 255 255 / 0.55), rgb(255 255 255 / 0.05) 35% 65%, rgb(255 255 255 / 0.45)),
+      rgb(255 255 255 / 0.08);
+    mask-image: linear-gradient(to top, #000, transparent);
+  }
+  /* A drop clings, slips, clings again, then lets go — with a slight wander sideways. */
+  @keyframes glass-drop-run {
+    0% {
+      transform: translate(0, 0) scale(0.6);
+      opacity: 0;
+    }
+    6% {
+      transform: translate(0, 0) scale(1);
+      opacity: 1;
+    }
+    22% {
+      transform: translate(0, 0.5vh);
+    }
+    30% {
+      transform: translate(1px, 7vh);
+    }
+    46% {
+      transform: translate(1px, 8vh);
+    }
+    54% {
+      transform: translate(-2px, 19vh);
+    }
+    64% {
+      transform: translate(-2px, 20.5vh);
+    }
+    92% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate(1px, 82vh);
+      opacity: 0;
+    }
+  }
+  /* Fine condensation between the beads. */
+  .glass-mist {
+    background-image:
+      radial-gradient(circle at 30% 30%, rgb(255 255 255 / 0.75) 0 0.9px, rgb(40 30 20 / 0.1) 1.4px, transparent 2px),
+      radial-gradient(circle at 30% 30%, rgb(255 255 255 / 0.65) 0 0.6px, rgb(40 30 20 / 0.08) 1px, transparent 1.5px),
+      radial-gradient(circle at 30% 30%, rgb(255 255 255 / 0.7) 0 1.2px, rgb(40 30 20 / 0.1) 1.8px, transparent 2.5px);
+    background-size:
+      37px 53px,
+      23px 31px,
+      71px 59px;
+    background-position:
+      5px 9px,
+      14px 3px,
+      31px 40px;
+    opacity: 0.55;
+  }
+  /* Soft diagonal light across the pane. */
+  .glass-sheen {
+    background:
+      linear-gradient(115deg, rgb(255 255 255 / 0.28) 0%, transparent 28%, transparent 62%, rgb(255 255 255 / 0.16) 100%);
+  }
+  .glass-card {
+    border-radius: 2rem;
+    border: 1px solid rgb(255 255 255 / 0.7);
+    background: linear-gradient(145deg, rgb(255 255 255 / 0.62), rgb(255 255 255 / 0.3));
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.9),
+      0 30px 60px -20px rgb(160 93 73 / 0.35);
+    backdrop-filter: blur(18px) saturate(1.3);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .glass-drop--run {
+      display: none;
+    }
+  }
+
+  /* Underline-on-hover text link (used in nav and footer). */
+  .link-underline {
+    @apply relative inline-block;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size 200ms var(--ease-out-soft);
+  }
+  .link-underline:hover,
+  .link-underline:focus-visible,
+  .link-underline[aria-current='page'] {
+    background-size: 100% 1px;
+  }
+
+  /* Scroll reveal: slide-in only (keep opacity 1 so images/text stay visible). */
+  .reveal {
+    opacity: 1;
+    transform: translateY(16px);
+    transition: transform 600ms var(--ease-out-soft);
+  }
+  .reveal.is-visible {
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* Square 1px checkbox in brand colour with a white check when selected. */
+  .checkbox {
+    @apply h-4 w-4 shrink-0 cursor-pointer appearance-none border border-primary bg-white;
+    transition: background-color 150ms;
+  }
+  .checkbox:checked {
+    background-color: var(--color-primary);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E");
+    background-size: 70%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* Product grid: keep each card (image + copy) in one cell — no row stretching. */
+  .product-grid {
+    align-items: start;
+  }
+  .product-grid__cell {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+  .product-card,
+  .product-card__link {
+    display: block;
+    width: 100%;
+  }
+  .product-card__media {
+    aspect-ratio: 4 / 5;
+    width: 100%;
+  }
+  .aspect-product {
+    aspect-ratio: 4 / 5;
+  }
+  .aspect-landscape {
+    aspect-ratio: 3 / 2;
+  }
+  .aspect-wide {
+    aspect-ratio: 16 / 9;
+  }
+  .aspect-square {
+    aspect-ratio: 1 / 1;
+  }
+
+  /* Hover zoom for product/collection imagery. */
+  .zoom-media {
+    @apply overflow-hidden;
+  }
+  .zoom-media img,
+  .zoom-media .zoom-target {
+    transition: transform 500ms var(--ease-out-soft);
+  }
+  .zoom-media:hover img,
+  .zoom-media:hover .zoom-target,
+  .zoom-media:focus-within img,
+  .zoom-media:focus-within .zoom-target {
+    transform: scale(1.03);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .zoom-media:hover img,
+    .zoom-media:hover .zoom-target {
+      transform: none;
+    }
+  }
+}

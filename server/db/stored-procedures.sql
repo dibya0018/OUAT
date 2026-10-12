@@ -1,0 +1,14 @@
+-- Catalogue stored procedures (reference copy).
+-- Installed automatically by: npm run db:migrate  (server/scripts/install-procedures.js)
+--
+-- sp_collections_list()
+-- sp_collection_by_slug(p_slug)
+-- sp_products_list(p_collection, p_featured_only, p_search, p_include_inactive, p_id_list)
+-- sp_product_by_slug(p_slug)
+-- sp_product_by_id(p_id)
+-- sp_product_images_by_product_ids(p_id_list)
+-- sp_product_images_delete_for_product(p_product_id)
+-- sp_product_image_insert(...)
+-- sp_collection_upsert(...)
+-- sp_product_upsert(...)
+-- sp_catalog_counts()

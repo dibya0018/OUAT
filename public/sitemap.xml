@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Static sitemap. Update the domain and add/remove product URLs when the
+  catalogue changes (slugs live in src/data/products.js).
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://ouat.in/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://ouat.in/shop</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://ouat.in/glassware</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ouat.in/candles</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ouat.in/kitchen-storage</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ouat.in/jewellery</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ouat.in/story</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ouat.in/impact</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ouat.in/gifting-b2b</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ouat.in/contact</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+
+  <url><loc>https://ouat.in/product/tall-tumbler-set</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ouat.in/product/short-tumbler-set</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ouat.in/product/stemless-wine-glass-pair</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ouat.in/product/carafe</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ouat.in/product/amber-soy-candle</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ouat.in/product/sea-salt-sage-candle</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ouat.in/product/candle-trio</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ouat.in/product/storage-jar-cork-lid</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ouat.in/product/oil-vinegar-pourer-set</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ouat.in/product/bottle-vase</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ouat.in/product/sea-glass-pendant</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ouat.in/product/glass-drop-earrings</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <url><loc>https://ouat.in/policies/shipping</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://ouat.in/policies/returns</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://ouat.in/policies/privacy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://ouat.in/policies/terms</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+</urlset>

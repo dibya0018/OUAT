@@ -1,0 +1,126 @@
+/*
+ * Collections index — the list drives the photograph.
+ *
+ * Only state and motion live here (which layout shows, the row's hover/focus
+ * state, the cross-fade in the preview frame). Spacing, colour and type are
+ * Tailwind utilities on the elements themselves.
+ */
+
+/* Section styles load before index.css, so the layer order is restated here:
+   without it `components` would be declared first and rank below Tailwind's base. */
+@layer theme, base, components, utilities;
+
+@layer components {
+  /* ---- Which layout ------------------------------------------------------ */
+  /* Cards are the default. The index needs room and a pointer that can hover,
+     so a wide touch screen keeps the cards instead of a preview it cannot drive. */
+  .home-collections__index {
+    display: none;
+  }
+  .home-collections__cards {
+    display: grid;
+  }
+  @media (min-width: 64rem) and (hover: hover) {
+    .home-collections__index {
+      display: grid;
+    }
+    .home-collections__cards {
+      display: none;
+    }
+  }
+
+  /* ---- Rows -------------------------------------------------------------- */
+  .home-collections__row {
+    transition: opacity 0.5s ease;
+  }
+  /* While the list is hovered or holds keyboard focus, the other rows step back. */
+  .home-collections__list.is-engaged .home-collections__row:not(.is-active) {
+    opacity: 0.35;
+  }
+
+  .home-collections__name {
+    transition: transform 0.6s var(--home-ease, cubic-bezier(0.22, 1, 0.36, 1));
+  }
+  .home-collections__name h3 {
+    transition: color 0.4s ease;
+  }
+  .home-collections__row.is-active .home-collections__name {
+    transform: translateX(0.75rem);
+  }
+
+  .home-collections__arrow {
+    opacity: 0.35;
+    transform: translateX(-0.75rem);
+    transition:
+      opacity 0.5s ease,
+      transform 0.6s var(--home-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+      color 0.4s ease;
+  }
+  .home-collections__row.is-active .home-collections__arrow {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ---- Preview ----------------------------------------------------------- */
+  /* Sticks under the 5rem header. The width is capped by the viewport height so
+     the 4:5 frame and its caption always fit on screen: 7rem above, 7.5rem below. */
+  .home-collections__preview {
+    position: sticky;
+    top: 7rem;
+    width: min(100%, calc((100vh - 14.5rem) * 0.8));
+    width: min(100%, calc((100svh - 14.5rem) * 0.8));
+  }
+
+  /* A photograph that is leaving holds still underneath until the next one has
+     fully arrived, so the frame's tone never shows through mid cross-fade. */
+  .home-collections__shot {
+    opacity: 0;
+    transform: scale(1.05);
+    transition:
+      opacity 0s linear 0.7s,
+      transform 0s linear 0.7s;
+  }
+  .home-collections__shot.is-active {
+    z-index: 1;
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.7s ease,
+      transform 0.9s var(--home-ease, cubic-bezier(0.22, 1, 0.36, 1));
+  }
+
+  /* The captions share one grid cell: the old one leaves, then the new one arrives. */
+  .home-collections__note {
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      opacity 0.25s ease,
+      visibility 0s linear 0.25s;
+  }
+  .home-collections__note.is-active {
+    visibility: visible;
+    opacity: 1;
+    transition:
+      opacity 0.5s ease 0.25s,
+      visibility 0s;
+  }
+
+  /* ---- Reduced motion: the state still changes, nothing travels ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .home-collections__row,
+    .home-collections__name,
+    .home-collections__name h3,
+    .home-collections__arrow,
+    .home-collections__shot,
+    .home-collections__shot.is-active,
+    .home-collections__note,
+    .home-collections__note.is-active {
+      transition: none;
+    }
+    .home-collections__row.is-active .home-collections__name,
+    .home-collections__arrow,
+    .home-collections__shot {
+      transform: none;
+    }
+  }
+}

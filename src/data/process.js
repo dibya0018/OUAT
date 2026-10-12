@@ -1,0 +1,37 @@
+import processRescued from '../components/images/process-rescued.png'
+import processReshaped from '../components/images/process-reshaped.png'
+import processReborn from '../components/images/process-reborn.png'
+
+/** The three-step "Bottle to Product" story, shared by Home and Our Story. */
+export const PROCESS_STEPS = [
+  {
+    step: '01',
+    title: 'Rescued',
+    text: 'Bottles are collected from restaurants, bars and homes across Goa, sorted by colour and washed.',
+    image: {
+      src: processRescued,
+      alt: 'Three empty glass bottles standing in the sand on a Goa beach at sunset',
+      tone: 'sand',
+    },
+  },
+  {
+    step: '02',
+    title: 'Reshaped',
+    text: 'Each bottle is scored, cut and ground by hand. No remelting, so the glass keeps its original character.',
+    image: {
+      src: processReshaped,
+      alt: 'Hands sanding the cut edge of a green bottle on driftwood by the sea',
+      tone: 'olive',
+    },
+  },
+  {
+    step: '03',
+    title: 'Reborn',
+    text: 'Rims are polished, candles poured, lids fitted. The bottle leaves the studio as something new.',
+    image: {
+      src: processReborn,
+      alt: 'Olive-green tumbler and lit candle on stone at the beach at golden hour',
+      tone: 'sand',
+    },
+  },
+]

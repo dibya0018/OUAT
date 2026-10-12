@@ -1,0 +1,373 @@
+/*
+ * Home page — "quiet coastal gallery".
+ * Shared surfaces, type scale and motion primitives for the home sections and
+ * the kit in src/components/home/kit. Everything sits in the components layer,
+ * so a Tailwind utility on the same element always wins.
+ *
+ * Motion contract: a hidden state belongs to the component's own class and is
+ * lifted by `.is-in`. Under prefers-reduced-motion every hidden state is
+ * neutralised at the bottom of this file, so nothing can stay invisible.
+ */
+@layer components {
+  :root {
+    --home-bone: #f8f5ee;
+    --home-night: #1f2a22;
+    --home-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* ---- Surfaces ---------------------------------------------------------- */
+  .home-bone {
+    background-color: var(--home-bone);
+    color: var(--color-ink);
+  }
+  .home-night {
+    background-color: var(--home-night);
+    color: var(--color-cream);
+  }
+  /* The base layer paints h1–h4 in ink; on night they follow the surface instead. */
+  .home-night :where(h1, h2, h3, h4) {
+    color: inherit;
+  }
+
+  /* ---- Rhythm ------------------------------------------------------------ */
+  .home-section {
+    padding-block: clamp(5rem, 11vw, 10rem);
+  }
+
+  /* ---- Type (colour is always left to the section) ----------------------- */
+  .home-display-xl,
+  .home-display-lg,
+  .home-display-md {
+    font-family: var(--font-display);
+    font-weight: 300;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  .home-display-xl {
+    font-size: clamp(2.75rem, 7.2vw, 7rem);
+    line-height: 0.98;
+  }
+  .home-display-lg {
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+    line-height: 1.02;
+  }
+  .home-display-md {
+    font-size: clamp(1.75rem, 3.2vw, 3rem);
+    line-height: 1.1;
+  }
+
+  /* Large body copy that opens a section. */
+  .home-lede {
+    font-family: var(--font-sans);
+    font-size: clamp(1rem, 1.25vw, 1.25rem);
+    line-height: 1.6;
+  }
+
+  /* Tiny uppercase label: eyebrows, metadata, captions. */
+  .home-label {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* Huge light index numeral. */
+  .home-numeral {
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 10vw, 9rem);
+    font-weight: 300;
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+    font-variant-numeric: lining-nums;
+  }
+
+  /* ---- Hairline ---------------------------------------------------------- */
+  .home-rule {
+    display: block;
+    width: 100%;
+    height: 1px;
+    border: 0;
+    background-color: var(--color-line);
+  }
+  .home-rule--light {
+    background-color: rgb(240 233 211 / 0.2);
+  }
+
+  /* ---- Hover zoom: wrap an image, it breathes in slowly ------------------ */
+  .home-zoom {
+    overflow: hidden;
+  }
+  .home-zoom img {
+    transition: transform 1.2s var(--home-ease);
+  }
+  .home-zoom:hover img,
+  .home-zoom:focus-within img {
+    transform: scale(1.04);
+  }
+
+  /* ---- FadeUp ------------------------------------------------------------ */
+  .home-fade {
+    opacity: 0;
+    transform: translateY(32px) scale(0.985);
+    transition:
+      opacity 0.95s var(--home-ease),
+      transform 0.95s var(--home-ease);
+  }
+  .home-fade.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ---- RevealLines: each line rises from behind its own mask ------------- */
+  /* The padding and matching negative margin give descenders and italic
+     overhang room inside the mask without moving the text or the line spacing. */
+  .home-line {
+    display: block;
+    overflow: hidden;
+    margin: 0 -0.08em -0.2em;
+    padding: 0 0.08em 0.2em;
+  }
+  .home-line__inner {
+    display: block;
+    transform: translateY(calc(100% + 0.35em));
+    transition: transform 1s var(--home-ease);
+  }
+  .is-in > .home-line > .home-line__inner {
+    transform: none;
+  }
+
+  /* ---- RevealImage: a wipe from the bottom while the picture settles ----- */
+  .home-image {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+  .home-image--fill {
+    height: 100%;
+  }
+  /* The wipe lives on an inner layer so the observed frame is never clipped. */
+  .home-image__clip {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path 1.2s var(--home-ease);
+  }
+  /* `scale` settles the picture and `translate` carries the parallax drift,
+     which leaves `transform` free for .home-zoom on a parent. */
+  .home-image__img {
+    position: absolute;
+    top: calc(var(--home-parallax, 0) * -50%);
+    left: 0;
+    width: 100%;
+    max-width: none;
+    height: calc(100% + var(--home-parallax, 0) * 100%);
+    object-fit: cover;
+    scale: 1.12;
+  }
+  .home-image__img,
+  .home-zoom .home-image__img {
+    transition:
+      scale 1.6s var(--home-ease),
+      transform 1.2s var(--home-ease);
+  }
+  .home-image.is-in .home-image__clip {
+    clip-path: inset(0);
+  }
+  .home-image.is-in .home-image__img {
+    scale: 1;
+  }
+
+  /* ---- Parallax ---------------------------------------------------------- */
+  .home-parallax {
+    will-change: transform;
+  }
+
+  /* ---- Marquee ----------------------------------------------------------- */
+  .home-marquee {
+    overflow: hidden;
+  }
+  /* Two identical groups; each carries its own trailing gap, so sliding the
+     track by exactly half its width lands the copy where the original began. */
+  .home-marquee__track {
+    display: flex;
+    width: max-content;
+    min-width: 200%;
+    white-space: nowrap;
+    animation: home-marquee var(--home-marquee-duration, 40s) linear infinite;
+    will-change: transform;
+  }
+  .home-marquee--reverse .home-marquee__track {
+    animation-direction: reverse;
+  }
+  .home-marquee__group {
+    display: flex;
+    flex: 1 0 auto;
+    align-items: center;
+    justify-content: space-around;
+    gap: var(--home-marquee-gap, 3rem);
+    padding-inline-end: var(--home-marquee-gap, 3rem);
+  }
+  .home-marquee__group > * {
+    flex-shrink: 0;
+  }
+  @keyframes home-marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* ---- CountUp ----------------------------------------------------------- */
+  /* The real value always holds the space; the running figure is laid over it. */
+  .home-count {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  .home-count.is-counting .home-count__final {
+    opacity: 0;
+  }
+  .home-count__live {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* ---- Eyebrow: numeral, short hairline, label --------------------------- */
+  .home-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    color: var(--color-ink);
+  }
+  .home-eyebrow--light {
+    color: var(--color-cream);
+  }
+  .home-eyebrow__num {
+    color: var(--color-accent);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  /* Terracotta disappears on night and olive, so dark surfaces get a paler tint. */
+  .home-eyebrow--light .home-eyebrow__num {
+    color: #e3b29f;
+  }
+  .home-eyebrow__rule {
+    flex: none;
+    width: 2rem;
+    height: 1px;
+    background-color: color-mix(in oklab, var(--color-ink) 30%, transparent);
+  }
+  .home-eyebrow--light .home-eyebrow__rule {
+    background-color: color-mix(in oklab, var(--color-cream) 40%, transparent);
+  }
+
+  /* ---- ArrowLink --------------------------------------------------------- */
+  .home-arrow-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    color: var(--color-primary);
+    text-align: left;
+    cursor: pointer;
+  }
+  .home-arrow-link--light {
+    color: var(--color-cream);
+  }
+  /* Stretches the tap target to 44px without changing the layout. */
+  .home-arrow-link::after {
+    content: '';
+    position: absolute;
+    inset: -0.75rem -0.5rem;
+  }
+  .home-arrow-link:focus-visible {
+    outline-color: currentColor;
+    outline-offset: 6px;
+  }
+  /* A faint resting hairline; the full-colour line draws over it from the left. */
+  .home-arrow-link__label {
+    padding-bottom: 0.3125rem;
+    background-image:
+      linear-gradient(currentColor, currentColor),
+      linear-gradient(
+        color-mix(in oklab, currentColor 28%, transparent),
+        color-mix(in oklab, currentColor 28%, transparent)
+      );
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size:
+      0% 1px,
+      100% 1px;
+    transition: background-size 0.5s var(--home-ease);
+  }
+  .home-arrow-link:hover .home-arrow-link__label,
+  .home-arrow-link:focus-visible .home-arrow-link__label {
+    background-size:
+      100% 1px,
+      100% 1px;
+  }
+  .home-arrow-link__icon {
+    flex: none;
+    transition: transform 0.5s var(--home-ease);
+  }
+  .home-arrow-link:hover .home-arrow-link__icon,
+  .home-arrow-link:focus-visible .home-arrow-link__icon {
+    transform: translateX(4px);
+  }
+
+  /* ---- Reduced motion: everything is simply there ------------------------ */
+  @media (prefers-reduced-motion: reduce) {
+    .home-fade,
+    .home-line__inner,
+    .home-image__clip,
+    .home-image__img,
+    .home-zoom .home-image__img,
+    .home-zoom img,
+    .home-arrow-link__label,
+    .home-arrow-link__icon {
+      transition: none;
+    }
+    .home-fade {
+      opacity: 1;
+      transform: none;
+    }
+    .home-line__inner {
+      transform: none;
+    }
+    .home-image__clip {
+      clip-path: none;
+    }
+    .home-image__img {
+      top: 0;
+      height: 100%;
+      scale: none;
+      translate: none !important;
+    }
+    .home-zoom:hover img,
+    .home-zoom:focus-within img,
+    .home-arrow-link:hover .home-arrow-link__icon,
+    .home-arrow-link:focus-visible .home-arrow-link__icon {
+      transform: none;
+    }
+    .home-parallax {
+      transform: none !important;
+      will-change: auto;
+    }
+    .home-marquee__track {
+      animation: none;
+    }
+    .home-count.is-counting .home-count__final {
+      opacity: 1;
+    }
+    .home-count__live {
+      display: none;
+    }
+  }
+}

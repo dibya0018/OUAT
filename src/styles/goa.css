@@ -1,0 +1,578 @@
+/*
+ * Goa atmosphere — effects only, layered over the site's own photos and copy:
+ * a tide that drains off the page on arrival, palm shadows and sun on the hero,
+ * waves washing onto sand below it, and water rings under the pointer.
+ * Everything here is decorative; motion is switched off for reduced-motion users.
+ */
+@layer components {
+  /* ---- Arrival: you surface, and the water drains off the page ----------- */
+  .goa-intro {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .goa-intro__water {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -14vh;
+    height: 130vh;
+    background: linear-gradient(to bottom, #8fd6c8 0%, #3fa99f 16%, #17797a 55%, #0c5360 100%);
+    animation: goa-intro-drain 1.5s cubic-bezier(0.7, 0, 0.25, 1) 1s forwards;
+    will-change: transform;
+  }
+  @keyframes goa-intro-drain {
+    to {
+      transform: translate3d(0, 122vh, 0);
+    }
+  }
+  /* Sunlight falling through the water. */
+  .goa-intro__light {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 55% at 62% 0%, rgb(255 255 255 / 0.5), transparent 70%),
+      repeating-linear-gradient(
+        104deg,
+        rgb(255 255 255 / 0) 0 7vw,
+        rgb(255 255 255 / 0.1) 9vw 11vw,
+        rgb(255 255 255 / 0) 14vw 20vw
+      );
+    animation: goa-intro-light 3s ease-in-out infinite alternate;
+  }
+  @keyframes goa-intro-light {
+    from {
+      transform: translate3d(-3vw, 0, 0);
+    }
+    to {
+      transform: translate3d(3vw, 0, 0);
+    }
+  }
+  .goa-intro__crest {
+    position: absolute;
+    left: 0;
+    bottom: 100%;
+    width: 200%;
+    height: 9vh;
+    margin-bottom: -1px;
+    animation: goa-wave-x 5s linear infinite;
+  }
+  .goa-intro__crest--foam {
+    height: 10.5vh;
+    fill: #fff;
+    opacity: 0.9;
+    animation-duration: 8s;
+    animation-direction: reverse;
+  }
+  .goa-intro__crest--water {
+    fill: #8fd6c8;
+  }
+  .goa-intro__bubble {
+    position: absolute;
+    bottom: -4vh;
+    border-radius: 50%;
+    border: 1px solid rgb(255 255 255 / 0.75);
+    background: radial-gradient(circle at 32% 30%, rgb(255 255 255 / 0.85), rgb(255 255 255 / 0.08) 55%);
+    animation: goa-bubble 2.2s ease-in both;
+  }
+  @keyframes goa-bubble {
+    0% {
+      transform: translate3d(0, 0, 0) scale(0.6);
+      opacity: 0;
+    }
+    15% {
+      opacity: 0.9;
+    }
+    100% {
+      transform: translate3d(var(--drift, 0), -125vh, 0) scale(1.15);
+      opacity: 0;
+    }
+  }
+  .goa-intro__mark {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 64vh; /* centre of the screen: the water starts 14vh above it */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    transform: translateY(-50%);
+    color: var(--color-cream);
+    animation: goa-intro-mark 1.5s ease-out both;
+  }
+  @keyframes goa-intro-mark {
+    0% {
+      opacity: 0;
+      filter: blur(8px);
+    }
+    35%,
+    75% {
+      opacity: 1;
+      filter: blur(0);
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  /* ---- Hero: the photo breathes --------------------------------------- */
+  /* The photo settles into place as you arrive. No fill mode: if the animation never
+     runs (background tab, old browser) the photo is simply there. */
+  .goa-arrive {
+    animation: goa-arrive 2.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes goa-arrive {
+    from {
+      transform: scale(1.14);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  .goa-kenburns {
+    animation: goa-kenburns 22s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  @keyframes goa-kenburns {
+    from {
+      transform: scale(1.03) translate3d(0, 0, 0);
+    }
+    to {
+      transform: scale(1.12) translate3d(-1.2%, -1%, 0);
+    }
+  }
+
+  /* Low sun in the top corner, with soft rays. */
+  .goa-sun {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+  .goa-sun::before,
+  .goa-sun::after {
+    content: '';
+    position: absolute;
+    inset: -20%;
+  }
+  .goa-sun::before {
+    background: radial-gradient(circle at 80% 14%, rgb(255 218 160 / 0.6), rgb(255 190 130 / 0.18) 30%, transparent 55%);
+    animation: goa-sun-breathe 9s ease-in-out infinite alternate;
+  }
+  .goa-sun::after {
+    background: repeating-conic-gradient(
+      from 196deg at 80% 14%,
+      rgb(255 236 200 / 0.16) 0deg 3deg,
+      transparent 3deg 11deg
+    );
+    mask-image: radial-gradient(circle at 80% 14%, #000 8%, transparent 62%);
+    filter: blur(10px);
+    animation: goa-rays 14s ease-in-out infinite alternate;
+    transform-origin: 80% 14%;
+  }
+  @keyframes goa-sun-breathe {
+    from {
+      opacity: 0.65;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes goa-rays {
+    from {
+      transform: rotate(-3deg);
+      opacity: 0.5;
+    }
+    to {
+      transform: rotate(3deg);
+      opacity: 1;
+    }
+  }
+
+  /* Palm-frond shadows moving over whatever is underneath. */
+  .goa-shadows {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    opacity: var(--goa-shadow, 0.3);
+  }
+  .goa-palm {
+    position: absolute;
+    aspect-ratio: 1;
+  }
+  .goa-palm--right {
+    top: -9%;
+    right: -5%;
+    width: clamp(20rem, 80vmin, 52rem);
+  }
+  .goa-palm--left {
+    top: -15%;
+    left: -10%;
+    width: clamp(14rem, 54vmin, 34rem);
+    transform: scaleX(-1);
+    opacity: 0.6;
+  }
+  .goa-palm svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    fill: #26362a;
+    filter: blur(6px);
+    /* the crown sits at the top-right corner of the drawing */
+    transform-origin: 89.7% 10.3%;
+    animation: goa-sway 8.5s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  .goa-palm svg + svg {
+    filter: blur(3.5px);
+    animation-duration: 6.4s;
+    animation-delay: -2.5s;
+  }
+  .goa-palm--left svg {
+    animation-duration: 10s;
+  }
+  @keyframes goa-sway {
+    from {
+      transform: rotate(-2.6deg);
+    }
+    to {
+      transform: rotate(3deg);
+    }
+  }
+
+  /* Sun glinting off spray. */
+  .goa-glints {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+  .goa-glint {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 0 28%, rgb(255 240 205 / 0.65) 46%, transparent 70%);
+    opacity: 0;
+    animation: goa-glint ease-in-out infinite;
+  }
+  @keyframes goa-glint {
+    0% {
+      transform: translate3d(0, 10px, 0) scale(0.3);
+      opacity: 0;
+    }
+    35% {
+      opacity: 0.95;
+    }
+    55% {
+      opacity: 0.35;
+    }
+    70% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translate3d(var(--drift, 0), -34px, 0) scale(1);
+      opacity: 0;
+    }
+  }
+
+  /* Rings on the water where the pointer touches it. */
+  .goa-ripples {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .goa-ripple {
+    position: absolute;
+    width: 13rem;
+    height: 13rem;
+    margin: -6.5rem 0 0 -6.5rem;
+    border-radius: 50%;
+    border: 1.5px solid rgb(255 255 255 / 0.75);
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.12),
+      inset 0 0 22px rgb(255 255 255 / 0.22);
+    animation: goa-ripple 1.7s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+  }
+  .goa-ripple::after {
+    content: '';
+    position: absolute;
+    inset: 20%;
+    border-radius: 50%;
+    border: 1px solid rgb(255 255 255 / 0.5);
+  }
+  .goa-ripple--soft {
+    width: 7rem;
+    height: 7rem;
+    margin: -3.5rem 0 0 -3.5rem;
+    border-width: 1px;
+    border-color: rgb(255 255 255 / 0.45);
+    box-shadow: none;
+    animation-duration: 1.3s;
+  }
+  .goa-ripple--soft::after {
+    display: none;
+  }
+  @keyframes goa-ripple {
+    from {
+      transform: scale(0.04);
+      opacity: 0.95;
+    }
+    to {
+      transform: scale(1);
+      opacity: 0;
+    }
+  }
+
+  /* ---- Shoreline: the sea meets the sand under the hero ------------------ */
+  .goa-shore {
+    position: relative;
+    z-index: 2;
+    height: 0;
+    pointer-events: none;
+  }
+  .goa-shore__band {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -4rem;
+    height: 9rem;
+    overflow: hidden;
+  }
+  @media (min-width: 768px) {
+    .goa-shore__band {
+      top: -6rem;
+      height: 13rem;
+    }
+  }
+  .goa-wave {
+    position: absolute;
+    left: 0;
+    width: 200%;
+    animation: goa-wave-x linear infinite;
+    will-change: transform;
+  }
+  .goa-wave--back {
+    top: 0;
+    height: 56%;
+    /* far water is a little out of focus, so the photo melts into the sea */
+    filter: blur(1.5px);
+    animation-duration: 26s;
+  }
+  .goa-wave--mid {
+    top: 13%;
+    height: 43%;
+    animation-duration: 17s;
+    animation-direction: reverse;
+  }
+  .goa-wave--front {
+    top: 25%;
+    height: 31%;
+    animation-duration: 11s;
+  }
+  /* Foam on the nearest crest: broken, never a clean outline. */
+  .goa-wave__foam {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.6;
+    stroke-opacity: 0.9;
+    stroke-linecap: round;
+    stroke-dasharray: 60 14 130 22 34 10 90 30;
+    vector-effect: non-scaling-stroke;
+  }
+  .goa-wave__foam--soft {
+    stroke-width: 7;
+    stroke-opacity: 0.28;
+    stroke-dasharray: none;
+  }
+  @keyframes goa-wave-x {
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+  /* Sun glitter: short streaks of light that slide and flicker on the water. */
+  .goa-shore__glitter {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 16%;
+    height: 42%;
+    mix-blend-mode: screen;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.5' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.97 0 0 0 0 0.88 5 0 0 0 -3.1'/%3E%3C/filter%3E%3Crect width='480' height='120' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 480px 120px;
+    mask-image: linear-gradient(to bottom, transparent, #000 35%, #000 80%, transparent);
+    animation: goa-glitter 9s linear infinite;
+  }
+  @keyframes goa-glitter {
+    0% {
+      background-position: 0 0;
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 0.95;
+    }
+    100% {
+      background-position: -480px 0;
+      opacity: 0.55;
+    }
+  }
+  /* The thin sheet of water that runs up the sand and slides back. */
+  .goa-swash {
+    position: absolute;
+    left: -3%;
+    top: 56%;
+    width: 106%;
+    height: 34%;
+    transform-origin: 50% 0;
+    animation: goa-swash 8s infinite;
+    will-change: transform;
+  }
+  .goa-swash__foam {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .goa-swash__foam--soft {
+    stroke-width: 16;
+    stroke-opacity: 0.4;
+    filter: blur(2px);
+  }
+  .goa-swash__bubbles {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 3;
+    stroke-opacity: 0.8;
+    stroke-linecap: round;
+    stroke-dasharray: 0.5 9 0.5 16 0.5 6 0.5 23 0.5 12;
+    vector-effect: non-scaling-stroke;
+  }
+  .goa-swash__bubbles--far {
+    stroke-width: 2;
+    stroke-opacity: 0.55;
+    stroke-dasharray: 0.5 19 0.5 31 0.5 13 0.5 44;
+  }
+  @keyframes goa-swash {
+    0% {
+      transform: scaleY(0.42) translate3d(0, 0, 0);
+      animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1);
+    }
+    40% {
+      transform: scaleY(1.28) translate3d(-1.2%, 0, 0);
+      animation-timing-function: ease-in-out;
+    }
+    100% {
+      transform: scaleY(0.42) translate3d(0, 0, 0);
+    }
+  }
+  /* Sand stays dark for a while after the water has gone. */
+  .goa-shore__wet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 56%;
+    height: 44%;
+    background: linear-gradient(to bottom, rgb(132 98 56 / 0.42), rgb(132 98 56 / 0.16) 55%, transparent);
+    animation: goa-wet 8s ease-in-out infinite;
+  }
+  @keyframes goa-wet {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    45% {
+      opacity: 1;
+    }
+    75% {
+      opacity: 0.8;
+    }
+  }
+
+  /* ---- Sand: fine grain over a wind-streaked base ------------------------ */
+  .goa-sand {
+    background-color: #f0e9d3;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' seed='8' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.36 0 0 0 0 0.18 3 0 0 0 -1.5'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23a)' opacity='0.38'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.035' numOctaves='2' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.62 0 0 0 0 0.47 0 0 0 0 0.27 1.6 0 0 0 -0.75'/%3E%3C/filter%3E%3Crect width='600' height='600' filter='url(%23b)' opacity='0.3'/%3E%3C/svg%3E"),
+      linear-gradient(to bottom, #ecdfc3, #f1e9d4 45%, #f0e9d3);
+  }
+
+  /* ---- Sound toggle ------------------------------------------------------ */
+  .goa-sound__bars {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 0.875rem;
+  }
+  .goa-sound__bars span {
+    width: 2px;
+    height: 100%;
+    border-radius: 1px;
+    background: currentColor;
+    transform: scaleY(0.25);
+    transform-origin: 50% 100%;
+  }
+  .goa-sound[aria-pressed='true'] .goa-sound__bars span {
+    animation: goa-sound-bar 1.6s ease-in-out infinite alternate;
+  }
+  .goa-sound__bars span:nth-child(2) {
+    animation-delay: -0.5s !important;
+  }
+  .goa-sound__bars span:nth-child(3) {
+    animation-delay: -1s !important;
+  }
+  .goa-sound__bars span:nth-child(4) {
+    animation-delay: -0.2s !important;
+  }
+  @keyframes goa-sound-bar {
+    from {
+      transform: scaleY(0.2);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  /* A small live dot beside the Goa clock. */
+  .goa-live-dot {
+    animation: goa-live 2.4s ease-in-out infinite;
+  }
+  @keyframes goa-live {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .goa-intro,
+    .goa-glints,
+    .goa-ripples {
+      display: none;
+    }
+    .goa-arrive,
+    .goa-kenburns,
+    .goa-sun::before,
+    .goa-sun::after,
+    .goa-palm svg,
+    .goa-wave,
+    .goa-shore__glitter,
+    .goa-swash,
+    .goa-shore__wet,
+    .goa-live-dot {
+      animation: none;
+    }
+  }
+}

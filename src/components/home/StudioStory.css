@@ -1,0 +1,50 @@
+/*
+ * The studio — layout values that depend on the viewport, not on a breakpoint utility.
+ *
+ * --home-studio-edge is the distance from the viewport's left edge to the
+ * Container's content edge: its gutter (px-4 / sm:px-6 / md:px-10), plus its
+ * centring once the page is wider than the 80rem site width. Pulling the
+ * portrait back by that amount lets it bleed off the left of the screen while
+ * its right edge stays on the column grid.
+ *
+ * --home-studio-band is the shape of the closing photograph: tall enough to
+ * hold the figures on a phone, a wide band on a desktop. On the widest screens
+ * it relaxes to the photograph's own 3:1, so the picture is enlarged no further
+ * than it has to be.
+ */
+@layer components {
+  .home-studio {
+    --home-studio-edge: 1rem;
+    --home-studio-band: 5 / 4;
+  }
+  .home-studio__bleed {
+    margin-left: calc(var(--home-studio-edge) * -1);
+  }
+
+  @media (min-width: 40rem) {
+    .home-studio {
+      --home-studio-edge: 1.5rem;
+      --home-studio-band: 2 / 1;
+    }
+  }
+  @media (min-width: 48rem) {
+    .home-studio {
+      --home-studio-edge: 2.5rem;
+    }
+  }
+  @media (min-width: 64rem) {
+    .home-studio {
+      --home-studio-band: 21 / 9;
+    }
+  }
+  @media (min-width: 80rem) {
+    .home-studio {
+      --home-studio-edge: calc((100vw - 80rem) / 2 + 2.5rem);
+    }
+  }
+  @media (min-width: 96rem) {
+    .home-studio {
+      --home-studio-band: 3 / 1;
+    }
+  }
+}
