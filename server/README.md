@@ -12,7 +12,7 @@ Express API for catalogue data and form submissions (Hostinger MySQL).
 
 ## Hostinger notes
 
-- **Node.js app (hPanel):** Set **Entry file** to `server/index.js` (not `server.js` at the project root). Build command: `npm run build` if the host runs a build step; start command: `npm start` (runs `node server/index.js`).
+- **Node.js app (hPanel):** Default **Entry file** `server.js` at the project root is supported (it loads `server/index.js`). You can also set the entry to `server/index.js` directly. Build: `npm run build`; start: `npm start`.
 - **phpMyAdmin works ≠ remote works.** phpMyAdmin logs in as `user@localhost`. Your PC connects as `user@your-public-ip` — you need **Remote MySQL** for site **bipminds.com** (`%` or your IP) plus matching password.
 - **API on Hostinger** (same account as the DB): `DB_HOST=127.0.0.1` (not `localhost` for Node.js).
 - **API on your PC**: `DB_HOST=srvXXXX.hstgr.io` from **Remote MySQL** (manage **bipminds.com**).

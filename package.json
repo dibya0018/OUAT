@@ -15,7 +15,7 @@
     "db:seed-admin": "node server/scripts/seed-admin.js",
     "catalog:sync-images": "node server/scripts/sync-catalog-images.js",
     "build": "vite build",
-    "start": "node server/index.js",
+    "start": "node server.js",
     "lint": "oxlint",
     "preview": "vite preview"
   },
