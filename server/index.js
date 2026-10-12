@@ -1,5 +1,6 @@
 import './lib/loadEnv.js'
 import express from 'express'
+import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { ensureCatalogProcedures } from './scripts/install-procedures.js'
@@ -16,6 +17,9 @@ import adminProductMediaRouter from './routes/adminProductMedia.js'
 import { optionalAuth } from './middleware/auth.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const distDir = path.join(__dirname, '../dist')
+const clientIndex = path.join(distDir, 'index.html')
+const serveClient = fs.existsSync(clientIndex)
 const app = express()
 const port = Number(process.env.PORT || 3001)
 
@@ -24,10 +28,6 @@ app.use(cors({ origin: corsOrigin.split(',').map((s) => s.trim()) }))
 app.use(optionalAuth)
 app.use(express.json({ limit: '256kb' }))
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')))
-
-app.get('/', (_req, res) => {
-  res.json({ name: 'O.U.A.T. API', version: '1.0.0' })
-})
 
 app.use('/api/health', healthRouter)
 app.use('/api', catalogRouter)
@@ -38,6 +38,18 @@ app.use('/api', paymentsRouter)
 app.use('/api', analyticsRouter)
 app.use('/api', adminRouter)
 app.use('/api', adminProductMediaRouter)
+
+if (serveClient) {
+  app.use(express.static(distDir, { index: false }))
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next()
+    res.sendFile(clientIndex, (err) => (err ? next(err) : undefined))
+  })
+} else {
+  app.get('/', (_req, res) => {
+    res.json({ name: 'O.U.A.T. API', version: '1.0.0' })
+  })
+}
 
 app.use((err, _req, res, _next) => {
   console.error('[api]', err.code || err.name, err.message)
@@ -71,7 +83,10 @@ app.use((err, _req, res, _next) => {
 
 function listen() {
   const server = app.listen(port, () => {
-    console.info(`O.U.A.T. API listening on http://localhost:${port} (DB ${process.env.DB_HOST}/${process.env.DB_NAME})`)
+    const mode = serveClient ? 'web+api' : 'api'
+    console.info(
+      `O.U.A.T. ${mode} listening on http://localhost:${port} (DB ${process.env.DB_HOST}/${process.env.DB_NAME})`,
+    )
   })
   server.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
