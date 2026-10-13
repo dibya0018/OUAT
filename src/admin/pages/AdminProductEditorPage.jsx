@@ -45,6 +45,7 @@ function emptyProductForm(collectionSlug = 'glassware') {
     stock: '0',
     active: false,
     featured: false,
+    isNew: false,
     origin: '',
     colour: '',
     images: [],
@@ -66,6 +67,7 @@ export default function AdminProductEditorPage() {
   const isNew = productId === 'new'
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [saveNote, setSaveNote] = useState(null) // { ok: boolean, text: string }
   const [collections, setCollections] = useState([])
   const [reviews, setReviews] = useState([])
   const [mediaTab, setMediaTab] = useState('photos')
@@ -109,6 +111,7 @@ export default function AdminProductEditorPage() {
         stock: String(p.stock),
         active: p.active,
         featured: p.featured,
+        isNew: Boolean(p.isNew),
         origin: p.origin ?? '',
         colour: p.colour ?? '',
         images: p.images ?? [],
@@ -146,11 +149,14 @@ export default function AdminProductEditorPage() {
     stock: Number(form.stock),
     active: form.active,
     featured: form.featured,
+    isNew: form.isNew,
     origin: form.origin,
     colour: form.colour,
     benefits: form.benefits,
-    packOptions: form.packOptions.map((o) => ({
-      size: o.size,
+    packOptions: form.packOptions
+      .filter((o) => String(o.size ?? '').trim())
+      .map((o) => ({
+      size: String(o.size).trim(),
       badge: o.badge,
       price: o.price === '' ? 0 : Number(o.price),
       compareAtPrice: o.compareAtPrice === '' ? null : Number(o.compareAtPrice),
@@ -159,12 +165,21 @@ export default function AdminProductEditorPage() {
     })),
     videoUrl: form.videoUrl,
     details: form.details,
-    images: form.images,
+    // Photos are saved by the upload / delete / cover endpoints, so they are not resent here.
   })
 
   const onSave = async () => {
     if (!form) return
+    if (!form.name.trim()) {
+      setSaveNote({ ok: false, text: 'Enter a product name.' })
+      return
+    }
+    if (!(Number(form.price) > 0) && !form.packOptions.some((o) => o.size.trim() && Number(o.price) > 0)) {
+      setSaveNote({ ok: false, text: 'Enter a price above 0.' })
+      return
+    }
     setSaving(true)
+    setSaveNote(null)
     try {
       if (isNew) {
         const res = await createProduct(buildPayload())
@@ -177,6 +192,9 @@ export default function AdminProductEditorPage() {
       }
       await patchProduct(productId, buildPayload())
       await load()
+      setSaveNote({ ok: true, text: 'Saved. The store now shows these details.' })
+    } catch (err) {
+      setSaveNote({ ok: false, text: err.message || 'Could not save product.' })
     } finally {
       setSaving(false)
     }
@@ -194,6 +212,10 @@ export default function AdminProductEditorPage() {
   }
 
   const addReview = async () => {
+    if (!reviewForm.authorName.trim()) {
+      window.alert('Enter the reviewer name.')
+      return
+    }
     await addProductReview(productId, {
       authorName: reviewForm.authorName,
       rating: Number(reviewForm.rating),
@@ -526,13 +548,21 @@ export default function AdminProductEditorPage() {
                     </span>
                   </div>
                   <p className="mt-2 text-admin-muted">{r.body}</p>
-                  {r.status === 'approved' && (
+                  {r.status === 'approved' ? (
                     <button
                       type="button"
                       className="mt-2 text-xs text-red-400"
                       onClick={() => patchReview(r.id, 'rejected').then(load)}
                     >
-                      Deny
+                      Hide from store
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="mt-2 text-xs text-green-400"
+                      onClick={() => patchReview(r.id, 'approved').then(load)}
+                    >
+                      Approve
                     </button>
                   )}
                 </li>
@@ -608,6 +638,25 @@ export default function AdminProductEditorPage() {
                 </select>
               </label>
             </div>
+          </section>
+
+          <section className="admin-panel space-y-4 p-5">
+            <p className="admin-field-label">Product details (Material / Size / Care / Shipping on the store)</p>
+            {[
+              ['material', 'Material'],
+              ['size', 'Size'],
+              ['care', 'Care'],
+              ['shipping', 'Shipping'],
+            ].map(([key, label]) => (
+              <label key={key} className="block">
+                <span className="admin-field-label">{label}</span>
+                <textarea
+                  className="admin-input mt-1 min-h-[3.5rem]"
+                  value={form.details[key]}
+                  onChange={(e) => set('details', { ...form.details, [key]: e.target.value })}
+                />
+              </label>
+            ))}
           </section>
 
           <section className="admin-panel p-5">
@@ -739,9 +788,32 @@ export default function AdminProductEditorPage() {
               />
               <span className="text-sm text-admin-text">Published on store</span>
             </label>
+            <label className="flex cursor-pointer items-center gap-3">
+              <input
+                type="checkbox"
+                checked={form.featured}
+                onChange={(e) => set('featured', e.target.checked)}
+                className="h-4 w-4 accent-[var(--color-admin-gold)]"
+              />
+              <span className="text-sm text-admin-text">Featured (home page and top of listings)</span>
+            </label>
+            <label className="flex cursor-pointer items-center gap-3">
+              <input
+                type="checkbox"
+                checked={form.isNew}
+                onChange={(e) => set('isNew', e.target.checked)}
+                className="h-4 w-4 accent-[var(--color-admin-gold)]"
+              />
+              <span className="text-sm text-admin-text">Show “New” badge</span>
+            </label>
             <button type="button" className="admin-btn-gold w-full py-3" disabled={saving} onClick={onSave}>
               {saving ? 'Saving…' : isNew ? 'Create product' : 'Save product'}
             </button>
+            {saveNote && (
+              <p className={saveNote.ok ? 'text-sm text-green-400' : 'text-sm text-red-400'} role="status">
+                {saveNote.text}
+              </p>
+            )}
           </section>
         </div>
       </div>

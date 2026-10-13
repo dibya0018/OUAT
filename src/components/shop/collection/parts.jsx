@@ -103,8 +103,8 @@ export function AddToCartButton({ product, className, label = 'Add to cart' }) {
       onClick={() => addItem(product)}
       aria-label={soldOut ? `${product.name} is sold out` : `${label}: ${product.name}`}
       className={cx(
-        'inline-flex h-11 items-center justify-center rounded-xs border px-5 font-sans text-sm tracking-wide',
-        'transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50',
+        'btn-water inline-flex h-11 items-center justify-center rounded-xs border px-5 font-sans text-sm tracking-wide',
+        '[transition:color_0.35s_ease_0.45s,border-color_0.4s_ease,background-color_0.2s_ease] disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}
     >

@@ -1,52 +1,75 @@
 /**
  * Placeholder policy copy. Replace each `sections[].body` with the final,
  * legally reviewed text. Structure (slug → title/description/sections) is
- * consumed by PolicyPage.
+ * consumed by PolicyPage. An optional `intro` paragraph shows above the sections;
+ * line breaks (\n) in a body are kept on the page.
  */
 export const POLICIES = {
   shipping: {
-    title: 'Shipping',
-    description: 'How and when O.U.A.T. pieces ship from Goa.',
+    title: 'Shipping Policy',
+    description: 'Processing times, delivery times and shipping charges for O.U.A.T. orders.',
     updated: 'October 2026',
     sections: [
       {
-        heading: 'Dispatch times',
-        body: 'Pieces are made in small batches and ship from Goa within 3–5 working days of your order. Custom and B2B orders follow the timeline agreed in your quotation.',
+        heading: 'Processing Time',
+        body: 'Orders are processed within 24-48 working hours.',
       },
       {
-        heading: 'Delivery across India',
-        body: 'We ship across India with tracked couriers. Typical delivery is 3–7 working days after dispatch, depending on your location. Shipping is calculated at checkout.',
+        heading: 'Delivery Time',
+        body: 'Urban Areas: 3-7 business days\nOther Areas: 5-8 business days',
       },
       {
-        heading: 'International orders',
-        body: 'We currently ship within India. For international enquiries, please write to us and we will do our best to help.',
+        heading: 'Special Regions',
+        body: 'For certain remote locations, a flat shipping charge of ₹130 may apply. COD may not be available in these areas.',
       },
       {
-        heading: 'Packaging',
-        body: 'Glass is packed in recycled card with paper padding. If anything arrives damaged, photograph the box and the piece and contact us within 48 hours.',
+        heading: 'Delivery Information',
+        body: 'Deliveries are made between 9 AM – 7 PM, Monday to Friday.\n\nDelays may occur due to unforeseen circumstances or courier issues.',
+      },
+      {
+        heading: 'Note',
+        body: 'O.U.A.T. is not responsible for delays caused by third-party logistics partners.',
+      },
+      {
+        heading: 'Contact',
+        body: 'For shipping queries, contact us at info@indieyaa.com.',
       },
     ],
   },
   returns: {
-    title: 'Returns & Exchanges',
-    description: 'Our returns and exchanges policy for O.U.A.T. pieces.',
+    title: 'Refund and Returns Policy',
+    description: 'Returns, refunds and cancellations for O.U.A.T. orders.',
     updated: 'October 2026',
+    intro:
+      'At O.U.A.T., we take pride in creating handcrafted products from upcycled materials. Each piece is unique and made with care.',
     sections: [
       {
-        heading: 'Damaged in transit',
-        body: 'If a piece arrives broken, we will replace it at no cost. Send photos of the packaging and the item to our email within 48 hours of delivery.',
+        heading: 'Return Policy',
+        body: 'Returns are accepted within 3 days of delivery.\n\nItems must be unused and in original condition.',
       },
       {
-        heading: 'Change of mind',
-        body: 'Unused pieces in their original packaging may be returned within 7 days of delivery for store credit. Return shipping is at the customer’s expense.',
+        heading: 'Eligibility',
+        body: '• Defective or damaged products\n• Incorrect item received',
       },
       {
-        heading: 'Variation is not a defect',
-        body: 'Every piece is made from a reclaimed bottle and finished by hand. Small differences in height, tint and surface are part of the object, not a fault.',
+        heading: 'Non-Returnable Items',
+        body: '• Used products\n• Items returned after 3 days\n• Personalized items\n• Sale or discounted products',
       },
       {
-        heading: 'Custom and B2B orders',
-        body: 'Engraved, custom-coloured and bulk orders are made to your approval and cannot be returned unless faulty.',
+        heading: 'Return Process',
+        body: 'Email us at info@indieyaa.com with your order ID and product images within 24 hours of delivery.',
+      },
+      {
+        heading: 'Refunds',
+        body: 'Once approved, you may receive:\n\n• A credit note (valid for 90 days), or\n• A refund to your original payment method (excluding shipping charges)',
+      },
+      {
+        heading: 'Shipping for Returns',
+        body: 'Customers are responsible for return shipping costs. These charges are non-refundable.',
+      },
+      {
+        heading: 'Cancellation Policy',
+        body: '• Orders can be cancelled before dispatch by emailing us with your order ID.\n• Orders already shipped or purchased on discount cannot be cancelled.',
       },
     ],
   },

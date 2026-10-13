@@ -51,6 +51,12 @@ export default function OrderTrackingTimeline({ order, compact = false }) {
         </ul>
       )}
 
+      {(order.giftItems?.length > 0 || order.giftNote) && (
+        <p className="mt-3 text-sm text-ink-soft">
+          Gift wrapped{order.giftNote ? ` with your note: “${order.giftNote}”` : ', no note'}
+        </p>
+      )}
+
       <div className="mt-6">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs uppercase tracking-widest text-ink-soft">
           <span>Track order</span>

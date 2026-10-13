@@ -242,3 +242,116 @@ button.admin-filter-pill[data-active='true'] {
   border-color: var(--color-admin-gold);
   color: #0a0a0a;
 }
+
+/*
+ * Phones: Orders, Products and Team tables become one card per row instead of a
+ * table that scrolls sideways. Column names come from the per-table rules below.
+ */
+@media (max-width: 767px) {
+  .admin-table--stack,
+  .admin-table--stack tbody {
+    display: block;
+  }
+
+  .admin-table--stack thead {
+    display: none;
+  }
+
+  .admin-table--stack tr {
+    display: block;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--color-admin-border);
+  }
+
+  .admin-table--stack td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-width: 0;
+    padding: 0.3rem 0;
+    border-bottom: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-table--stack td::before {
+    flex-shrink: 0;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: left;
+    color: var(--color-admin-muted);
+  }
+
+  /* The first cell is the card's title; full-width cells (empty state, order details) read as plain blocks. */
+  .admin-table--stack td:first-child,
+  .admin-table--stack td[colspan] {
+    display: block;
+    text-align: left;
+  }
+
+  .admin-table--stack td:first-child {
+    padding-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .admin-table--stack td[colspan]::before {
+    content: none;
+  }
+
+  .admin-table--orders td:nth-child(2)::before {
+    content: 'Customer';
+  }
+  .admin-table--orders td:nth-child(3)::before {
+    content: 'Total';
+  }
+  .admin-table--orders td:nth-child(4)::before {
+    content: 'Payment';
+  }
+  .admin-table--orders td:nth-child(5)::before {
+    content: 'Status';
+  }
+  .admin-table--orders td:nth-child(6)::before {
+    content: 'Date';
+  }
+
+  .admin-table--products td:nth-child(2)::before {
+    content: 'Price';
+  }
+  .admin-table--products td:nth-child(3)::before {
+    content: 'Stock';
+  }
+  .admin-table--products td:nth-child(4)::before {
+    content: 'Status';
+  }
+  .admin-table--products td:nth-child(5)::before {
+    content: 'Actions';
+  }
+
+  .admin-table--team td:nth-child(2)::before {
+    content: 'Access';
+  }
+  .admin-table--team td:nth-child(3)::before {
+    content: 'Status';
+  }
+  .admin-table--team td:nth-child(4)::before {
+    content: 'Joined';
+  }
+  .admin-table--team td:nth-child(5)::before {
+    content: 'Actions';
+  }
+
+  /* Tap targets and form controls sized for fingers; 16px text stops iOS zooming in on focus. */
+  .admin-input,
+  .admin-status-select {
+    font-size: 1rem;
+  }
+
+  .admin-btn-ghost,
+  .admin-btn-gold,
+  .admin-filter-pill {
+    min-height: 2.5rem;
+  }
+}

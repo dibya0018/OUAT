@@ -19,7 +19,13 @@ import {
 const STEPS = ['contact', 'pincode', 'address', 'pay']
 
 function itemsPayload(lines) {
-  return lines.map((l) => ({ productId: l.id, qty: l.qty, gift: Boolean(l.gift) }))
+  return lines.map((l) => ({
+    productId: l.id,
+    qty: l.qty,
+    gift: Boolean(l.gift),
+    option: l.option ?? undefined,
+    name: l.name,
+  }))
 }
 
 async function lookupPincode(pin) {
@@ -56,6 +62,8 @@ export default function CheckoutModal() {
 
   const [couponInput, setCouponInput] = useState('')
   const [couponApplied, setCouponApplied] = useState(null)
+  const [couponError, setCouponError] = useState('')
+  const [couponBusy, setCouponBusy] = useState(false)
 
   const [form, setForm] = useState({
     phone: '',
@@ -72,7 +80,8 @@ export default function CheckoutModal() {
   const subtotal = useMemo(() => lines.reduce((s, l) => s + l.price * l.qty, 0), [lines])
   const discount = couponApplied?.discount ?? 0
   const total = couponApplied?.total ?? subtotal
-  const hasGift = lines.some((l) => l.gift)
+  const giftNames = lines.filter((l) => l.gift).map((l) => l.name)
+  const hasGift = giftNames.length > 0
 
   const resetFlow = useCallback(() => {
     setStepIndex(0)
@@ -80,6 +89,7 @@ export default function CheckoutModal() {
     setError('')
     setCouponInput('')
     setCouponApplied(null)
+    setCouponError('')
     setForm({
       phone: user?.phone || '',
       pincode: '',
@@ -136,12 +146,35 @@ export default function CheckoutModal() {
 
   const applyCoupon = async () => {
     setError('')
-    const res = await validateCoupon(couponInput, itemsPayload(lines))
-    if (!res.ok) {
-      setError(res.error || 'Invalid coupon')
-      return
+    setCouponError('')
+    setCouponBusy(true)
+    try {
+      const res = await validateCoupon(couponInput.trim(), itemsPayload(lines))
+      if (!res.ok) {
+        setCouponApplied(null)
+        setCouponError(res.error || 'Invalid coupon')
+        return
+      }
+      setCouponApplied(res)
+    } catch {
+      setCouponApplied(null)
+      setCouponError('Could not check this coupon. Please try again.')
+    } finally {
+      setCouponBusy(false)
     }
-    setCouponApplied(res)
+  }
+
+  const removeCoupon = () => {
+    setCouponApplied(null)
+    setCouponError('')
+    setCouponInput('')
+  }
+
+  // Typing a different code drops the one already applied, so the total never shows a stale discount.
+  const onCouponInput = (value) => {
+    setCouponInput(value.toUpperCase())
+    setCouponError('')
+    if (couponApplied) setCouponApplied(null)
   }
 
   const buildPayload = () => ({
@@ -162,14 +195,20 @@ export default function CheckoutModal() {
     },
   })
 
-  const finishSuccess = () => {
+  const finishSuccess = ({ hasAccount = false } = {}) => {
     window.dispatchEvent(new Event('ouat:orders-changed'))
     const email = form.email.trim()
     onOrderSuccess()
     closeCheckout()
     // Guests must register or sign in before they can see order status (no order id in URL/state).
+    // An email that already has an account goes to sign in; a new email goes to register.
     if (isAuthenticated) navigate(ORDERS_PATH, { replace: true })
-    else navigate('/register', { replace: true, state: { from: ORDERS_PATH, postCheckout: true, email } })
+    else {
+      navigate(hasAccount ? '/login' : '/register', {
+        replace: true,
+        state: { from: ORDERS_PATH, postCheckout: true, email },
+      })
+    }
   }
 
   const payCod = async () => {
@@ -178,7 +217,7 @@ export default function CheckoutModal() {
     try {
       const res = await checkoutCod(buildPayload())
       if (!res.ok) throw new Error(res.error || 'Order failed')
-      finishSuccess()
+      finishSuccess({ hasAccount: res.hasAccount })
     } catch (e) {
       setError(e.message || 'Could not place order')
     } finally {
@@ -217,7 +256,7 @@ export default function CheckoutModal() {
                 signature: response.razorpay_signature,
               })
               if (!verified.ok) throw new Error(verified.error || 'Verification failed')
-              finishSuccess()
+              finishSuccess({ hasAccount: res.hasAccount })
               resolve()
             } catch (err) {
               reject(err)
@@ -329,6 +368,7 @@ export default function CheckoutModal() {
                   <li key={l.key ?? l.id} className="flex justify-between gap-2">
                     <span>
                       {l.name} × {l.qty}
+                      {l.gift && <span className="block text-xs text-ink-soft">Gift wrapped</span>}
                     </span>
                     <span className="tabular-nums">{formatPrice(l.price * l.qty)}</span>
                   </li>
@@ -437,15 +477,6 @@ export default function CheckoutModal() {
                     value={form.email}
                     onChange={(e) => setField('email', e.target.value)}
                   />
-                  {hasGift && (
-                    <FormField
-                      label="Gift note"
-                      name="giftNote"
-                      as="textarea"
-                      value={form.giftNote}
-                      onChange={(e) => setField('giftNote', e.target.value)}
-                    />
-                  )}
                 </div>
               )}
 
@@ -468,6 +499,27 @@ export default function CheckoutModal() {
                     </button>
                   </div>
 
+                  {hasGift && (
+                    <div className="rounded-xs border border-line p-4">
+                      <p className="flex items-center gap-2 text-sm font-medium">
+                        <Icon name="gift" size={16} className="text-primary" /> This order is a gift
+                      </p>
+                      <p className="mt-1 text-xs text-ink-soft">
+                        {giftNames.join(', ')} will be wrapped in recycled card. Add the message for our handwritten
+                        note (optional).
+                      </p>
+                      <textarea
+                        className="mt-3 w-full border border-line bg-transparent p-3 font-sans text-sm focus:border-primary focus:outline-none"
+                        rows={3}
+                        maxLength={300}
+                        placeholder="Your message"
+                        aria-label="Gift message"
+                        value={form.giftNote}
+                        onChange={(e) => setField('giftNote', e.target.value)}
+                      />
+                    </div>
+                  )}
+
                   <div>
                     <p className="mb-2 text-xs font-medium uppercase tracking-widest text-ink-soft">Coupon</p>
                     <div className="flex gap-2">
@@ -475,12 +527,40 @@ export default function CheckoutModal() {
                         className="w-full border-b border-line bg-transparent py-3 font-sans text-base focus:border-primary focus:outline-none"
                         placeholder="Enter code"
                         value={couponInput}
-                        onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                        onChange={(e) => onCouponInput(e.target.value)}
+                        aria-label="Coupon code"
                       />
-                      <Button type="button" variant="outline" onClick={applyCoupon} disabled={!couponInput.trim()}>
-                        Apply
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={applyCoupon}
+                        disabled={!couponInput.trim() || couponBusy || Boolean(couponApplied)}
+                      >
+                        {couponBusy ? 'Checking…' : couponApplied ? 'Applied' : 'Apply'}
                       </Button>
                     </div>
+                    {couponApplied && (
+                      <p
+                        className="mt-3 flex items-start justify-between gap-3 rounded-xs border border-primary bg-sand/40 px-3 py-2 text-sm text-ink"
+                        role="status"
+                      >
+                        <span className="flex items-start gap-2">
+                          <Icon name="check" size={16} className="mt-0.5 shrink-0 text-primary" />
+                          <span>
+                            Coupon <strong className="font-medium">{couponApplied.code}</strong> applied. You save{' '}
+                            {formatPrice(discount)} — new total {formatPrice(total)}.
+                          </span>
+                        </span>
+                        <button type="button" className="link-underline shrink-0 text-xs text-primary" onClick={removeCoupon}>
+                          Remove
+                        </button>
+                      </p>
+                    )}
+                    {couponError && (
+                      <p className="mt-3 text-sm text-red-800" role="alert">
+                        {couponError}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -529,9 +609,23 @@ export default function CheckoutModal() {
                     </div>
                   </div>
 
-                  <dl className="flex justify-between border-t border-line pt-4 text-base">
-                    <dt>Order total</dt>
-                    <dd className="tabular-nums font-medium">{formatPrice(total)}</dd>
+                  <dl className="space-y-2 border-t border-line pt-4">
+                    {discount > 0 && (
+                      <>
+                        <div className="flex justify-between text-sm text-ink-soft">
+                          <dt>Subtotal</dt>
+                          <dd className="tabular-nums">{formatPrice(subtotal)}</dd>
+                        </div>
+                        <div className="flex justify-between text-sm text-primary">
+                          <dt>Discount ({couponApplied.code})</dt>
+                          <dd className="tabular-nums">−{formatPrice(discount)}</dd>
+                        </div>
+                      </>
+                    )}
+                    <div className="flex justify-between text-base">
+                      <dt>Order total</dt>
+                      <dd className="tabular-nums font-medium">{formatPrice(total)}</dd>
+                    </div>
                   </dl>
                 </div>
               )}

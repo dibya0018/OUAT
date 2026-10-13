@@ -10,6 +10,7 @@ import { NAV_LINKS, SITE } from '../../lib/site'
 import { cx } from '../../lib/format'
 import ShopNavMenu, { ShopNavMobile } from './ShopNavMenu'
 import HeaderAccountMenu from './HeaderAccountMenu'
+import HeaderSearch from './HeaderSearch'
 import { isAdminUser } from '../../lib/adminAccess'
 
 const SCROLL_THRESHOLD = 24
@@ -91,6 +92,7 @@ export default function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-3 md:gap-5">
+          <HeaderSearch onOpen={closeMenu} />
           {!booting &&
             (isAuthenticated ? (
               <HeaderAccountMenu

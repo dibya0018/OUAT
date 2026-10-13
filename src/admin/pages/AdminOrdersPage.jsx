@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 import AdminPageHeader from '../components/AdminPageHeader'
-import { fetchOrders, patchOrderStatus } from '../services/adminService'
+import { fetchOrder, fetchOrders, patchOrderStatus } from '../services/adminService'
 import { formatPrice } from '../../lib/format'
 
 const FILTERS = [
@@ -52,22 +52,96 @@ function statusOptions(order) {
   })
 }
 
+/** What to pack and where to send it, shown under an order row. */
+function OrderDetails({ detail }) {
+  if (detail === 'loading') return <p className="text-sm text-admin-muted">Loading order…</p>
+  if (!detail) return <p className="text-sm text-red-400">Could not load this order.</p>
+  const a = detail.address
+  const addressLines = [a.line1, a.line2, [a.city, a.state].filter(Boolean).join(', '), a.pincode].filter(Boolean)
+  return (
+    <div className="grid gap-6 text-sm md:grid-cols-2">
+      <div>
+        <p className="admin-field-label">Items</p>
+        <ul className="space-y-1">
+          {detail.items.map((item, i) => (
+            <li key={i} className="flex justify-between gap-4">
+              <span>
+                {item.name} × {item.qty}
+              </span>
+              <span className="tabular-nums text-admin-muted">{formatPrice(item.unitPrice * item.qty)}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-3 flex justify-between gap-4 border-t border-admin-border pt-3 font-medium">
+          <span>Total{detail.couponCode ? ` (coupon ${detail.couponCode})` : ''}</span>
+          <span className="tabular-nums">{formatPrice(detail.total)}</span>
+        </p>
+        {(detail.giftItems?.length > 0 || detail.giftNote) && (
+          <div className="mt-3 rounded-lg border border-admin-gold/50 p-3">
+            <p className="admin-field-label text-admin-gold">Gift wrap this order</p>
+            {detail.giftItems?.length > 0 && <p>{detail.giftItems.join(', ')}</p>}
+            <p className="mt-1 text-admin-muted">
+              {detail.giftNote ? `Note: “${detail.giftNote}”` : 'No message — wrap without a note.'}
+            </p>
+          </div>
+        )}
+      </div>
+      <div>
+        <p className="admin-field-label">Ship to</p>
+        <p>{detail.customerName}</p>
+        {addressLines.length ? (
+          addressLines.map((line, i) => (
+            <p key={i} className="text-admin-muted">
+              {line}
+            </p>
+          ))
+        ) : (
+          <p className="text-admin-muted">No address on this order.</p>
+        )}
+        <p className="mt-3 text-admin-muted">
+          {detail.customerPhone || 'No phone'} · {detail.customerEmail}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export default function AdminOrdersPage() {
   const [filter, setFilter] = useState('all')
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
+  const [openId, setOpenId] = useState(null)
+  const [details, setDetails] = useState({}) // order id -> 'loading' | order detail | null (failed)
+
+  const toggleDetails = async (id) => {
+    if (openId === id) {
+      setOpenId(null)
+      return
+    }
+    setOpenId(id)
+    if (details[id] && details[id] !== 'loading') return
+    setDetails((d) => ({ ...d, [id]: 'loading' }))
+    try {
+      const res = await fetchOrder(id)
+      setDetails((d) => ({ ...d, [id]: res.order }))
+    } catch {
+      setDetails((d) => ({ ...d, [id]: null }))
+    }
+  }
 
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await fetchOrders(filter)
+      const res = await fetchOrders(filter, { from: fromDate, to: toDate })
       setOrders(res.orders ?? [])
     } catch {
       setOrders([])
     } finally {
       setLoading(false)
     }
-  }, [filter])
+  }, [filter, fromDate, toDate])
 
   useEffect(() => {
     load()
@@ -113,8 +187,43 @@ export default function AdminOrdersPage() {
         ))}
       </div>
 
+      <div className="mb-4 flex flex-wrap items-end gap-3">
+        <label>
+          <span className="admin-field-label">From</span>
+          <input
+            type="date"
+            className="admin-input"
+            value={fromDate}
+            max={toDate || undefined}
+            onChange={(e) => setFromDate(e.target.value)}
+          />
+        </label>
+        <label>
+          <span className="admin-field-label">To</span>
+          <input
+            type="date"
+            className="admin-input"
+            value={toDate}
+            min={fromDate || undefined}
+            onChange={(e) => setToDate(e.target.value)}
+          />
+        </label>
+        {(fromDate || toDate) && (
+          <button
+            type="button"
+            className="admin-filter-pill"
+            onClick={() => {
+              setFromDate('')
+              setToDate('')
+            }}
+          >
+            Clear dates
+          </button>
+        )}
+      </div>
+
       <div className="admin-panel overflow-x-auto">
-        <table className="admin-table w-full min-w-[720px]">
+        <table className="admin-table admin-table--stack admin-table--orders w-full md:min-w-[720px]">
           <thead>
             <tr>
               <th>Order</th>
@@ -129,16 +238,31 @@ export default function AdminOrdersPage() {
             {!loading && orders.length === 0 && (
               <tr>
                 <td colSpan={6} className="py-12 text-center text-admin-muted">
-                  No orders yet. Checkout + Razorpay will create orders here.
+                  {fromDate || toDate || filter !== 'all'
+                    ? 'No orders match these filters.'
+                    : 'No orders yet. Checkout + Razorpay will create orders here.'}
                 </td>
               </tr>
             )}
             {orders.map((o) => (
-              <tr key={o.id}>
-                <td className="font-medium">#{o.order_number ?? o.id}</td>
+              <Fragment key={o.id}>
+              <tr>
+                <td className="font-medium">
+                  <button
+                    type="button"
+                    className="text-left hover:text-admin-gold"
+                    aria-expanded={openId === o.id}
+                    onClick={() => toggleDetails(o.id)}
+                  >
+                    #{o.order_number ?? o.id}
+                    <span className="mt-0.5 block text-[10px] font-normal uppercase tracking-widest text-admin-muted">
+                      {openId === o.id ? 'Hide details' : 'View details'}
+                    </span>
+                  </button>
+                </td>
                 <td className="text-admin-muted">{o.customer_email}</td>
                 <td>{formatPrice(o.total)}</td>
-                <td className="max-w-[8rem] truncate text-xs text-admin-gold">
+                <td className="truncate text-xs text-admin-gold md:max-w-[8rem]">
                   {o.razorpay_payment_id || o.razorpay_order_id || o.payment_method || '—'}
                 </td>
                 <td>
@@ -162,6 +286,14 @@ export default function AdminOrdersPage() {
                   {o.created_at ? new Date(o.created_at).toLocaleString('en-IN') : '—'}
                 </td>
               </tr>
+              {openId === o.id && (
+                <tr>
+                  <td colSpan={6} className="bg-admin-panel-2">
+                    <OrderDetails detail={details[o.id]} />
+                  </td>
+                </tr>
+              )}
+              </Fragment>
             ))}
           </tbody>
         </table>

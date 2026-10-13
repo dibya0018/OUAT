@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -n web,api -c cyan,magenta \"vite\" \"node --watch server/index.js\"",
+    "dev": "concurrently -n web,api -c cyan,magenta \"vite\" \"node --watch --import ./server/devApiOnlyEnv.js server/index.js\"",
     "dev:web": "vite",
     "dev:api": "node --watch server/index.js",
     "db:migrate": "node server/scripts/migrate.js",
@@ -14,6 +14,7 @@
     "db:seed": "node server/scripts/seed-catalog.js",
     "db:seed-admin": "node server/scripts/seed-admin.js",
     "catalog:sync-images": "node server/scripts/sync-catalog-images.js",
+    "catalog:import-website-xlsx": "xlsx-cli \"website details .xlsx\" --json -o server/data/website-details.json",
     "build": "vite build",
     "start": "node server.js",
     "lint": "oxlint",
@@ -35,11 +36,11 @@
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
-    "@vitejs/plugin-react": "^6.1.1",
+    "@vitejs/plugin-react": "^4.7.0",
     "concurrently": "^9.1.2",
     "oxlint": "^1.81.0",
     "pngjs": "^7.0.0",
     "tailwindcss": "^4.3.3",
-    "vite": "^8.3.0"
+    "vite": "6.3.5"
   }
 }

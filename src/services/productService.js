@@ -2,7 +2,7 @@
  * Product service — catalogue from API with mock fallback.
  */
 import { collections, products as mockProducts } from '../data/products'
-import { apiGet } from '../lib/api'
+import { apiGet, apiPost } from '../lib/api'
 
 export const SORT_OPTIONS = [
   { value: 'featured', label: 'Featured' },
@@ -223,4 +223,32 @@ export async function getProductsByIds(ids) {
     () => fetchProductsFromApi({ ids }),
     () => mockProducts.filter((p) => ids.includes(p.id)),
   )
+}
+
+/** Approved reviews for a product: { count, average, reviews }. Empty when the API is unavailable. */
+export async function getProductReviews(productId) {
+  const empty = { count: 0, average: 0, reviews: [] }
+  if (!productId || catalogMode() === 'mock') return empty
+  try {
+    const res = await apiGet(`/products/${encodeURIComponent(productId)}/reviews`)
+    return { count: res.count ?? 0, average: res.average ?? 0, reviews: res.reviews ?? [] }
+  } catch {
+    return empty
+  }
+}
+
+/** Submit a customer review; it appears on the site once approved in the admin. */
+export function submitProductReview(productId, values) {
+  return apiPost(`/products/${encodeURIComponent(productId)}/reviews`, values)
+}
+
+/** Coupons the admin has marked "Show on website". Empty when the API is unavailable. */
+export async function getOffers() {
+  if (catalogMode() === 'mock') return []
+  try {
+    const res = await apiGet('/payments/offers')
+    return res.offers ?? []
+  } catch {
+    return []
+  }
 }

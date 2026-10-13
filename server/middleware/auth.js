@@ -43,11 +43,11 @@ export async function optionalAuth(req, _res, next) {
     if (bearer) {
       const payload = verifyAccessToken(bearer)
       const row = await userById(payload.sub)
-      if (row) req.user = publicUser(row)
+      if (row && row.is_active !== 0) req.user = publicUser(row)
       req.authMethod = 'jwt'
     } else if (apiKey) {
       const row = await userByApiKey(String(apiKey))
-      if (row) req.user = publicUser(row)
+      if (row && row.is_active !== 0) req.user = publicUser(row)
       req.authMethod = 'api_key'
     }
     next()
@@ -73,6 +73,7 @@ export async function requireAuth(req, res, next) {
       }
       const row = await userById(payload.sub)
       if (!row) return res.status(401).json({ ok: false, error: 'User not found' })
+      if (row.is_active === 0) return res.status(403).json({ ok: false, error: 'This account is deactivated.' })
       req.user = publicUser(row)
       req.authMethod = 'jwt'
       return next()
@@ -81,6 +82,7 @@ export async function requireAuth(req, res, next) {
     if (apiKey) {
       const row = await userByApiKey(String(apiKey))
       if (!row) return res.status(401).json({ ok: false, error: 'Invalid API key' })
+      if (row.is_active === 0) return res.status(403).json({ ok: false, error: 'This account is deactivated.' })
       req.user = publicUser(row)
       req.authMethod = 'api_key'
       return next()

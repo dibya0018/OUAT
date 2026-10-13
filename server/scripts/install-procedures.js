@@ -159,6 +159,8 @@ BEGIN
     p_is_new, p_featured, p_created_at, p_origin, p_colour, p_short_story, p_description, p_details_json
   )
   ON DUPLICATE KEY UPDATE
+    slug = VALUES(slug),
+    collection_slug = VALUES(collection_slug),
     name = VALUES(name),
     price = VALUES(price),
     available_quantity = VALUES(available_quantity),

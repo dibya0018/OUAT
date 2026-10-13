@@ -4,6 +4,7 @@ import { requireAdmin } from '../middleware/requireAdmin.js'
 import { logAdminActivity } from '../lib/adminLog.js'
 import { createRazorpayOrder, getRazorpayCredentials, refundRazorpayPayment } from '../lib/razorpay.js'
 import { imagesByProductIds, replaceProductImages } from '../lib/productImagesDb.js'
+import { deductOrderStock, restoreOrderStock } from '../lib/checkoutOrders.js'
 
 function jsonField(value, fallback) {
   if (value == null) return fallback
@@ -258,6 +259,22 @@ adminApi.patch('/products/:id', async (req, res, next) => {
     const body = req.body ?? {}
     const prevDetails = jsonField(row.details_json, {})
 
+    // The upsert procedure leaves slug and collection alone on an existing product, so those are saved here.
+    const nextSlug = body.slug != null && String(body.slug).trim() ? slugifyIdPart(body.slug) : row.slug
+    const nextCollection =
+      body.collection != null && String(body.collection).trim() ? String(body.collection).trim() : row.collection_slug
+    if (nextSlug !== row.slug) {
+      const [taken] = await query('SELECT id FROM products WHERE slug = :slug AND id <> :id LIMIT 1', {
+        slug: nextSlug,
+        id,
+      })
+      if (taken) return res.status(409).json({ ok: false, error: 'Another product already uses this slug.' })
+    }
+    if (nextCollection !== row.collection_slug) {
+      const [known] = await query('SELECT slug FROM collections WHERE slug = :slug LIMIT 1', { slug: nextCollection })
+      if (!known) return res.status(400).json({ ok: false, error: 'Unknown collection.' })
+    }
+
     const details = {
       ...prevDetails,
       ...(body.details && typeof body.details === 'object' ? body.details : {}),
@@ -271,8 +288,8 @@ adminApi.patch('/products/:id', async (req, res, next) => {
 
     await callProcedure('sp_product_upsert', {
       p_id: id,
-      p_slug: body.slug ?? row.slug,
-      p_collection_slug: body.collection ?? row.collection_slug,
+      p_slug: nextSlug,
+      p_collection_slug: nextCollection,
       p_name: body.name ?? row.name,
       p_price: body.price ?? row.price,
       p_available_quantity: body.stock ?? row.available_quantity,
@@ -286,6 +303,14 @@ adminApi.patch('/products/:id', async (req, res, next) => {
       p_description: body.description ?? row.description,
       p_details_json: JSON.stringify(details),
     })
+
+    if (nextSlug !== row.slug || nextCollection !== row.collection_slug) {
+      await query('UPDATE products SET slug = :slug, collection_slug = :collection WHERE id = :id', {
+        slug: nextSlug,
+        collection: nextCollection,
+        id,
+      })
+    }
 
     if (Array.isArray(body.images)) {
       await replaceProductImages(id, body.images.filter((img) => img?.src))
@@ -331,13 +356,76 @@ adminApi.get('/orders', async (req, res, next) => {
                       payment_method, razorpay_order_id, razorpay_payment_id, created_at
                FROM orders`
     const params = {}
+    const where = []
     if (status && status !== 'all') {
-      sql += ' WHERE status = :status'
+      where.push('status = :status')
       params.status = status
     }
+    // from / to are instants (ISO strings): from is inclusive, to is exclusive.
+    const from = req.query.from ? new Date(String(req.query.from)) : null
+    const to = req.query.to ? new Date(String(req.query.to)) : null
+    if (from && !Number.isNaN(from.getTime())) {
+      where.push('created_at >= :from')
+      params.from = from
+    }
+    if (to && !Number.isNaN(to.getTime())) {
+      where.push('created_at < :to')
+      params.to = to
+    }
+    if (where.length) sql += ` WHERE ${where.join(' AND ')}`
     sql += ' ORDER BY created_at DESC LIMIT 200'
     const rows = await query(sql, params)
     res.json({ ok: true, orders: rows })
+  } catch (err) {
+    next(err)
+  }
+})
+
+adminApi.get('/orders/:id', async (req, res, next) => {
+  try {
+    const id = Number(req.params.id)
+    const [order] = await query(
+      `SELECT id, order_number, customer_email, customer_name, customer_phone, total, status,
+              payment_method, shipping_json, created_at
+       FROM orders WHERE id = :id LIMIT 1`,
+      { id },
+    )
+    if (!order) return res.status(404).json({ ok: false, error: 'Order not found' })
+    const items = await query(
+      'SELECT product_id, product_name, quantity, unit_price FROM order_items WHERE order_id = :id ORDER BY id',
+      { id },
+    )
+    const shipping = jsonField(order.shipping_json, {}) ?? {}
+    res.json({
+      ok: true,
+      order: {
+        id: order.id,
+        orderNumber: order.order_number,
+        customerName: order.customer_name,
+        customerEmail: order.customer_email,
+        customerPhone: order.customer_phone ?? '',
+        total: order.total,
+        status: order.status,
+        paymentMethod: order.payment_method,
+        createdAt: order.created_at,
+        couponCode: shipping.couponCode ?? null,
+        giftNote: shipping.giftNote ?? '',
+        giftItems: Array.isArray(shipping.giftItems) ? shipping.giftItems : [],
+        address: {
+          line1: shipping.line1 ?? '',
+          line2: shipping.line2 ?? '',
+          city: shipping.city ?? '',
+          state: shipping.state ?? '',
+          pincode: shipping.pincode ?? '',
+        },
+        items: items.map((i) => ({
+          productId: i.product_id,
+          name: i.product_name,
+          qty: i.quantity,
+          unitPrice: i.unit_price,
+        })),
+      },
+    })
   } catch (err) {
     next(err)
   }
@@ -349,7 +437,7 @@ adminApi.patch('/orders/:id/status', async (req, res, next) => {
     if (!status) return res.status(400).json({ ok: false, error: 'status required' })
     const id = Number(req.params.id)
     const [order] = await query(
-      'SELECT status, order_number, razorpay_payment_id FROM orders WHERE id = :id LIMIT 1',
+      'SELECT status, order_number, payment_method, razorpay_payment_id FROM orders WHERE id = :id LIMIT 1',
       { id },
     )
     if (!order) return res.status(404).json({ ok: false, error: 'Order not found' })
@@ -369,6 +457,12 @@ adminApi.patch('/orders/:id/status', async (req, res, next) => {
     }
 
     await query('UPDATE orders SET status = :status WHERE id = :id', { status, id })
+    // Cancelling puts the items back into stock; reopening a cancelled order takes them out again.
+    if (status === 'cancelled' && order.status !== 'cancelled') {
+      await restoreOrderStock(id)
+    } else if (order.status === 'cancelled' && status !== 'cancelled') {
+      if (order.payment_method === 'cod' || order.razorpay_payment_id) await deductOrderStock(id)
+    }
     await logAdminActivity(`Admin updated order #${id} status to ${status}`, req.user.userId)
     if (refund) {
       await logAdminActivity(
@@ -396,22 +490,30 @@ adminApi.get('/coupons', async (_req, res, next) => {
 adminApi.post('/coupons', async (req, res, next) => {
   try {
     const { code, discountType, discountValue, expiresAt, maxUses, showOnSite } = req.body ?? {}
-    if (!code || discountValue == null) {
-      return res.status(400).json({ ok: false, error: 'code and discountValue required' })
+    const cleanCode = String(code ?? '').trim().toUpperCase()
+    const value = Number(discountValue)
+    if (!cleanCode || !Number.isFinite(value) || value <= 0) {
+      return res.status(400).json({ ok: false, error: 'Enter a coupon code and a discount value above 0.' })
     }
+    if (discountType !== 'fixed' && value > 100) {
+      return res.status(400).json({ ok: false, error: 'A percentage discount cannot be more than 100.' })
+    }
+    const [dupe] = await query('SELECT id FROM coupons WHERE UPPER(code) = :code LIMIT 1', { code: cleanCode })
+    if (dupe) return res.status(409).json({ ok: false, error: `Coupon ${cleanCode} already exists.` })
+    const expiry = expiresAt ? new Date(expiresAt) : null
     await query(
       `INSERT INTO coupons (code, discount_type, discount_value, expires_at, max_uses, show_on_site)
        VALUES (:code, :type, :value, :expires, :maxUses, :show)`,
       {
-        code: String(code).toUpperCase(),
+        code: cleanCode,
         type: discountType === 'fixed' ? 'fixed' : 'percent',
-        value: Number(discountValue),
-        expires: expiresAt || null,
+        value,
+        expires: expiry && !Number.isNaN(expiry.getTime()) ? expiry : null,
         maxUses: maxUses ?? null,
         show: showOnSite ? 1 : 0,
       },
     )
-    await logAdminActivity(`Admin created coupon ${code}`, req.user.userId)
+    await logAdminActivity(`Admin created coupon ${cleanCode}`, req.user.userId)
     res.status(201).json({ ok: true })
   } catch (err) {
     next(err)
@@ -434,6 +536,14 @@ adminApi.patch('/coupons/:id', async (req, res, next) => {
     if ('expiresAt' in body) {
       expiresAt = body.expiresAt ? new Date(body.expiresAt) : null
     }
+    if (!code || !Number.isFinite(discountValue) || discountValue <= 0) {
+      return res.status(400).json({ ok: false, error: 'Enter a coupon code and a discount value above 0.' })
+    }
+    if (discountType === 'percent' && discountValue > 100) {
+      return res.status(400).json({ ok: false, error: 'A percentage discount cannot be more than 100.' })
+    }
+    const [dupe] = await query('SELECT id FROM coupons WHERE UPPER(code) = :code AND id <> :id LIMIT 1', { code, id })
+    if (dupe) return res.status(409).json({ ok: false, error: `Coupon ${code} already exists.` })
     const maxUses = body.maxUses !== undefined ? body.maxUses : row.max_uses
     const showOnSite = body.showOnSite != null ? (body.showOnSite ? 1 : 0) : row.show_on_site
     const isActive = body.isActive != null ? (body.isActive ? 1 : 0) : row.is_active
@@ -473,13 +583,14 @@ adminApi.delete('/coupons/:id', async (req, res, next) => {
 adminApi.get('/reviews', async (req, res, next) => {
   try {
     const status = req.query.status ?? 'pending'
-    let sql = 'SELECT * FROM product_reviews'
+    let sql = `SELECT r.*, p.name AS product_name, p.slug AS product_slug
+               FROM product_reviews r LEFT JOIN products p ON p.id = r.product_id`
     const params = {}
     if (status !== 'all') {
-      sql += ' WHERE status = :status'
+      sql += ' WHERE r.status = :status'
       params.status = status
     }
-    sql += ' ORDER BY created_at DESC LIMIT 100'
+    sql += ' ORDER BY r.created_at DESC LIMIT 100'
     const rows = await query(sql, params)
     res.json({ ok: true, reviews: rows })
   } catch (err) {
@@ -526,6 +637,12 @@ adminApi.get('/team', async (_req, res, next) => {
 adminApi.patch('/team/:userId', async (req, res, next) => {
   try {
     const { role, active } = req.body ?? {}
+    const self = req.params.userId === req.user.userId
+    if (self && ((role != null && role !== 'admin') || active === false)) {
+      return res
+        .status(400)
+        .json({ ok: false, error: 'You cannot remove your own admin access or deactivate your own account.' })
+    }
     if (role != null) {
       await query('UPDATE users SET role = :role WHERE user_id = :id', {
         role: role === 'admin' ? 'admin' : 'customer',
@@ -552,7 +669,7 @@ adminApi.get('/settings', async (_req, res, next) => {
     res.json({
       ok: true,
       settings: {
-        codEnabled: s.cod_enabled === '1',
+        codEnabled: s.cod_enabled !== '0',
         razorpayKeyId: s.razorpay_key_id || process.env.RAZORPAY_KEY_ID || '',
         razorpayConfigured: Boolean(creds),
       },

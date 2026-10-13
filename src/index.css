@@ -65,6 +65,77 @@
 /* Components                                                          */
 /* ------------------------------------------------------------------ */
 @layer components {
+  /*
+   * Water-fill CTA: on hover the button fills from the bottom with green "water".
+   * The surface is an S-shaped wave that keeps flowing sideways while the level rises.
+   * --btn-fill sets the liquid colour (green by default).
+   */
+  .btn-water {
+    --btn-wave-w: 72px;
+    --btn-wave-h: 12px;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .btn-water::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    bottom: 0;
+    left: 0;
+    /* One wave wider than the button, so the sideways loop never shows an edge. */
+    width: calc(100% + var(--btn-wave-w));
+    /* One wave taller, so the crest clears the top edge once the button is full. */
+    height: calc(100% + var(--btn-wave-h));
+    background: var(--btn-fill, var(--color-primary-hover));
+    /* Wavy top edge (repeating S curve) + solid body beneath it. */
+    --btn-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 12' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q18 -4 36 4 T72 4 V12 H0Z'/%3E%3C/svg%3E");
+    -webkit-mask:
+      var(--btn-wave) repeat-x 0 0 / var(--btn-wave-w) var(--btn-wave-h),
+      linear-gradient(#000, #000) no-repeat 0 calc(var(--btn-wave-h) - 1px) / 100% 100%;
+    mask:
+      var(--btn-wave) repeat-x 0 0 / var(--btn-wave-w) var(--btn-wave-h),
+      linear-gradient(#000, #000) no-repeat 0 calc(var(--btn-wave-h) - 1px) / 100% 100%;
+    /* Resting below the bottom edge. */
+    translate: 0 100%;
+    transition: translate 1.5s cubic-bezier(0.3, 0.1, 0.25, 1);
+    animation: btn-water-flow 1.6s linear infinite paused;
+    pointer-events: none;
+  }
+  @media (hover: hover) {
+    .btn-water:hover::before,
+    .btn-water:focus-visible::before {
+      translate: 0 0;
+      animation-play-state: running;
+    }
+  }
+  .btn-water:active::before {
+    translate: 0 0;
+    animation-play-state: running;
+  }
+  /* A disabled button stays still: no fill and no hover colour change. */
+  .btn-water:disabled {
+    pointer-events: none;
+  }
+  @keyframes btn-water-flow {
+    to {
+      transform: translateX(calc(-1 * var(--btn-wave-w)));
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn-water::before {
+      transition: none;
+      animation: none;
+    }
+  }
+
+  /* Product pages on phones: space under the footer for the fixed buy bar. */
+  @media (max-width: 767px) {
+    body:has([data-mobile-buy-bar]) footer {
+      padding-bottom: 4.5rem;
+    }
+  }
+
   /* Small uppercase label used above headings and for metadata. */
   .eyebrow {
     @apply font-sans text-xs font-medium uppercase tracking-eyebrow text-ink;

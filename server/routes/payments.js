@@ -31,6 +31,30 @@ router.get('/payments/config', async (_req, res, next) => {
   }
 })
 
+/** Coupons marked "Show on website" in the admin, shown as offers on product pages. */
+router.get('/payments/offers', async (_req, res, next) => {
+  try {
+    const rows = await query(
+      `SELECT code, discount_type, discount_value, expires_at FROM coupons
+       WHERE is_active = 1 AND show_on_site = 1
+         AND (expires_at IS NULL OR expires_at > NOW())
+         AND (max_uses IS NULL OR use_count < max_uses)
+       ORDER BY created_at DESC LIMIT 10`,
+    )
+    res.json({
+      ok: true,
+      offers: rows.map((r) => ({
+        code: r.code,
+        discountType: r.discount_type,
+        discountValue: r.discount_value,
+        expiresAt: r.expires_at,
+      })),
+    })
+  } catch (err) {
+    next(err)
+  }
+})
+
 router.post('/payments/coupon/validate', async (req, res, next) => {
   try {
     const { code, items } = req.body ?? {}
@@ -46,6 +70,9 @@ router.post('/payments/coupon/validate', async (req, res, next) => {
   } catch (err) {
     if (err.code?.startsWith('COUPON_') || err.code === 'EMPTY_CART') {
       return res.status(400).json({ ok: false, error: err.message })
+    }
+    if (err.code === 'PRODUCT_UNAVAILABLE') {
+      return res.status(409).json({ ok: false, error: err.message })
     }
     next(err)
   }

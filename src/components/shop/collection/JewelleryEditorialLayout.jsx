@@ -127,7 +127,7 @@ export default function JewelleryEditorialLayout({ collection, products, loading
                   <AddToCartButton
                     product={product}
                     label="Add to bag"
-                    className="mt-5 rounded-full border-accent px-8 text-accent hover:bg-accent hover:text-cream"
+                    className="mt-5 rounded-full border-accent px-8 text-accent [--btn-fill:var(--color-primary)] hover:border-primary hover:text-cream"
                   />
                 </Reveal>
               ))}

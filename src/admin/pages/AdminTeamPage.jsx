@@ -22,6 +22,15 @@ export default function AdminTeamPage() {
     load()
   }, [load])
 
+  const update = async (userId, body) => {
+    try {
+      await patchTeamMember(userId, body)
+    } catch (err) {
+      window.alert(err.message || 'Could not update this member')
+    }
+    load()
+  }
+
   return (
     <>
       <AdminPageHeader title="Team" onRefresh={load} refreshing={loading} />
@@ -30,7 +39,7 @@ export default function AdminTeamPage() {
         panel and manage roles.
       </p>
       <div className="admin-panel overflow-x-auto">
-        <table className="admin-table w-full min-w-[640px]">
+        <table className="admin-table admin-table--stack admin-table--team w-full md:min-w-[640px]">
           <thead>
             <tr>
               <th>Email</th>
@@ -47,7 +56,7 @@ export default function AdminTeamPage() {
                 <td>
                   <select
                     value={m.role}
-                    onChange={(e) => patchTeamMember(m.userId, { role: e.target.value }).then(load)}
+                    onChange={(e) => update(m.userId, { role: e.target.value })}
                     className="rounded-full border border-admin-border bg-admin-panel-2 px-2 py-1 text-xs"
                   >
                     <option value="customer">Customer — Storefront only</option>
@@ -66,7 +75,7 @@ export default function AdminTeamPage() {
                   <button
                     type="button"
                     className="admin-btn-ghost text-xs"
-                    onClick={() => patchTeamMember(m.userId, { active: !m.active }).then(load)}
+                    onClick={() => update(m.userId, { active: !m.active })}
                   >
                     {m.active ? 'Deactivate' : 'Activate'}
                   </button>

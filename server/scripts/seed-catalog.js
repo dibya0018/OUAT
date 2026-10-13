@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { collections, products } from '../data/catalogSeed.js'
-import { callProcedure } from '../config/db.js'
-import { collectionImageBase64, productImagesBase64 } from '../lib/catalogImages.js'
+import { callProcedure, query } from '../config/db.js'
+import { collectionImageBase64, productImagesPublicUrls } from '../lib/catalogImages.js'
 import { replaceProductImages } from '../lib/productImagesDb.js'
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
@@ -54,7 +54,14 @@ async function seedProducts() {
       p_details_json: JSON.stringify(p.details),
     })
 
-    await replaceProductImages(p.id, productImagesBase64(p))
+    // Older installs of the upsert procedure do not update these two on an existing product.
+    await query('UPDATE products SET slug = :slug, collection_slug = :collection WHERE id = :id', {
+      slug: p.slug,
+      collection: p.collection,
+      id: p.id,
+    })
+
+    await replaceProductImages(p.id, productImagesPublicUrls(p))
   }
 }
 

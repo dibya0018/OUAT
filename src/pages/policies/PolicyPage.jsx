@@ -45,12 +45,13 @@ export default function PolicyPage() {
             <article className="md:col-span-7 md:col-start-5">
               <EditorialTitle as="h1" size="lg" accent={accent} rest={rest} />
               <p className="mt-4 text-xs text-ink-soft">Last updated {policy.updated}</p>
+              {policy.intro && <p className="mt-8 text-base leading-relaxed text-ink md:text-lg">{policy.intro}</p>}
 
               <div className="mt-12 flex flex-col gap-10">
                 {policy.sections.map((s) => (
                   <section key={s.heading} className="border-t border-line pt-6">
                     <EditorialTitle as="h2" size="sm" {...splitEditorialTitle(s.heading)} />
-                    <p className="mt-3 text-base text-ink-soft leading-relaxed">{s.body}</p>
+                    <p className="mt-3 text-base leading-relaxed whitespace-pre-line text-ink-soft">{s.body}</p>
                   </section>
                 ))}
               </div>

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { formatPrice, cx } from '../../lib/format'
+import { cx } from '../../lib/format'
+import PriceTag from './PriceTag'
 import { productDisplayImages } from '../../lib/productImages'
 
 /**
@@ -57,7 +58,7 @@ export default function ProductCard({ product, className, priority = false }) {
             <h3 className="line-clamp-2 min-w-0 flex-1 font-display text-base leading-tight font-normal sm:text-lg">
               {product.name}
             </h3>
-            <p className="shrink-0 font-sans text-sm tabular-nums">{formatPrice(product.price)}</p>
+            <p className="shrink-0 font-sans text-sm tabular-nums"><PriceTag product={product} /></p>
           </div>
           {product.origin && <p className="mt-1 text-xs text-ink-soft">Once a {product.origin}</p>}
         </div>

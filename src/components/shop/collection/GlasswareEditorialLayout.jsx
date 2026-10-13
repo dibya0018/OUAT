@@ -10,7 +10,8 @@ import CollectionSortControl from './CollectionSortControl'
 import { AddToCartButton, Crumbs, PieceCount, ProductPhoto, StockBadge } from './parts'
 import { useCollectionPage } from './useCollectionPage'
 import { BELOW_HEADER, HEADER_PAD } from '../../../lib/collectionUi'
-import { cx, formatPrice } from '../../../lib/format'
+import { cx } from '../../../lib/format'
+import PriceTag from '../../product/PriceTag'
 
 const FAQ = [
   {
@@ -45,14 +46,14 @@ function GlassCard({ product, priority }) {
           <AddToCartButton
             product={product}
             label="Quick add"
-            className="w-full border-white bg-white/95 text-primary backdrop-blur-sm hover:border-primary hover:bg-primary hover:text-cream"
+            className="w-full border-white bg-white/95 text-primary backdrop-blur-sm [--btn-fill:var(--color-primary)] hover:border-primary hover:text-cream"
           />
         </div>
       </div>
       <Link to={`/product/${product.slug}`} className="mt-4 block text-ink">
         <div className="flex items-baseline justify-between gap-3">
           <h3 className="min-w-0 font-display text-lg leading-tight">{product.name}</h3>
-          <p className="shrink-0 font-sans text-sm tabular-nums">{formatPrice(product.price)}</p>
+          <p className="shrink-0 font-sans text-sm tabular-nums"><PriceTag product={product} /></p>
         </div>
         <p className="mt-1 text-xs text-ink-soft">
           {[product.colour, product.origin && `once a ${product.origin}`].filter(Boolean).join(' · ')}

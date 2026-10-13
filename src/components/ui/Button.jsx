@@ -3,16 +3,20 @@ import { cx } from '../../lib/format'
 
 const base =
   'inline-flex shrink-0 items-center justify-center gap-2 rounded-xs font-sans text-sm tracking-wide ' +
-  'whitespace-nowrap transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50 ' +
+  /* Label colour changes as the water reaches it (see .btn-water), not the instant the pointer arrives. */
+  'whitespace-nowrap [transition:color_0.35s_ease_0.45s,border-color_0.4s_ease,background-color_0.2s_ease] disabled:cursor-not-allowed disabled:opacity-50 ' +
   'focus-visible:outline-offset-4'
 
 const variants = {
   /* Default CTA: dark olive fill, cream label — high contrast on cream/sage pages. */
+  /* On light buttons the hover colour arrives as a rising water fill (.btn-water), so they set --btn-fill instead of hover:bg. */
+  /* Green buttons stay static: a plain darker green on hover, no water fill. */
   solid: 'border border-primary bg-primary text-cream hover:border-primary-hover hover:bg-primary-hover',
   outline:
-    'border border-primary bg-transparent text-primary hover:border-primary-hover hover:bg-primary hover:text-cream',
+    'btn-water border border-primary bg-transparent text-primary hover:text-cream [--btn-fill:var(--color-primary)]',
   /* On dark olive or sage hero/footer bands: cream fill, dark label. */
-  inverse: 'border border-cream bg-cream text-primary hover:border-white hover:bg-white',
+  inverse:
+    'btn-water border border-cream bg-cream text-primary hover:text-cream [--btn-fill:var(--color-primary-hover)]',
   text: 'link-underline shrink-0 whitespace-normal rounded-none px-0 py-0 text-primary',
 }
 

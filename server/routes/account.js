@@ -59,6 +59,8 @@ function mapOrder(row, items) {
       state: shipping.state ?? '',
       pincode: shipping.pincode ?? '',
     },
+    giftItems: Array.isArray(shipping.giftItems) ? shipping.giftItems : [],
+    giftNote: shipping.giftNote ?? '',
     items,
     tracking,
   }

@@ -38,7 +38,7 @@ export default function AdminProductsPage() {
       </AdminPageHeader>
 
       <div className="admin-panel overflow-x-auto">
-        <table className="admin-table w-full min-w-[640px]">
+        <table className="admin-table admin-table--stack admin-table--products w-full md:min-w-[640px]">
           <thead>
             <tr>
               <th>Product</th>

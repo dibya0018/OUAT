@@ -11,11 +11,12 @@ export default defineConfig({
     },
   },
   build: {
-    // Keep vendor code in a stable chunk so route-level chunks stay small.
-    rolldownOptions: {
+    rollupOptions: {
       output: {
-        codeSplitting: {
-          groups: [{ name: 'vendor', test: /node_modules[\\/](react|react-dom|react-router|react-helmet-async|scheduler)/ }],
+        manualChunks(id) {
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router') || id.includes('node_modules/react-helmet-async') || id.includes('node_modules/scheduler')) {
+            return 'vendor'
+          }
         },
       },
     },

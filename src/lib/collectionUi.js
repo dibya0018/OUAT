@@ -1,3 +1,5 @@
+import { offerFor } from './productOffer'
+
 /** Collection pages sit under the fixed header (Layout skips its own top padding for them). */
 export const HEADER_PAD = 'pt-[calc(3.5rem+env(safe-area-inset-top,0px))] md:pt-20'
 
@@ -6,9 +8,12 @@ export const BELOW_HEADER = 'top-[calc(3.5rem+env(safe-area-inset-top,0px))] md:
 
 const LOW_STOCK_AT = 5
 
-/** 'in' | 'low' | 'out'. Unknown quantity (mock catalogue) counts as in stock. */
-export function stockState(product) {
-  const qty = product?.availableQuantity
+/**
+ * 'in' | 'low' | 'out'. Unknown quantity (mock catalogue) counts as in stock.
+ * For a product with size / pack options this is the stock of `option` (default: its default option).
+ */
+export function stockState(product, option) {
+  const qty = offerFor(product, option).stock
   if (qty == null) return 'in'
   if (qty <= 0) return 'out'
   return qty <= LOW_STOCK_AT ? 'low' : 'in'

@@ -26,7 +26,10 @@ const port = Number(process.env.PORT || 3001)
 const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173'
 app.use(cors({ origin: corsOrigin.split(',').map((s) => s.trim()) }))
 app.use(optionalAuth)
-app.use(express.json({ limit: '256kb' }))
+// Product image routes carry base64 uploads and parse their own (larger) body.
+const jsonBody = express.json({ limit: '256kb' })
+const IMAGE_UPLOAD_PATH = /^\/api\/admin\/products\/[^/]+\/images(\/|$)/
+app.use((req, res, next) => (IMAGE_UPLOAD_PATH.test(req.path) ? next() : jsonBody(req, res, next)))
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')))
 
 app.use('/api/health', healthRouter)
@@ -39,16 +42,68 @@ app.use('/api', analyticsRouter)
 app.use('/api', adminRouter)
 app.use('/api', adminProductMediaRouter)
 
-if (serveClient) {
+/** @type {'api' | 'dist' | 'vite-dev'} */
+let clientMode = 'api'
+/** @type {import('vite').ViteDevServer | undefined} */
+let viteDevServer
+
+function attachDistClient() {
   app.use(express.static(distDir, { index: false }))
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next()
     res.sendFile(clientIndex, (err) => (err ? next(err) : undefined))
   })
-} else {
+  clientMode = 'dist'
+}
+
+function attachApiOnlyRoot() {
   app.get('/', (_req, res) => {
-    res.json({ name: 'O.U.A.T. API', version: '1.0.0' })
+    res.json({
+      name: 'O.U.A.T. API',
+      version: '1.0.0',
+      ui: 'Run npm run dev (http://localhost:5173) or npm run dev:api (UI on this port).',
+    })
   })
+  clientMode = 'api'
+}
+
+async function attachClientServing() {
+  const isProduction = process.env.NODE_ENV === 'production'
+  const embedVite = !isProduction && process.env.VITE_MIDDLEWARE !== '0'
+
+  if (isProduction && serveClient) {
+    attachDistClient()
+    return
+  }
+
+  if (embedVite) {
+    try {
+      const { createServer } = await import('vite')
+      viteDevServer = await createServer({
+        configFile: path.join(__dirname, '../vite.config.js'),
+        server: { middlewareMode: true },
+        appType: 'spa',
+      })
+      app.use(viteDevServer.middlewares)
+      clientMode = 'vite-dev'
+      return
+    } catch (err) {
+      console.warn('[api] Vite dev middleware unavailable:', err.message)
+      if (serveClient) {
+        attachDistClient()
+        console.info('[api] Serving pre-built dist/ instead. Run npm run build to refresh the UI.')
+        return
+      }
+      console.warn('[api] Run npm install (see Rolldown optional deps) or npm run build, then restart.')
+    }
+  }
+
+  if (serveClient) {
+    attachDistClient()
+    return
+  }
+
+  attachApiOnlyRoot()
 }
 
 app.use((err, _req, res, _next) => {
@@ -81,12 +136,20 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ ok: false, error: 'Internal server error' })
 })
 
+/** @type {import('node:http').Server | undefined} */
+let httpServer
+
 function listen() {
   const server = app.listen(port, () => {
-    const mode = serveClient ? 'web+api' : 'api'
+    const labels = { api: 'api', dist: 'web+api (dist)', 'vite-dev': 'vite+api' }
     console.info(
-      `O.U.A.T. ${mode} listening on http://localhost:${port} (DB ${process.env.DB_HOST}/${process.env.DB_NAME})`,
+      `O.U.A.T. ${labels[clientMode]} on http://localhost:${port} (DB ${process.env.DB_HOST}/${process.env.DB_NAME})`,
     )
+    if (clientMode === 'vite-dev') {
+      console.info(`[api] Local UI: http://localhost:${port}`)
+    } else if (clientMode === 'api') {
+      console.info('[api] Local UI: npm run dev → http://localhost:5173')
+    }
   })
   server.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
@@ -101,8 +164,9 @@ function listen() {
   return server
 }
 
-function start() {
-  listen()
+async function start() {
+  await attachClientServing()
+  httpServer = listen()
 
   // Do not block HTTP listen on remote DB / procedure install (dev watch restarts stay fast).
   ensureCatalogProcedures()
@@ -116,5 +180,27 @@ function start() {
       console.error('[api] Fix DB_* in .env, then run: npm run db:procedures')
     })
 }
+
+function shutdown() {
+  const finish = () => {
+    if (!httpServer) {
+      process.exit(0)
+      return
+    }
+    httpServer.close(() => {
+      process.exit(0)
+    })
+    setTimeout(() => process.exit(1), 5000).unref()
+  }
+
+  if (viteDevServer) {
+    viteDevServer.close().then(finish).catch(finish)
+    return
+  }
+  finish()
+}
+
+process.once('SIGTERM', shutdown)
+process.once('SIGINT', shutdown)
 
 start()

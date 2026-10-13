@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import ImagePlaceholder from '../ui/ImagePlaceholder'
 import JewelleryProductFrame from './JewelleryProductFrame'
-import { formatPrice, cx } from '../../lib/format'
+import { cx } from '../../lib/format'
+import PriceTag from './PriceTag'
 
 /** Centred luxury tile — real photo or floral vignette (never a grey label box). */
 export default function JewelleryProductCard({ product, className, priority = false }) {
@@ -31,7 +32,7 @@ export default function JewelleryProductCard({ product, className, priority = fa
         {product.colour && (
           <p className="mt-1 font-sans text-xs uppercase tracking-eyebrow text-ink-soft">{product.colour}</p>
         )}
-        <p className="mt-2 font-display text-lg text-accent">{formatPrice(product.price)}</p>
+        <p className="mt-2 font-display text-lg text-accent"><PriceTag product={product} /></p>
       </Link>
     </article>
   )

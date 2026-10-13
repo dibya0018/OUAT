@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { useCart } from '../../hooks/useCart'
-import { cx, formatPrice } from '../../lib/format'
+import { cx } from '../../lib/format'
 import { stockState } from '../../lib/collectionUi'
+import PriceTag from '../product/PriceTag'
 import { productDisplayImages } from '../../lib/productImages'
 
 /** Calm fills shown behind a photograph while it loads, or on their own when there is none. */
@@ -71,7 +72,7 @@ export default function HomeProductTile({ product, priority = false }) {
 
         <div className="mt-4 flex items-baseline justify-between gap-4">
           <h3 className="min-w-0 font-display text-[1.25rem] font-normal leading-[1.2] text-ink">{product.name}</h3>
-          <p className="shrink-0 font-sans text-sm tabular-nums text-ink">{formatPrice(product.price)}</p>
+          <p className="shrink-0 font-sans text-sm tabular-nums text-ink"><PriceTag product={product} /></p>
         </div>
       </Link>
 

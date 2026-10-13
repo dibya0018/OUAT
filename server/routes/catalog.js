@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { callProcedure } from '../config/db.js'
+import { callProcedure, query } from '../config/db.js'
 import { imagesByProductIds } from '../lib/productImagesDb.js'
 
 const router = Router()
@@ -18,6 +18,14 @@ function jsonField(value, fallback) {
   return value
 }
 
+/** DATE column -> 'YYYY-MM-DD' (the driver returns a Date object, in local time). */
+function isoDay(value) {
+  if (!value) return null
+  if (!(value instanceof Date)) return String(value).slice(0, 10)
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())}`
+}
+
 function mapProduct(row, images = []) {
   return {
     id: row.id,
@@ -29,7 +37,7 @@ function mapProduct(row, images = []) {
     active: row.is_active == null ? true : Boolean(row.is_active),
     isNew: Boolean(row.is_new),
     featured: Boolean(row.featured),
-    createdAt: row.created_at ? String(row.created_at).slice(0, 10) : null,
+    createdAt: isoDay(row.created_at),
     origin: row.origin,
     colour: row.colour,
     shortStory: row.short_story,
@@ -132,6 +140,64 @@ router.get('/products/by-id/:id', async (req, res, next) => {
     })
     if (!product) return res.status(404).json({ error: 'Not found' })
     res.json(product)
+  } catch (err) {
+    next(err)
+  }
+})
+
+/** Approved reviews for a product page (moderated in Admin → Reviews). */
+router.get('/products/:id/reviews', async (req, res, next) => {
+  try {
+    const rows = await query(
+      `SELECT id, author_name, rating, body, created_at FROM product_reviews
+       WHERE product_id = :id AND status = 'approved'
+       ORDER BY created_at DESC LIMIT 50`,
+      { id: req.params.id },
+    )
+    const count = rows.length
+    const average = count ? rows.reduce((sum, r) => sum + Number(r.rating), 0) / count : 0
+    res.json({
+      ok: true,
+      count,
+      average: Math.round(average * 10) / 10,
+      reviews: rows.map((r) => ({
+        id: r.id,
+        authorName: r.author_name,
+        rating: r.rating,
+        body: r.body ?? '',
+        createdAt: r.created_at,
+      })),
+    })
+  } catch (err) {
+    next(err)
+  }
+})
+
+/** A customer review; it stays hidden until an admin approves it. */
+router.post('/products/:id/reviews', async (req, res, next) => {
+  try {
+    const id = req.params.id
+    const name = String(req.body?.name ?? '').trim().slice(0, 120)
+    const email = String(req.body?.email ?? '').trim().toLowerCase().slice(0, 255)
+    const rating = Math.round(Number(req.body?.rating))
+    const body = String(req.body?.body ?? '').trim().slice(0, 2000)
+
+    const errors = {}
+    if (!name) errors.name = 'Please enter your name.'
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Enter a valid email.'
+    if (!(rating >= 1 && rating <= 5)) errors.rating = 'Choose a rating from 1 to 5.'
+    if (!body) errors.body = 'Please write a few words.'
+    if (Object.keys(errors).length) return res.status(400).json({ ok: false, errors })
+
+    const rows = await callProcedure('sp_product_by_id', { p_id: id })
+    if (!rows.length || !rows[0].is_active) return res.status(404).json({ ok: false, error: 'Product not found' })
+
+    await query(
+      `INSERT INTO product_reviews (product_id, author_name, author_email, rating, body, status)
+       VALUES (:pid, :name, :email, :rating, :body, 'pending')`,
+      { pid: id, name, email, rating, body },
+    )
+    res.status(201).json({ ok: true })
   } catch (err) {
     next(err)
   }

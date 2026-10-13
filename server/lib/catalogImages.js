@@ -40,6 +40,21 @@ export function productImagesBase64(product) {
     .filter(Boolean)
 }
 
+/**
+ * Image objects that point at /images/<file> (synced to public/images by the seed).
+ * Keeps product API responses small: embedding photos as base64 makes every listing megabytes.
+ */
+export function productImagesPublicUrls(product) {
+  const files = galleryFilesForProduct(product.slug, product.collection)
+  return files
+    .filter((file) => fs.existsSync(path.join(IMAGE_DIR, file)))
+    .map((file, i) => ({
+      src: `/images/${file}`,
+      alt: `${product.name} — ${IMAGE_FILES[file] ?? product.name}`,
+      tone: TONES[i % TONES.length],
+    }))
+}
+
 export function collectionImageBase64(slug, name) {
   const [file] = collectionHeroFiles(slug)
   const src = file ? fileToDataUrl(file) : null

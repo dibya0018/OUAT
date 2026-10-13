@@ -10,7 +10,7 @@ function reducer(state, action) {
   switch (action.type) {
     case 'add': {
       const { item, qty } = action
-      const existing = state.find((line) => line.id === item.id && line.gift === item.gift)
+      const existing = state.find((line) => line.key === item.key)
       if (existing) {
         return state.map((line) =>
           line === existing ? { ...line, qty: Math.min(99, line.qty + qty) } : line,
@@ -55,16 +55,16 @@ export function CartProvider({ children }) {
     }
   }, [lines])
 
-  const addItem = useCallback((product, { qty = 1, gift = false, open = true } = {}) => {
-    const item = buildCheckoutLine(product, { qty: 1, gift })
+  const addItem = useCallback((product, { qty = 1, gift = false, open = true, option } = {}) => {
+    const item = buildCheckoutLine(product, { qty: 1, gift, option })
     dispatch({ type: 'add', item, qty })
     trackEvent('AddToCart', {
       currency: 'INR',
-      value: product.price * qty,
+      value: item.price * qty,
       content_ids: [product.id],
       content_name: product.name,
       content_type: 'product',
-      items: [{ item_id: product.id, item_name: product.name, price: product.price, quantity: qty }],
+      items: [{ item_id: product.id, item_name: item.name, price: item.price, quantity: qty }],
     })
     if (open) setIsOpen(true)
   }, [])

@@ -42,9 +42,22 @@ export function addProductReview(productId, body) {
   return apiPost(`/admin/products/${productId}/reviews`, body, auth)
 }
 
-export function fetchOrders(status = 'all') {
-  const q = status === 'all' ? '' : `?status=${encodeURIComponent(status)}`
-  return apiGet(`/admin/orders${q}`, auth)
+/** from / to are 'YYYY-MM-DD' days in the admin's own timezone; both are inclusive. */
+export function fetchOrders(status = 'all', { from = '', to = '' } = {}) {
+  const params = new URLSearchParams()
+  if (status !== 'all') params.set('status', status)
+  if (from) params.set('from', new Date(`${from}T00:00:00`).toISOString())
+  if (to) {
+    const end = new Date(`${to}T00:00:00`)
+    end.setDate(end.getDate() + 1)
+    params.set('to', end.toISOString())
+  }
+  const q = params.toString()
+  return apiGet(`/admin/orders${q ? `?${q}` : ''}`, auth)
+}
+
+export function fetchOrder(id) {
+  return apiGet(`/admin/orders/${id}`, auth)
 }
 
 export function patchOrderStatus(id, status) {

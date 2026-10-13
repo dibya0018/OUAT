@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import Seo from '../components/Seo'
 import Container from '../components/ui/Container'
 import SectionHeading from '../components/ui/SectionHeading'
@@ -6,6 +7,8 @@ import Reveal from '../components/ui/Reveal'
 import Button from '../components/ui/Button'
 import { PROCESS_STEPS } from '../data/process'
 import { IMPACT_FACTS } from '../lib/site'
+import founderPortrait from '../components/images/founder-atika.jpg'
+import studioGrinding from '../components/images/studio-grinding.webp'
 
 /** Before/after pairs: the bottle on the left, the finished piece on the right. */
 const PAIRS = [
@@ -58,19 +61,43 @@ export default function StoryPage() {
         <Container>
           <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:items-center">
             <Reveal className="md:col-span-5">
-              <ImagePlaceholder ratio="product" alt="Atika Gaur in the O.U.A.T. studio, Goa" tone="olive" label="Atika Gaur" />
+              <ImagePlaceholder
+                src={founderPortrait}
+                ratio="product"
+                alt="Atika Gaur, founder of O.U.A.T., laughing as she sits on a patterned armchair"
+                imgClassName="object-top"
+              />
             </Reveal>
             <Reveal delay={100} className="md:col-span-6 md:col-start-7">
               <SectionHeading eyebrow="The founder" title="Atika Gaur" id="founder-title" />
               <div className="mt-8 flex flex-col gap-6 text-ink-soft">
                 <p>
-                  Atika came to glass the long way round: through design, through a move to Goa, and through a growing
-                  pile of bottles on her own kitchen counter. The first tumbler was cut with a borrowed tool and a lot
-                  of patience. It was uneven, a little too tall, and she still drinks from it.
+                  Atika founded Once Upon a Time (OUAT) to give waste a second life. A biotechnologist by training,
+                  she brings material science to{' '}
+                  <Link to="/impact" className="link-underline text-ink">
+                    sustainability
+                  </Link>{' '}
+                  and craft: where others see a discarded bottle, she sees a material with a stress profile and a set
+                  of possibilities waiting to be unlocked.
                 </p>
                 <p>
-                  What started as a weekend experiment became a studio. Today O.U.A.T. is a women-led team working
-                  with local artisans, and the pieces are found on tables, in hotels and in homes across India.
+                  It began with a single product, a{' '}
+                  <Link to="/candles" className="link-underline text-ink">
+                    hand-poured candle
+                  </Link>{' '}
+                  in an upcycled glass vessel. Then came the{' '}
+                  <Link to="/product/sproutcycled-glass-germinator" className="link-underline text-ink">
+                    glass sprouter
+                  </Link>
+                  , for which she is now researching fully compostable lids made from corn starch.
+                </p>
+                <p>
+                  Unable to find tools precise enough for her standards, she designed and built her own. Every piece
+                  of{' '}
+                  <Link to="/glassware" className="link-underline text-ink">
+                    glassware
+                  </Link>{' '}
+                  rests on the same belief: sustainable products should be as beautiful as they are responsible.
                 </p>
                 <p className="font-display text-2xl text-primary not-italic">
                   “I’m not interested in making things that look recycled. I want to make things people choose
@@ -151,7 +178,12 @@ export default function StoryPage() {
               </dl>
             </Reveal>
             <Reveal delay={100} className="order-1 md:order-2 md:col-span-5 md:col-start-8">
-              <ImagePlaceholder ratio="product" alt="Artisan polishing a glass rim in the studio" tone="sand" label="The studio" />
+              <ImagePlaceholder
+                src={studioGrinding}
+                ratio="product"
+                alt="Grinding the cut edge of a green glass bottle on a wheel in the studio workshop"
+                imgClassName="object-top"
+              />
             </Reveal>
           </div>
         </Container>

@@ -7,7 +7,8 @@ import CollectionSortControl from './CollectionSortControl'
 import { AddToCartButton, Crumbs, PieceCount, ProductPhoto, StockBadge } from './parts'
 import { useCollectionPage } from './useCollectionPage'
 import { HEADER_PAD } from '../../../lib/collectionUi'
-import { cx, formatPrice } from '../../../lib/format'
+import { cx } from '../../../lib/format'
+import PriceTag from '../../product/PriceTag'
 
 /** The three scents in the range, as described on the product pages. */
 const SCENTS = [
@@ -52,10 +53,10 @@ function CandleRow({ product, index }) {
           <p className="mt-4 border-t border-cream/15 pt-4 text-sm text-cream/60">{product.details.size}</p>
         )}
         <div className="mt-8 flex flex-wrap items-center gap-5">
-          <p className="font-display text-2xl text-cream tabular-nums">{formatPrice(product.price)}</p>
+          <p className="font-display text-2xl text-cream tabular-nums"><PriceTag product={product} /></p>
           <AddToCartButton
             product={product}
-            className="border-cream bg-cream text-[#1f1b17] hover:border-accent hover:bg-accent hover:text-cream"
+            className="border-cream bg-cream text-[#1f1b17] [--btn-fill:var(--color-primary)] hover:border-primary hover:text-cream"
           />
           <Link to={`/product/${product.slug}`} className="link-underline text-sm text-cream/80">
             Details

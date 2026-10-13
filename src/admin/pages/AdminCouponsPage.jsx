@@ -38,7 +38,7 @@ function discountLabel(c) {
   return c.discount_type === 'percent' ? `${c.discount_value}% off` : `₹${c.discount_value} off`
 }
 
-function CouponModal({ title, form, setForm, onClose, onSave, saving }) {
+function CouponModal({ title, form, setForm, onClose, onSave, saving, error }) {
   return (
     <div className="admin-modal-backdrop" role="presentation" onClick={onClose}>
       <div
@@ -120,6 +120,11 @@ function CouponModal({ title, form, setForm, onClose, onSave, saving }) {
           <button type="button" className="admin-btn-gold mt-2 w-full py-3" disabled={saving} onClick={onSave}>
             {saving ? 'Saving…' : 'Save coupon'}
           </button>
+          {error && (
+            <p className="text-sm text-red-400" role="alert">
+              {error}
+            </p>
+          )}
         </div>
       </div>
     </div>
@@ -132,6 +137,7 @@ export default function AdminCouponsPage() {
   const [modal, setModal] = useState(null)
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -150,11 +156,13 @@ export default function AdminCouponsPage() {
   }, [load])
 
   const openCreate = () => {
+    setSaveError('')
     setForm(emptyForm)
     setModal({ mode: 'create' })
   }
 
   const openEdit = (c) => {
+    setSaveError('')
     setForm({
       code: c.code,
       discountType: c.discount_type,
@@ -176,15 +184,20 @@ export default function AdminCouponsPage() {
 
   const onSave = async () => {
     setSaving(true)
+    setSaveError('')
     try {
       const body = payloadFromForm()
       if (modal.mode === 'create') {
-        await createCoupon(body)
+        // createCoupon reports failure in the response rather than throwing.
+        const res = await createCoupon(body)
+        if (res.ok === false) throw new Error(res.error || 'Could not save coupon')
       } else {
         await updateCoupon(modal.id, body)
       }
       setModal(null)
       load()
+    } catch (err) {
+      setSaveError(err.message || 'Could not save coupon')
     } finally {
       setSaving(false)
     }
@@ -220,7 +233,11 @@ export default function AdminCouponsPage() {
                   type="button"
                   className="admin-btn-ghost h-9 w-9 rounded-full p-0"
                   aria-label={`Delete ${c.code}`}
-                  onClick={() => deleteCoupon(c.id).then(load)}
+                  onClick={() => {
+                    if (window.confirm(`Delete coupon ${c.code}? Customers will no longer be able to use it.`)) {
+                      deleteCoupon(c.id).then(load)
+                    }
+                  }}
                 >
                   ×
                 </button>
@@ -257,6 +274,7 @@ export default function AdminCouponsPage() {
           onClose={() => setModal(null)}
           onSave={onSave}
           saving={saving}
+          error={saveError}
         />
       )}
     </>

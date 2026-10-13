@@ -56,7 +56,8 @@ export default function AdminReviewsPage() {
               <div>
                 <p className="font-medium">{r.author_name}</p>
                 <p className="text-xs text-admin-muted">
-                  {r.product_id} · ★ {r.rating}
+                  {r.product_name || r.product_id} · ★ {r.rating}
+                  {r.created_at ? ` · ${new Date(r.created_at).toLocaleDateString('en-IN')}` : ''}
                 </p>
                 {r.body && <p className="mt-2 text-sm text-admin-muted">{r.body}</p>}
               </div>

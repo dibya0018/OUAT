@@ -6,7 +6,8 @@ import CollectionSortControl from './CollectionSortControl'
 import { AddToCartButton, Crumbs, PieceCount, ProductPhoto, StockBadge } from './parts'
 import { useCollectionPage } from './useCollectionPage'
 import { BELOW_HEADER, HEADER_PAD } from '../../../lib/collectionUi'
-import { cx, formatPrice } from '../../../lib/format'
+import { cx } from '../../../lib/format'
+import PriceTag from '../../product/PriceTag'
 
 const SPEC_ROWS = [
   ['material', 'Material'],
@@ -36,7 +37,7 @@ function SpecCard({ product, index }) {
               </Link>
             </h3>
           </div>
-          <p className="shrink-0 font-sans text-lg tabular-nums text-primary">{formatPrice(product.price)}</p>
+          <p className="shrink-0 font-sans text-lg tabular-nums text-primary"><PriceTag product={product} /></p>
         </div>
         {product.shortStory && <p className="mt-3 text-sm text-ink-soft">{product.shortStory}</p>}
         {specs.length > 0 && (
@@ -52,7 +53,7 @@ function SpecCard({ product, index }) {
         <div className="mt-6 flex flex-wrap items-center gap-4 sm:mt-auto sm:pt-6">
           <AddToCartButton
             product={product}
-            className="border-primary bg-primary text-cream hover:border-primary-hover hover:bg-primary-hover"
+            className="border-primary bg-primary text-cream before:hidden hover:border-primary-hover hover:bg-primary-hover"
           />
           <Link to={`/product/${product.slug}`} className="link-underline text-sm text-primary">
             Full details
@@ -168,7 +169,32 @@ export default function KitchenEditorialLayout({ collection, products, loading, 
             <h2 id="kitchen-compare" className="mt-3 font-display text-3xl md:text-4xl">
               Compare the range
             </h2>
-            <div className="mt-8 overflow-x-auto">
+            {/* Phones: one compact row per piece (a five-column table needs sideways scrolling there). */}
+            <ul className="mt-8 divide-y divide-line border-y border-line md:hidden">
+              {list.map((p) => (
+                <li key={p.id} className="flex items-center gap-4 py-4">
+                  <div className="min-w-0 flex-1">
+                    <Link to={`/product/${p.slug}`} className="link-underline font-display text-lg">
+                      {p.name}
+                    </Link>
+                    <p className="mt-1 text-xs text-ink-soft">
+                      {[p.origin && `Once a ${p.origin}`, p.details?.size].filter(Boolean).join(' · ')}
+                    </p>
+                    <p className="mt-2 text-sm tabular-nums">
+                      <PriceTag product={p} />
+                    </p>
+                  </div>
+                  <AddToCartButton
+                    product={p}
+                    label="Add"
+                    className="h-10 shrink-0 border-primary px-4 text-primary [--btn-fill:var(--color-primary)] hover:text-cream"
+                  />
+                </li>
+              ))}
+            </ul>
+
+            {/* `relative` keeps the visually-hidden "Buy" heading inside the scroll area. */}
+            <div className="relative mt-8 hidden overflow-x-auto md:block">
               <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-primary text-xs uppercase tracking-eyebrow text-ink-soft">
@@ -187,12 +213,12 @@ export default function KitchenEditorialLayout({ collection, products, loading, 
                       </th>
                       <td className="py-4 pr-4 text-ink-soft">{p.origin ?? '—'}</td>
                       <td className="max-w-xs py-4 pr-4 text-ink-soft">{p.details?.size ?? '—'}</td>
-                      <td className="py-4 pr-4 text-right tabular-nums">{formatPrice(p.price)}</td>
+                      <td className="py-4 pr-4 text-right tabular-nums"><PriceTag product={p} /></td>
                       <td className="py-3 text-right">
                         <AddToCartButton
                           product={p}
                           label="Add"
-                          className="h-9 border-primary px-4 text-primary hover:bg-primary hover:text-cream"
+                          className="h-9 border-primary px-4 text-primary [--btn-fill:var(--color-primary)] hover:text-cream"
                         />
                       </td>
                     </tr>
