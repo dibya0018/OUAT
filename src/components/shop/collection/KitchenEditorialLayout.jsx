@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
 import Container from '../../ui/Container'
+import ProductGrid from '../../product/ProductGrid'
 import Button from '../../ui/Button'
 import Icon from '../../ui/Icon'
 import CollectionSortControl from './CollectionSortControl'
-import { AddToCartButton, Crumbs, PieceCount, ProductPhoto, StockBadge } from './parts'
+import { AddToCartButton, Crumbs, PieceCount } from './parts'
 import { useCollectionPage } from './useCollectionPage'
 import { BELOW_HEADER, HEADER_PAD } from '../../../lib/collectionUi'
 import { cx } from '../../../lib/format'
@@ -14,55 +15,6 @@ const SPEC_ROWS = [
   ['size', 'Size'],
   ['care', 'Care'],
 ]
-
-/** Catalogue entry: photo left, name, specs and buy box right. */
-function SpecCard({ product, index }) {
-  const specs = SPEC_ROWS.filter(([key]) => product.details?.[key])
-  return (
-    <li
-      id={`piece-${product.slug}`}
-      className="group grid scroll-mt-28 grid-cols-1 border border-primary/15 bg-white sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
-    >
-      <Link to={`/product/${product.slug}`} className="relative block" aria-label={product.name}>
-        <ProductPhoto product={product} priority={index < 2} className="aspect-square h-full w-full" />
-        <StockBadge product={product} className="absolute top-3 left-3" />
-      </Link>
-      <div className="flex flex-col p-6 md:p-8">
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <p className="font-sans text-xs tracking-eyebrow text-ink-soft">No. {String(index + 1).padStart(2, '0')}</p>
-            <h3 className="mt-1 font-display text-2xl leading-tight md:text-3xl">
-              <Link to={`/product/${product.slug}`} className="link-underline">
-                {product.name}
-              </Link>
-            </h3>
-          </div>
-          <p className="shrink-0 font-sans text-lg tabular-nums text-primary"><PriceTag product={product} /></p>
-        </div>
-        {product.shortStory && <p className="mt-3 text-sm text-ink-soft">{product.shortStory}</p>}
-        {specs.length > 0 && (
-          <dl className="mt-5 divide-y divide-line border-y border-line text-sm">
-            {specs.map(([key, label]) => (
-              <div key={key} className="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
-                <dt className="font-sans text-xs uppercase tracking-eyebrow text-ink-soft">{label}</dt>
-                <dd className="text-ink">{product.details[key]}</dd>
-              </div>
-            ))}
-          </dl>
-        )}
-        <div className="mt-6 flex flex-wrap items-center gap-4 sm:mt-auto sm:pt-6">
-          <AddToCartButton
-            product={product}
-            className="border-primary bg-primary text-cream before:hidden hover:border-primary-hover hover:bg-primary-hover"
-          />
-          <Link to={`/product/${product.slug}`} className="link-underline text-sm text-primary">
-            Full details
-          </Link>
-        </div>
-      </div>
-    </li>
-  )
-}
 
 /** Kitchen & Storage — working catalogue: typographic hero, spec cards with a side rail, compare table, trade band. */
 export default function KitchenEditorialLayout({ collection, products, loading, collectionSlug }) {
@@ -87,9 +39,9 @@ export default function KitchenEditorialLayout({ collection, products, loading, 
               </h1>
               <p className="mt-6 max-w-xl text-ink-soft">{description}</p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-                <Button href={`#${editorial.piecesId}`}>Browse the catalogue</Button>
-                <Button to="/gifting-b2b" variant="text">
-                  Buying for a café or hotel?
+                <Button href={`#${editorial.piecesId}`}>{editorial.hero.primary}</Button>
+                <Button href={`#${editorial.piecesId}`} variant="text">
+                  {editorial.hero.secondary}
                 </Button>
               </div>
             </div>
@@ -128,35 +80,9 @@ export default function KitchenEditorialLayout({ collection, products, loading, 
                 sortOptions={sortOptions}
                 className="mt-6 flex-col items-start gap-2"
               />
-              {list.length > 1 && (
-                <nav aria-label="Jump to a piece" className="mt-8 hidden border-t border-primary/15 pt-6 lg:block">
-                  <ul className="flex flex-col gap-2 text-sm">
-                    {list.map((p) => (
-                      <li key={p.id}>
-                        <a href={`#piece-${p.slug}`} className="link-underline text-ink-soft hover:text-primary">
-                          {p.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
-              )}
             </aside>
 
-            {loading ? (
-              <div className="flex flex-col gap-6" aria-busy="true">
-                <div className="h-64 animate-pulse bg-white" />
-                <div className="h-64 animate-pulse bg-white" />
-              </div>
-            ) : list.length === 0 ? (
-              <p className="py-20 text-center text-ink-soft">No pieces here yet.</p>
-            ) : (
-              <ul className="flex flex-col gap-6">
-                {list.map((product, i) => (
-                  <SpecCard key={product.id} product={product} index={i} />
-                ))}
-              </ul>
-            )}
+            <ProductGrid products={list} loading={loading} columns={3} />
           </div>
         </Container>
       </section>

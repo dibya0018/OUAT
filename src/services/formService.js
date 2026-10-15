@@ -26,18 +26,14 @@ function validate(payload, rules) {
 }
 
 /**
- * B2B / gifting enquiry.
- * @param {{ name, company, businessType, quantity, productInterest, email, message }} payload
+ * Corporate gifting enquiry.
+ * @param {{ name, email, subject, message? }} payload
  */
 export async function submitEnquiry(payload) {
   const errors = validate(payload, {
     name: { required: true },
     email: { required: true, email: true },
-    company: { required: true },
-    businessType: { required: true },
-    quantity: { required: true },
-    productInterest: { required: true },
-    message: { min: 10 },
+    subject: { required: true },
   })
   if (Object.keys(errors).length) return { ok: false, errors }
 
@@ -52,13 +48,13 @@ export async function submitEnquiry(payload) {
 
 /**
  * General contact message.
- * @param {{ name, email, message }} payload
+ * @param {{ name, email, subject, message? }} payload
  */
 export async function submitContact(payload) {
   const errors = validate(payload, {
     name: { required: true },
     email: { required: true, email: true },
-    message: { required: true, min: 10 },
+    subject: { required: true },
   })
   if (Object.keys(errors).length) return { ok: false, errors }
 

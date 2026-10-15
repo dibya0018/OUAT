@@ -1,44 +1,83 @@
 import Seo from '../components/Seo'
 import Container from '../components/ui/Container'
 import SectionHeading from '../components/ui/SectionHeading'
+import EditorialTitle from '../components/ui/EditorialTitle'
 import ImagePlaceholder from '../components/ui/ImagePlaceholder'
 import Reveal from '../components/ui/Reveal'
 import Button from '../components/ui/Button'
-import { PROCESS_STEPS } from '../data/process'
-import { IMPACT_FACTS, IMPACT_PER_KG } from '../lib/site'
+import Icon from '../components/ui/Icon'
+import { IMPACT_PER_KG } from '../lib/site'
+import impactCollecting from '../components/images/impact-collecting.jpg'
+import impactBottles from '../components/images/impact-bottles.jpg'
+import impactGrinding from '../components/images/impact-grinding.webp'
+import impactGlassware from '../components/images/impact-glassware.jpg'
 
 /*
  * Copy and figures here come from the brand's own About page (ouatworld.com/about)
  * and the approved claims in lib/site.js. Do not add new figures without sign-off.
  */
 
-const PRINCIPLES = ['Reuse', 'Repurpose', 'Upcycle']
-
-/** How the studio's way of working helps, one idea per card. */
-const WAYS = [
+/** A bottle's journey in the studio's own photos, left to right. */
+const JOURNEY = [
   {
-    title: 'We catch bottles before they are thrown away',
-    text: 'Bottles are collected from restaurants, bars and homes across Goa. Each one we take is one that does not go out with the rubbish.',
+    label: 'Collected',
+    text: 'Discarded glass bottles are rescued from homes, bars, and waste sites across Goa, giving them a second chance before they reach landfill.',
+    src: impactCollecting,
+    alt: 'Atika and a team member sorting discarded wine bottles from a waste pile in Goa',
   },
   {
-    title: 'We never remelt the glass',
-    text: 'Melting glass needs a furnace and a great deal of heat. We cut, grind and polish by hand instead, so the work stays low in energy.',
+    label: 'Sorted & Cleaned',
+    text: 'Each bottle is carefully sorted by colour and size, thoroughly washed, and stripped of its labels, preparing it for a new purpose.',
+    src: impactBottles,
+    alt: 'Rows of empty brown beer bottles gathered on the studio floor',
+    imgClassName: 'object-top',
   },
   {
-    title: 'We use what already exists',
-    text: 'The glass in your tumbler was made once, for a bottle. Giving it a second life means nothing new has to be made for it.',
+    label: 'Cut & Refined',
+    text: 'Each bottle is cut into new forms, with the edges carefully ground and sanded to create smooth, safe, and refined finishes.',
+    src: impactGrinding,
+    alt: 'Grinding the cut edge of a green glass bottle on a wheel in the studio workshop',
+    imgClassName: 'object-top',
   },
   {
-    title: 'We make things to be kept',
-    text: 'A piece that is used for years replaces many that are used once. We finish every rim and edge so it earns its place on the table.',
+    label: 'Redesigned',
+    text: 'What was once discarded is transformed into thoughtfully crafted home and lifestyle products, ready to find a new place in eco-conscious homes.',
+    src: impactGlassware,
+    alt: 'Upcycled green, amber and clear tumblers and two bottle vases holding flowers',
   },
 ]
 
-/** What a single bottle goes through, told from the bottle's side. */
-const JOURNEY = [
-  { label: 'First life', text: 'A bottle of wine, whisky or gin is poured and emptied in an evening.' },
-  { label: 'The usual ending', text: 'It is thrown away. Glass does not rot or break down, so it stays wherever it lands.' },
-  { label: 'Our ending', text: 'It is collected, washed, cut and finished by hand, and becomes a glass, a candle or a jar.' },
+const VALUES = [
+  {
+    icon: 'bottle',
+    title: 'Made from Waste',
+    text: 'Our products are upcycled from materials that were once considered waste. This process may result in variations, flaws, and imperfections, which are natural in handmade items. These unique characteristics should be celebrated for their uniqueness.',
+  },
+  {
+    icon: 'leaf',
+    title: 'Low Impact Production Process',
+    text: 'Our process involves cutting bottles into different sizes and shapes, and meticulously sanding the edges using a simple, energy-efficient machine, minimising environmental impact with minimal electricity consumption. Each piece is artisanally handcrafted, blending sustainability and style!',
+  },
+  {
+    icon: 'upcycle',
+    title: 'Upcycling, Not Recycling',
+    text: 'Upcycling transforms materials into higher-value products while maintaining their original qualities, unlike recycling, which breaks them down. This method preserves the energy from their initial creation and significantly reduces environmental impact.',
+  },
+  {
+    icon: 'women',
+    title: 'Women Owned',
+    text: 'Our studio is owned and run by women. Your purchase directly supports a woman-led business and the livelihoods that grow from it.',
+  },
+  {
+    icon: 'heart',
+    title: 'Cruelty Free',
+    text: 'At O.U.A.T., we cherish all creatures and proudly uphold our commitment as a vegan brand. Our candles are crafted without any animal-based materials, reflecting our commitment to compassion and ethical practices.',
+  },
+  {
+    icon: 'pin',
+    title: 'From Goa, India',
+    text: 'Designed and handmade in Goa. Buying from us supports local craft and community.',
+  },
 ]
 
 export default function ImpactPage() {
@@ -46,44 +85,99 @@ export default function ImpactPage() {
     <>
       <Seo
         title="Our Impact"
-        description="From waste to wealth: how O.U.A.T. upcycles discarded glass bottles in Goa to reduce landfill, save raw materials and fuel, and cut CO₂ emissions."
+        description="Every O.U.A.T. piece starts as a discarded glass bottle. 6,000+ bottles rescued in Goa and upcycled by hand with a low-impact, women-led, cruelty-free process."
         path="/impact"
       />
 
       {/* Intro */}
-      <section className="section-white pb-20 pt-8 md:pb-32 md:pt-12">
+      <section className="section-white pb-16 pt-10 md:pb-24 md:pt-16">
         <Container>
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-12">
-            <div className="md:col-span-7">
-              <p className="eyebrow">Our impact on the planet</p>
-              <h1 className="mt-6 text-4xl md:text-6xl">From waste to wealth.</h1>
-            </div>
-            <div className="md:col-span-4 md:col-start-9 md:self-end">
-              <p className="text-ink-soft">
-                O.U.A.T. is a Goa-based sustainable brand transforming discarded glass bottles into thoughtfully
-                crafted glassware, candles and décor. By upcycling glass waste, we reduce landfill burden and
-                environmental damage while conserving natural resources.
-              </p>
-            </div>
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="eyebrow">Our impact</p>
+            <EditorialTitle
+              as="h1"
+              size="md"
+              stacked
+              accent="Every piece starts as something"
+              rest="the world was ready to throw away."
+              className="mt-6"
+            />
+            <div aria-hidden="true" className="mx-auto mt-8 h-px w-16 bg-primary/40" />
+            <p className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-ink-soft md:text-xl">
+              We give discarded bottles a second life, transforming them into thoughtful everyday pieces with care for the
+              planet and the people behind every creation!
+            </p>
           </div>
         </Container>
       </section>
 
-      {/* Approved facts */}
-      <section className="border-t border-line py-16 md:py-24" aria-label="Impact at a glance">
+      {/* Headline figure */}
+      <section className="section-cream py-20 md:py-28" aria-label="Bottles rescued">
         <Container>
-          <dl className="grid grid-cols-1 divide-y divide-line border-y border-line md:grid-cols-3 md:divide-x md:divide-y-0">
-            {IMPACT_FACTS.map((fact, i) => (
-              <Reveal
-                key={fact.label}
-                delay={i * 100}
-                className="flex flex-col gap-3 py-10 md:px-10 md:first:pl-0 md:last:pr-0"
-              >
-                <dt className="order-2 max-w-xs text-sm text-ink-soft">{fact.label}</dt>
-                <dd className="order-1 font-display text-4xl font-normal text-ink md:text-5xl">{fact.value}</dd>
+          <Reveal className="mx-auto max-w-3xl text-center">
+            <p className="font-display text-6xl font-light text-primary sm:text-7xl md:text-8xl">6,000+</p>
+            <p className="mt-4 font-display text-2xl text-ink md:text-3xl">
+              bottles rescued. <span className="text-accent">Zero wasted.</span>
+            </p>
+          </Reveal>
+        </Container>
+      </section>
+
+      {/* Journey */}
+      <section className="py-24 md:py-32" aria-labelledby="journey-title">
+        <Container>
+          <Reveal>
+            <SectionHeading
+              title="The Transformation Journey"
+              id="journey-title"
+            />
+          </Reveal>
+          <ol className="mt-16 grid grid-cols-2 gap-x-4 gap-y-10 md:gap-x-6 lg:grid-cols-4 lg:gap-x-10">
+            {JOURNEY.map((step, i) => (
+              <Reveal as="li" key={step.label} delay={i * 100} className="relative">
+                <div className="zoom-media">
+                  <ImagePlaceholder ratio="product" src={step.src} alt={step.alt} imgClassName={step.imgClassName} />
+                </div>
+                {i < JOURNEY.length - 1 && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute top-[40%] -right-[2.375rem] z-10 hidden h-9 w-9 items-center justify-center rounded-full bg-primary text-cream lg:flex"
+                  >
+                    <Icon name="arrowRight" size={16} strokeWidth={1.75} />
+                  </span>
+                )}
+                <div className="mt-5 flex items-baseline gap-3">
+                  <span className="font-sans text-xs tracking-eyebrow text-ink-soft">0{i + 1}</span>
+                  <h3 className="font-display text-xl md:text-2xl">{step.label}</h3>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft">{step.text}</p>
               </Reveal>
             ))}
-          </dl>
+          </ol>
+        </Container>
+      </section>
+
+      {/* Values */}
+      <section className="section-cream py-24 md:py-32" aria-labelledby="values-title">
+        <Container>
+          <Reveal>
+            <SectionHeading
+              eyebrow="What we stand for"
+              title="With care for the planet and the people involved"
+              id="values-title"
+            />
+          </Reveal>
+          <ul className="mt-16 grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+            {VALUES.map((v, i) => (
+              <Reveal as="li" key={v.title} delay={(i % 3) * 80} className="border-t border-line pt-6">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-cream">
+                  <Icon name={v.icon} size={22} strokeWidth={1.5} />
+                </span>
+                <h3 className="mt-5 font-display text-2xl">{v.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-ink-soft">{v.text}</p>
+              </Reveal>
+            ))}
+          </ul>
         </Container>
       </section>
 
@@ -110,155 +204,20 @@ export default function ImpactPage() {
         </Container>
       </section>
 
-      {/* Vision & mission */}
-      <section className="py-24 md:py-32" aria-label="Vision and mission">
-        <Container>
-          <div className="grid grid-cols-1 gap-16 md:grid-cols-2 md:gap-6">
-            <Reveal>
-              <SectionHeading eyebrow="Our vision" title="A greener lifestyle for a greener tomorrow" />
-              <p className="mt-8 max-w-md text-ink-soft">
-                To help people live a greener and more sustainable lifestyle, for a greener tomorrow.
-              </p>
-            </Reveal>
-            <Reveal delay={100}>
-              <SectionHeading eyebrow="Our mission" title="Crafting sustainability with purpose" />
-              <p className="mt-8 max-w-md text-ink-soft">
-                Through a consciously curated selection of eco-friendly, sustainable products, we reinforce three
-                simple ideas.
-              </p>
-              <ul className="mt-6 flex flex-wrap gap-x-8 gap-y-2">
-                {PRINCIPLES.map((p) => (
-                  <li key={p} className="font-display text-2xl text-primary">
-                    {p}
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-          </div>
-        </Container>
-      </section>
-
-      {/* The problem */}
-      <section className="section-cream py-24 md:py-32" aria-labelledby="problem-title">
-        <Container>
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-12">
-            <Reveal className="md:col-span-5">
-              <SectionHeading
-                eyebrow="Why it matters"
-                title="A bottle is used for one evening and lasts for centuries"
-                id="problem-title"
-              />
-            </Reveal>
-            <ol className="flex flex-col md:col-span-6 md:col-start-7">
-              {JOURNEY.map((j, i) => (
-                <Reveal as="li" key={j.label} delay={i * 80} className="border-t border-line py-6 last:border-b">
-                  <p className="font-sans text-xs tracking-eyebrow text-ink-soft">{j.label}</p>
-                  <p className="mt-2 text-ink">{j.text}</p>
-                </Reveal>
-              ))}
-            </ol>
-          </div>
-        </Container>
-      </section>
-
-      {/* How we help */}
-      <section className="py-24 md:py-32" aria-labelledby="ways-title">
-        <Container>
-          <Reveal>
-            <SectionHeading
-              eyebrow="How we help nature"
-              title="Four small decisions, made every day"
-              lede="None of this is complicated. It is simply the slower way of doing things, done on purpose."
-              id="ways-title"
-            />
-          </Reveal>
-          <ul className="mt-16 grid grid-cols-1 gap-x-6 gap-y-12 md:grid-cols-2">
-            {WAYS.map((w, i) => (
-              <Reveal as="li" key={w.title} delay={i * 80} className="border-t border-line pt-6">
-                <span className="font-sans text-xs tracking-eyebrow text-ink-soft">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <h3 className="mt-3 font-display text-2xl">{w.title}</h3>
-                <p className="mt-3 max-w-md text-sm text-ink-soft">{w.text}</p>
-              </Reveal>
-            ))}
-          </ul>
-        </Container>
-      </section>
-
-      {/* Process */}
-      <section className="section-white border-t border-line py-24 md:py-32" aria-labelledby="impact-process-title">
-        <Container>
-          <Reveal>
-            <SectionHeading
-              eyebrow="From waste to table"
-              title="Rescued. Reshaped. Reborn."
-              lede="The bottle you finished last month could be the glass you drink from next month."
-              id="impact-process-title"
-            />
-          </Reveal>
-          <ol className="mt-16 grid grid-cols-1 gap-12 md:grid-cols-3 md:gap-6">
-            {PROCESS_STEPS.map((s, i) => (
-              <Reveal as="li" key={s.step} delay={i * 100}>
-                <div className="zoom-media">
-                  <ImagePlaceholder
-                    ratio="product"
-                    src={s.image.src}
-                    alt={s.image.alt}
-                    tone={s.image.tone}
-                    label={s.title}
-                  />
-                </div>
-                <div className="mt-6 flex items-baseline gap-4">
-                  <span className="font-sans text-xs tracking-eyebrow text-ink-soft">{s.step}</span>
-                  <h3 className="font-display text-2xl">{s.title}</h3>
-                </div>
-                <p className="mt-3 max-w-sm text-sm text-ink-soft">{s.text}</p>
-              </Reveal>
-            ))}
-          </ol>
-        </Container>
-      </section>
-
-      {/* People + honesty */}
-      <section className="border-t border-line py-24 md:py-32" aria-labelledby="people-title">
-        <Container>
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-6">
-            <Reveal>
-              <SectionHeading eyebrow="People" title="Good for Goa, too" id="people-title" />
-              <p className="mt-8 max-w-md text-ink-soft">
-                Every piece is cut, ground and finished by local artisans in our women-led studio. The work stays in
-                Goa, close to where the bottles are collected, so the glass does not travel far to be remade.
-              </p>
-            </Reveal>
-            <Reveal delay={100}>
-              <SectionHeading eyebrow="Where it all began" title="A first small step, in January 2022" as="h2" />
-              <p className="mt-8 max-w-md text-ink-soft">
-                O.U.A.T. was born from one question: how can I help protect the planet, or at least not harm her?
-                Founder Atika Gaur’s first step towards a smaller carbon footprint was upcycling — taking objects
-                once labelled “waste” and turning them into eco-friendly treasures.
-              </p>
-              <p className="mt-6 max-w-md font-display text-2xl text-primary">
-                “One man’s waste is another man’s treasure.”
-              </p>
-            </Reveal>
-          </div>
-        </Container>
-      </section>
-
       {/* Your part */}
-      <section className="bg-primary py-24 text-cream md:py-32" aria-label="Your part">
+      <section className="section-cream py-24 md:py-32" aria-label="Your part">
         <Container>
           <Reveal className="mx-auto max-w-3xl text-center">
-            <p className="eyebrow text-cream/85">Your part</p>
-            <p className="mt-8 font-display text-3xl font-light text-cream md:text-5xl">
-              Every product you choose contributes to a cleaner, more sustainable future.
+            <p className="eyebrow">Your part</p>
+            <p className="mt-8 font-display text-3xl font-light text-ink md:text-5xl">
+              Every product you choose contributes to a{' '}
+              <span className="text-accent">cleaner, more sustainable future.</span>
             </p>
             <div className="mt-12 flex flex-wrap justify-center gap-4">
-              <Button to="/shop" variant="inverse">
+              <Button to="/shop" variant="solid">
                 Shop the collection
               </Button>
-              <Button to="/story" variant="inverse">
+              <Button to="/story" variant="outline">
                 Read our story
               </Button>
             </div>

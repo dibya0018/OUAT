@@ -5,13 +5,14 @@ import SectionHeading from '../ui/SectionHeading'
 import ImagePlaceholder from '../ui/ImagePlaceholder'
 import Reveal from '../ui/Reveal'
 import Icon from '../ui/Icon'
-import { getCollectionPath } from '../../lib/collections'
+import { getCollectionPath, shopMenuCollections } from '../../lib/collections'
 import { getCollections } from '../../services/productService'
 
 export default function CollectionsGrid() {
   const [collections, setCollections] = useState([])
   useEffect(() => {
-    getCollections().then(setCollections)
+    // Same order and names as the Shop menu: Candles, Kitchenware, Glassware, Jewellery.
+    getCollections().then((all) => setCollections(shopMenuCollections(all)))
   }, [])
 
   return (
@@ -19,13 +20,12 @@ export default function CollectionsGrid() {
       <Container>
         <Reveal className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <SectionHeading
-            eyebrow="Collections"
             titleAccent="Four ways"
             titleRest="a bottle comes back"
             id="collections-title"
           />
           <Link to="/shop" className="link-underline inline-flex items-center gap-2 text-sm text-primary">
-            View all pieces <Icon name="arrowRight" size={16} />
+            Shop All <Icon name="arrowRight" size={16} />
           </Link>
         </Reveal>
 
@@ -34,10 +34,9 @@ export default function CollectionsGrid() {
             <Reveal as="li" key={c.slug} delay={i * 80}>
               <Link to={getCollectionPath(c.slug)} className="group block">
                 <div className="zoom-media">
-                  <ImagePlaceholder ratio="product" src={c.image.src} alt={c.image.alt} tone={c.image.tone} label={c.name} />
+                  <ImagePlaceholder ratio="product" src={c.image.src} alt={c.image.alt} tone={c.image.tone} label={c.label} />
                 </div>
-                <h3 className="mt-4 font-display text-xl md:text-2xl">{c.name}</h3>
-                <p className="mt-1 text-sm text-ink-soft">{c.tagline}</p>
+                <h3 className="mt-4 font-display text-xl md:text-2xl">{c.label}</h3>
               </Link>
             </Reveal>
           ))}

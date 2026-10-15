@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import Icon from '../ui/Icon'
-import { getCollectionPath, isCollectionSlug } from '../../lib/collections'
+import { getCollectionPath, isCollectionSlug, shopMenuCollections } from '../../lib/collections'
 import { getCollections } from '../../services/productService'
 import { cx } from '../../lib/format'
 
@@ -37,7 +37,7 @@ export default function ShopNavMenu({ transparent = false }) {
   }
 
   useEffect(() => {
-    getCollections().then(setCollections)
+    getCollections().then((all) => setCollections(shopMenuCollections(all)))
   }, [])
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export default function ShopNavMenu({ transparent = false }) {
         aria-controls={menuId}
         onFocus={openMenu}
       >
-        Shop
+        Our Collection
         <Icon name="chevronDown" size={14} className={cx('transition-transform', open && 'rotate-180')} />
       </Link>
 
@@ -93,7 +93,7 @@ export default function ShopNavMenu({ transparent = false }) {
         <div
           id={menuId}
           role="menu"
-          aria-label="Shop categories"
+          aria-label="Our Collection categories"
           className={cx(
             'border border-line bg-white py-2 transition-opacity duration-200',
             open ? 'opacity-100' : 'opacity-0',
@@ -105,8 +105,7 @@ export default function ShopNavMenu({ transparent = false }) {
             to="/shop"
             className="block px-5 py-3 text-sm text-ink hover:bg-sand"
           >
-            <span className="font-medium">All pieces</span>
-            <span className="mt-0.5 block text-xs text-ink-soft">Every collection</span>
+            <span className="font-medium">Shop All</span>
           </Link>
           <div className="my-1 border-t border-line" role="separator" />
           {collections.map((c) => (
@@ -116,8 +115,7 @@ export default function ShopNavMenu({ transparent = false }) {
               to={getCollectionPath(c.slug)}
               className="block px-5 py-3 text-sm hover:bg-sand"
             >
-              <span className="font-medium text-primary">{c.name}</span>
-              <span className="mt-0.5 block text-xs text-ink-soft">{c.tagline}</span>
+              <span className="font-medium text-primary">{c.label}</span>
             </Link>
           ))}
         </div>
@@ -132,7 +130,7 @@ export function ShopNavMobile({ onNavigate, className }) {
   const [expanded, setExpanded] = useState(false)
 
   useEffect(() => {
-    getCollections().then(setCollections)
+    getCollections().then((all) => setCollections(shopMenuCollections(all)))
   }, [])
 
   return (
@@ -143,14 +141,14 @@ export function ShopNavMobile({ onNavigate, className }) {
         aria-expanded={expanded}
         onClick={() => setExpanded((v) => !v)}
       >
-        Shop
+        Our Collection
         <Icon name="chevronDown" size={20} className={cx('transition-transform', expanded && 'rotate-180')} />
       </button>
       {expanded && (
         <ul className="mt-4 flex flex-col gap-3 border-l border-line pl-4">
           <li>
             <Link to="/shop" onClick={onNavigate} className="text-lg text-ink-soft hover:text-primary">
-              All pieces
+              Shop All
             </Link>
           </li>
           {collections.map((c) => (
@@ -160,7 +158,7 @@ export function ShopNavMobile({ onNavigate, className }) {
                 onClick={onNavigate}
                 className="text-lg text-ink-soft hover:text-primary"
               >
-                {c.name}
+                {c.label}
               </Link>
             </li>
           ))}

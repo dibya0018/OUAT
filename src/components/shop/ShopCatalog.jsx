@@ -27,7 +27,7 @@ export default function ShopCatalog({
   const [searchParams, setSearchParams] = useSearchParams()
   const sort = searchParams.get('sort') || 'featured'
 
-  const title = collection?.name ?? 'All pieces'
+  const title = collection?.name ?? 'All Collections'
   const { accent: titleAccent, rest: titleRest } = splitEditorialTitle(title)
   const description =
     collection?.description ??

@@ -1,7 +1,6 @@
 import { useCallback } from 'react'
 import Seo from '../components/Seo'
 import Container from '../components/ui/Container'
-import EditorialTitle from '../components/ui/EditorialTitle'
 import Button from '../components/ui/Button'
 import FormField from '../components/ui/FormField'
 import Icon from '../components/ui/Icon'
@@ -9,8 +8,9 @@ import { useForm } from '../hooks/useForm'
 import { submitContact } from '../services/formService'
 import { trackEvent } from '../lib/analytics'
 import { SITE } from '../lib/site'
+import contactPhoto from '../components/images/gifting-4.png'
 
-const INITIAL = { name: '', email: '', message: '' }
+const INITIAL = { name: '', email: '', subject: '', message: '' }
 
 export default function ContactPage() {
   const onSuccess = useCallback(() => trackEvent('Lead', { content_name: 'Contact form' }), [])
@@ -24,59 +24,30 @@ export default function ContactPage() {
         path="/contact"
       />
 
-      <section className="section-white pb-20 pt-8 md:pb-32 md:pt-12">
+      <section className="section-white pb-20 pt-10 md:pb-28 md:pt-16">
         <Container>
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-12">
-            {/* Intro + details */}
-            <div className="md:col-span-5">
-              <p className="eyebrow">Contact</p>
-              <EditorialTitle as="h1" size="lg" accent="Say" rest="hello" className="mt-6" />
-              <p className="mt-6 max-w-md text-ink-soft">
-                For questions about a piece, an order, or an idea you’d like to talk through. We answer every message
-                ourselves, usually within two working days.
+          <div className="grid grid-cols-1 gap-14 lg:grid-cols-2 lg:gap-0">
+            {/* Message form */}
+            <div className="lg:pr-12">
+              <p className="eyebrow">Send us a message</p>
+              <h1 className="mt-4 font-display text-3xl text-ink md:text-4xl">
+                Let’s Create Something Beautiful Together
+              </h1>
+              <p className="mt-4 max-w-md text-ink-soft">
+                Have a question, collaboration idea, or just want to say hello? We’d love to hear from you.
               </p>
 
-              <dl className="mt-12 flex flex-col gap-6 border-t border-line pt-8 text-sm">
-                <div>
-                  <dt className="eyebrow">Email</dt>
-                  <dd className="mt-2">
-                    <a href={`mailto:${SITE.email}`} className="link-underline inline-flex items-center gap-2 text-primary">
-                      <Icon name="mail" size={16} /> {SITE.email}
-                    </a>
-                  </dd>
-                </div>
-                <div>
-                  <dt className="eyebrow">Instagram</dt>
-                  <dd className="mt-2">
-                    <a
-                      href={SITE.instagramUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="link-underline inline-flex items-center gap-2 text-primary"
-                    >
-                      <Icon name="instagram" size={16} /> @{SITE.instagramHandle}
-                    </a>
-                  </dd>
-                </div>
-                <div>
-                  <dt className="eyebrow">Studio</dt>
-                  <dd className="mt-2 text-ink-soft">{SITE.location}. Visits by appointment.</dd>
-                </div>
-              </dl>
-            </div>
-
-            {/* Form */}
-            <div className="md:col-span-6 md:col-start-7">
               {status === 'success' ? (
-                <div role="status" className="border-t border-line pt-8 md:border-0 md:pt-0">
+                <div role="status" className="mt-10 border-t border-line pt-8">
                   <p className="font-display text-3xl text-primary">Thank you, {values.name.split(' ')[0]}.</p>
                   <p className="mt-4 text-ink-soft">Your message has reached the studio. We’ll reply soon.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-8">
+                <form onSubmit={handleSubmit} noValidate className="mt-10 flex flex-col gap-7">
                   <FormField label="Your name" name="name" autoComplete="name" required value={values.name} onChange={handleChange} error={errors.name} />
-                  <FormField label="Email" name="email" type="email" autoComplete="email" required value={values.email} onChange={handleChange} error={errors.email} />
-                  <FormField label="Message" name="message" as="textarea" required value={values.message} onChange={handleChange} error={errors.message} />
+                  <FormField label="Your email" name="email" type="email" autoComplete="email" required value={values.email} onChange={handleChange} error={errors.email} />
+                  <FormField label="Subject" name="subject" required value={values.subject} onChange={handleChange} error={errors.subject} />
+                  <FormField label="Your message (optional)" name="message" as="textarea" value={values.message} onChange={handleChange} error={errors.message} />
                   {status === 'error' && (
                     <p role="alert" className="text-sm text-primary">
                       Something went wrong. Please try again or email us.
@@ -84,11 +55,64 @@ export default function ContactPage() {
                   )}
                   <div>
                     <Button type="submit" disabled={status === 'submitting'}>
-                      {status === 'submitting' ? 'Sending…' : 'Send message'}
+                      {status === 'submitting' ? 'Sending…' : 'Submit'}
                     </Button>
                   </div>
                 </form>
               )}
+            </div>
+
+            {/* Photo, FAQ note and contact details */}
+            <div className="lg:border-l lg:border-line lg:pl-12">
+              <img
+                src={contactPhoto}
+                alt="O.U.A.T. gift box with upcycled green glassware on a wooden table"
+                loading="lazy"
+                decoding="async"
+                className="aspect-[5/3] w-full object-cover"
+              />
+
+              <h2 className="mt-8 font-display text-2xl text-ink md:text-3xl">Frequently Asked Questions</h2>
+              <p className="mt-4 text-ink-soft">
+                Find quick answers about our products, process, and policies. If you still need help, feel free to
+                reach out; we’re always here for you.
+              </p>
+
+              <p className="mt-8 font-sans text-xs font-medium uppercase tracking-eyebrow text-ink">Contact us</p>
+              <div className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div className="flex items-start gap-4">
+                  <Icon name="mobile" size={30} strokeWidth={1} className="shrink-0 text-ink-soft" />
+                  <div className="text-sm leading-relaxed">
+                    <p>
+                      <span className="font-medium text-ink">Phone:</span>{' '}
+                      <a href={SITE.phoneHref} className="link-underline text-ink-soft">
+                        {SITE.phone}
+                      </a>
+                    </p>
+                    <p>
+                      <span className="font-medium text-ink">Email:</span>{' '}
+                      <a href={`mailto:${SITE.email}`} className="link-underline text-primary">
+                        {SITE.email}
+                      </a>
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <Icon name="chat" size={30} strokeWidth={1} className="shrink-0 text-ink-soft" />
+                  <p className="text-sm font-medium leading-relaxed text-ink">
+                    Support forum
+                    <br />
+                    for over 24h
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 border-t border-line pt-6 text-sm">
+                <p className="font-medium text-ink">Have questions or need assistance?</p>
+                <a href={`mailto:${SITE.email}`} className="link-underline mt-1 inline-block font-medium text-primary">
+                  Send us an email and we’ll get in touch shortly.
+                </a>
+              </div>
             </div>
           </div>
         </Container>

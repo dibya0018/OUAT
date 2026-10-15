@@ -4,7 +4,7 @@ import Container from '../ui/Container'
 import Icon from '../ui/Icon'
 import Logo from '../ui/Logo'
 import { getCollections } from '../../services/productService'
-import { getCollectionPath } from '../../lib/collections'
+import { getCollectionPath, shopMenuCollections } from '../../lib/collections'
 import { NAV_LINKS, POLICY_LINKS, SITE } from '../../lib/site'
 
 const linkClass = 'link-underline text-sm text-cream/85 hover:text-cream'
@@ -13,7 +13,7 @@ const YEAR = new Date().getFullYear()
 export default function Footer() {
   const [collections, setCollections] = useState([])
   useEffect(() => {
-    getCollections().then(setCollections)
+    getCollections().then((all) => setCollections(shopMenuCollections(all)))
   }, [])
 
   return (
@@ -23,23 +23,23 @@ export default function Footer() {
           <div className="md:col-span-5">
             <Logo inverse className="h-16 md:h-20" fallbackClassName="text-3xl" />
             <p className="mt-6 max-w-sm font-display text-xl font-light leading-snug text-cream/90 md:text-[1.35rem]">
-              {SITE.tagline}
+              Every Piece Has a Story!
             </p>
-            <p className="mt-5 text-sm text-cream/70">Women-led. Designed and made in {SITE.location}.</p>
+            <p className="mt-2 max-w-sm text-base text-cream/85">Discover the one that becomes part of yours.</p>
           </div>
 
-          <nav aria-label="Shop" className="md:col-span-2">
-            <h2 className="mb-4 font-sans text-xs font-normal uppercase tracking-eyebrow text-cream/70">Shop</h2>
+          <nav aria-label="Our Collection" className="md:col-span-2">
+            <h2 className="mb-4 font-sans text-sm font-normal tracking-wide text-cream/70">Our Collection</h2>
             <ul className="flex flex-col gap-2">
               <li>
                 <Link to="/shop" className={linkClass}>
-                  All pieces
+                  Shop All
                 </Link>
               </li>
               {collections.map((c) => (
                 <li key={c.slug}>
                   <Link to={getCollectionPath(c.slug)} className={linkClass}>
-                    {c.name}
+                    {c.label}
                   </Link>
                 </li>
               ))}
@@ -47,7 +47,7 @@ export default function Footer() {
           </nav>
 
           <nav aria-label="Studio" className="md:col-span-2">
-            <h2 className="mb-4 font-sans text-xs font-normal uppercase tracking-eyebrow text-cream/70">Studio</h2>
+            <h2 className="mb-4 font-sans text-sm font-normal tracking-wide text-cream/70">Studio</h2>
             <ul className="flex flex-col gap-2">
               {NAV_LINKS.filter((l) => l.to !== '/shop').map((l) => (
                 <li key={l.to}>
@@ -65,7 +65,7 @@ export default function Footer() {
           </nav>
 
           <div className="md:col-span-3">
-            <h2 className="mb-4 font-sans text-xs font-normal uppercase tracking-eyebrow text-cream/70">Contact</h2>
+            <h2 className="mb-4 font-sans text-sm font-normal tracking-wide text-cream/70">Contact</h2>
             <ul className="flex flex-col gap-2">
               <li>
                 <a href={`mailto:${SITE.email}`} className={linkClass}>

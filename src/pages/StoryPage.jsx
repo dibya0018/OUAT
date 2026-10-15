@@ -5,10 +5,23 @@ import SectionHeading from '../components/ui/SectionHeading'
 import ImagePlaceholder from '../components/ui/ImagePlaceholder'
 import Reveal from '../components/ui/Reveal'
 import Button from '../components/ui/Button'
+import Icon from '../components/ui/Icon'
 import { PROCESS_STEPS } from '../data/process'
-import { IMPACT_FACTS } from '../lib/site'
 import founderPortrait from '../components/images/founder-atika.jpg'
 import studioGrinding from '../components/images/studio-grinding.webp'
+
+/**
+ * Story film banner. Set `src` to a video (e.g. an import from ../components/videos/story.mp4)
+ * and it plays in the banner; until then a plain "coming soon" frame shows. `poster` is optional.
+ */
+const STORY_FILM = {
+  src: null,
+  poster: undefined,
+  alt: 'The O.U.A.T. story film',
+}
+
+/** One icon per process step, in PROCESS_STEPS order. */
+const STEP_ICONS = ['bottle', 'scissors', 'sparkle']
 
 /** Before/after pairs: the bottle on the left, the finished piece on the right. */
 const PAIRS = [
@@ -41,18 +54,38 @@ export default function StoryPage() {
       {/* Intro */}
       <section className="section-white pb-20 pt-8 md:pb-32 md:pt-12">
         <Container>
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-12">
-            <div className="md:col-span-7">
-              <p className="eyebrow">Our story</p>
-              <h1 className="mt-6 text-4xl md:text-6xl">Once Upon A Time… a bottle. Now, a glass.</h1>
+          <h1 className="eyebrow">Our story</h1>
+
+          {/* Film banner */}
+          <Reveal className="mt-6 md:mt-8">
+            <div className="relative aspect-[4/3] overflow-hidden bg-ink sm:aspect-video lg:aspect-[21/9]">
+              {STORY_FILM.src ? (
+                <video
+                  src={STORY_FILM.src}
+                  poster={STORY_FILM.poster}
+                  className="absolute inset-0 h-full w-full object-cover"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  controls
+                  aria-label={STORY_FILM.alt}
+                />
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center text-cream">
+                  <span className="inline-flex h-14 w-14 items-center justify-center rounded-full border border-cream/60 md:h-16 md:w-16">
+                    <svg viewBox="0 0 24 24" className="ml-0.5 h-5 w-5 fill-current" aria-hidden="true">
+                      <path d="M7 4.5v15l12-7.5z" />
+                    </svg>
+                  </span>
+                  <div>
+                    <p className="eyebrow text-cream/85">Our film</p>
+                    <p className="mt-1 font-display text-xl md:text-2xl">Coming soon</p>
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="md:col-span-4 md:col-start-9 md:self-end">
-              <p className="text-ink-soft">
-                O.U.A.T. began with a simple observation: Goa pours a great deal of wine, and the bottles were going
-                nowhere good. We decided to give them somewhere to go.
-              </p>
-            </div>
-          </div>
+          </Reveal>
         </Container>
       </section>
 
@@ -72,37 +105,22 @@ export default function StoryPage() {
               <SectionHeading eyebrow="The founder" title="Atika Gaur" id="founder-title" />
               <div className="mt-8 flex flex-col gap-6 text-ink-soft">
                 <p>
-                  Atika founded Once Upon a Time (OUAT) to give waste a second life. A biotechnologist by training,
-                  she brings material science to{' '}
-                  <Link to="/impact" className="link-underline text-ink">
-                    sustainability
-                  </Link>{' '}
-                  and craft: where others see a discarded bottle, she sees a material with a stress profile and a set
-                  of possibilities waiting to be unlocked.
-                </p>
-                <p>
-                  It began with a single product, a{' '}
-                  <Link to="/candles" className="link-underline text-ink">
-                    hand-poured candle
-                  </Link>{' '}
-                  in an upcycled glass vessel. Then came the{' '}
-                  <Link to="/product/sproutcycled-glass-germinator" className="link-underline text-ink">
-                    glass sprouter
+                  Driven by a passion for circularity and transforming waste glass into worth, we set out to give
+                  discarded glass bottles a new life through thoughtful design and craftsmanship. By repurposing
+                  locally collected waste glass into functional, stylish and{' '}
+                  <Link to="/shop" className="link-underline text-ink">
+                    premium lifestyle products
                   </Link>
-                  , for which she is now researching fully compostable lids made from corn starch.
+                  , we embrace circular design to reduce waste and extend the life of valuable materials. Through
+                  innovative techniques and the skill of our artisans, we create pieces that bring together
+                  sustainability, functionality and contemporary aesthetics.
                 </p>
-                <p>
-                  Unable to find tools precise enough for her standards, she designed and built her own. Every piece
-                  of{' '}
-                  <Link to="/glassware" className="link-underline text-ink">
-                    glassware
-                  </Link>{' '}
-                  rests on the same belief: sustainable products should be as beautiful as they are responsible.
+                <p className="text-ink">
+                  As the founder, I warmly invite you to join us on this journey towards a circular future, where
+                  waste becomes a resource, design inspires change, and beauty goes hand in hand with responsibility.
+                  Together, we can make a meaningful difference and build a greener, more sustainable world.
                 </p>
-                <p className="font-display text-2xl text-primary not-italic">
-                  “I’m not interested in making things that look recycled. I want to make things people choose
-                  because they are beautiful, and then discover the story.”
-                </p>
+                <p className="font-display text-xl text-primary">— Atika Gaur</p>
               </div>
             </Reveal>
           </div>
@@ -135,17 +153,35 @@ export default function StoryPage() {
       </section>
 
       {/* Process */}
-      <section className="py-24 md:py-32" aria-labelledby="story-process-title">
+      <section className="section-cream py-24 md:py-32" aria-labelledby="story-process-title">
         <Container>
-          <Reveal>
-            <SectionHeading eyebrow="The process" title="Rescued. Reshaped. Reborn." id="story-process-title" />
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <SectionHeading
+              eyebrow="The process"
+              title="How a bottle becomes a piece"
+              lede="No furnace, no remelting. Just three careful steps, all done by hand in our Goa studio."
+              align="center"
+              id="story-process-title"
+            />
           </Reveal>
-          <ol className="mt-16 grid grid-cols-1 gap-12 md:grid-cols-3 md:gap-6">
+          {/* Dashed line behind the cards links the steps into one journey (desktop only). */}
+          <ol className="relative mt-16 grid grid-cols-1 gap-6 md:grid-cols-3 md:before:absolute md:before:inset-x-[16%] md:before:top-[3.75rem] md:before:border-t md:before:border-dashed md:before:border-primary/40">
             {PROCESS_STEPS.map((s, i) => (
-              <Reveal as="li" key={s.step} delay={i * 100}>
-                <span className="font-sans text-xs tracking-eyebrow text-ink-soft">{s.step}</span>
-                <h3 className="mt-3 font-display text-2xl">{s.title}</h3>
-                <p className="mt-3 text-sm text-ink-soft">{s.text}</p>
+              <Reveal as="li" key={s.step} delay={i * 120} className="relative">
+                <div className="group relative h-full overflow-hidden border border-line bg-white p-8 transition-[translate,box-shadow] duration-300 ease-[var(--ease-out-soft)] hover:-translate-y-1 hover:shadow-[0_18px_40px_rgb(45_45_45/0.08)] md:p-10">
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -top-3 right-4 font-display text-8xl font-light leading-none text-primary/10 transition-colors duration-300 group-hover:text-primary/20"
+                  >
+                    {s.step}
+                  </span>
+                  <span className="relative inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-cream">
+                    <Icon name={STEP_ICONS[i]} size={24} strokeWidth={1.5} />
+                  </span>
+                  <p className="mt-8 font-sans text-xs tracking-eyebrow text-ink-soft">Step {s.step}</p>
+                  <h3 className="mt-2 font-display text-3xl text-ink">{s.title}</h3>
+                  <p className="mt-4 leading-relaxed text-ink-soft">{s.text}</p>
+                </div>
               </Reveal>
             ))}
           </ol>
@@ -168,14 +204,6 @@ export default function StoryPage() {
                   bottles in the first place. It is hard to make something hurried here, and we have stopped trying.
                 </p>
               </div>
-              <dl className="mt-10 grid grid-cols-3 gap-6 border-t border-line pt-8">
-                {IMPACT_FACTS.map((f) => (
-                  <div key={f.label}>
-                    <dd className="font-display text-2xl text-primary md:text-3xl">{f.value}</dd>
-                    <dt className="mt-1 text-xs text-ink-soft">{f.label}</dt>
-                  </div>
-                ))}
-              </dl>
             </Reveal>
             <Reveal delay={100} className="order-1 md:order-2 md:col-span-5 md:col-start-8">
               <ImagePlaceholder
@@ -195,7 +223,7 @@ export default function StoryPage() {
           <Reveal className="mx-auto max-w-3xl text-center">
             <p className="eyebrow text-cream/85">Philosophy</p>
             <p className="mt-8 font-display text-3xl font-light text-cream md:text-5xl">
-              Every bottle has a past. We give it a future.
+              Welcome to the World where creativity meets Consciousness!
             </p>
             <div className="mt-12">
               <Button to="/shop" variant="inverse">

@@ -1,7 +1,6 @@
 import Seo from '../components/Seo'
 import Hero from '../components/home/Hero'
 import BrandStatement from '../components/home/BrandStatement'
-import BottleToProduct from '../components/home/BottleToProduct'
 import CollectionsGrid from '../components/home/CollectionsGrid'
 import FeaturedProducts from '../components/home/FeaturedProducts'
 import B2BBand from '../components/home/B2BBand'
@@ -26,15 +25,14 @@ export default function HomePage() {
     <>
       <Seo
         title="Reclaimed glass, designed in Goa"
-        description="Every bottle has a past. We give it a future. Premium glassware, candles, kitchen pieces and jewellery made from reclaimed bottles by a women-led studio in Goa."
+        description="Welcome to the World where creativity meets Consciousness! Premium glassware, candles, kitchen pieces and jewellery made from reclaimed bottles by a women-led studio in Goa."
         path="/"
         jsonLd={ORG_JSON_LD}
       />
       <Hero />
       <BrandStatement />
-      <BottleToProduct />
-      <CollectionsGrid />
       <FeaturedProducts />
+      <CollectionsGrid />
       <B2BBand />
       <ImpactStrip />
       <InstagramGrid />

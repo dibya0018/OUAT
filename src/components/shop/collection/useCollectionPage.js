@@ -24,8 +24,13 @@ export function useCollectionPage(collectionSlug, collection) {
     sort,
     setSort,
     sortOptions: SORT_OPTIONS,
-    heroAccent: collection?.heroTitleAccent ?? fallbackTitle?.[0] ?? collection?.name ?? 'Discover',
-    heroRest: collection?.heroTitleRest ?? (collection?.heroTitleAccent ? '' : (fallbackTitle?.[1] ?? '')),
-    description: collection?.description ?? '',
+    // Approved hero copy in collectionEditorial wins; the catalogue's own title/description are the fallback.
+    heroAccent:
+      editorial?.hero?.accent ?? collection?.heroTitleAccent ?? fallbackTitle?.[0] ?? collection?.name ?? 'Discover',
+    heroRest:
+      editorial?.hero?.rest ??
+      collection?.heroTitleRest ??
+      (collection?.heroTitleAccent ? '' : (fallbackTitle?.[1] ?? '')),
+    description: editorial?.hero?.lede ?? collection?.description ?? '',
   }
 }

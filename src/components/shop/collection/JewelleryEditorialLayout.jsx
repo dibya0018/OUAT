@@ -1,14 +1,13 @@
 import { Link } from 'react-router-dom'
 import Container from '../../ui/Container'
+import ProductGrid from '../../product/ProductGrid'
 import Button from '../../ui/Button'
-import Reveal from '../../ui/Reveal'
 import EditorialTitle from '../../ui/EditorialTitle'
 import CollectionNewsletterBand from '../CollectionNewsletterBand'
 import JewellerySurface from '../JewellerySurface'
-import JewelleryProductCard from '../../product/JewelleryProductCard'
 import CollectionSortControl from './CollectionSortControl'
 import JewelleryComingSoon from './JewelleryComingSoon'
-import { AddToCartButton, Crumbs, PieceCount } from './parts'
+import { Crumbs, PieceCount } from './parts'
 import { useCollectionPage } from './useCollectionPage'
 import { HEADER_PAD } from '../../../lib/collectionUi'
 import { cx } from '../../../lib/format'
@@ -56,18 +55,18 @@ export default function JewelleryEditorialLayout({ collection, products, loading
               <p className="eyebrow text-accent">{editorial.heroEyebrow}</p>
               <EditorialTitle as="h1" size="xl" accent={heroAccent} rest={heroRest} className="mt-5" />
               <p className="mx-auto mt-6 max-w-md text-ink-soft">{description}</p>
-              {collection?.audienceLine && (
-                <p className="mx-auto mt-4 max-w-md font-display text-lg italic text-ink/90">{collection.audienceLine}</p>
+              {editorial.hero.tagline && (
+                <p className="mx-auto mt-4 max-w-md font-display text-lg italic text-ink/90">{editorial.hero.tagline}</p>
               )}
               <div className="mt-9 flex flex-col items-center gap-4">
                 <a
                   href={`#${editorial.piecesId}`}
                   className="inline-flex h-12 items-center rounded-full border border-accent bg-accent px-9 font-sans text-sm tracking-wide text-cream transition-colors hover:border-accent-hover hover:bg-accent-hover"
                 >
-                  Discover the pieces
+                  {editorial.hero.primary}
                 </a>
-                <Button to="/story" variant="text" className="text-accent">
-                  Our story
+                <Button href={`#${editorial.piecesId}`} variant="text" className="text-accent">
+                  {editorial.hero.secondary}
                 </Button>
               </div>
             </div>
@@ -111,28 +110,7 @@ export default function JewelleryEditorialLayout({ collection, products, loading
               />
             </div>
           </header>
-          {loading ? (
-            <ul className="mx-auto mt-14 grid max-w-4xl grid-cols-1 gap-14 sm:grid-cols-2" aria-busy="true">
-              {[0, 1].map((i) => (
-                <li key={i} className="aspect-square w-full animate-pulse bg-cream/80" />
-              ))}
-            </ul>
-          ) : list.length === 0 ? (
-            <p className="py-20 text-center text-ink-soft">No pieces here yet.</p>
-          ) : (
-            <ul className="mx-auto mt-14 grid max-w-4xl grid-cols-1 gap-x-10 gap-y-16 sm:grid-cols-2">
-              {list.map((product, i) => (
-                <Reveal as="li" key={product.id} delay={(i % 2) * 80} className="flex flex-col items-center">
-                  <JewelleryProductCard product={product} priority={i < 2} className="w-full" />
-                  <AddToCartButton
-                    product={product}
-                    label="Add to bag"
-                    className="mt-5 rounded-full border-accent px-8 text-accent [--btn-fill:var(--color-primary)] hover:border-primary hover:text-cream"
-                  />
-                </Reveal>
-              ))}
-            </ul>
-          )}
+          <ProductGrid products={list} loading={loading} columns={4} className="mt-14" />
         </Container>
       </section>
 

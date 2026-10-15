@@ -1,5 +1,4 @@
 import Container from '../ui/Container'
-import EditorialTitle from '../ui/EditorialTitle'
 import Reveal from '../ui/Reveal'
 
 export default function BrandStatement() {
@@ -9,17 +8,17 @@ export default function BrandStatement() {
       aria-label="About O.U.A.T."
     >
       <Container>
-        <Reveal className="mx-auto max-w-3xl text-center">
-          <EditorialTitle
-            as="p"
-            size="lg"
-            accent="Once discarded."
-            rest="Now designed."
-            className="mt-2"
-          />
+        <Reveal className="mx-auto max-w-4xl text-center">
+          {/* The three actions carry the meaning, so they get the accent and their own line. */}
+          <p className="display-title mt-2 text-[1.75rem] leading-[1.2] text-ink sm:text-3xl md:text-4xl">
+            <span className="block">An endeavour to</span>
+            <span className="block text-accent">reuse, upcycle and reduce</span>
+            <span className="block">our carbon footprint.</span>
+          </p>
           <p className="mt-8 font-sans text-lg font-normal text-ink-soft md:text-xl">
-            We are a women-led studio in Goa that collects bottles after their first life and shapes them,
-            by hand, into glassware, candles and objects worth keeping.
+            Transforming waste into timeless creations, O.U.A.T. repurposes locally sourced glass bottles into
+            sustainable, handcrafted lifestyle pieces. Designed with care, each product blends functionality with
+            conscious living.
           </p>
         </Reveal>
       </Container>

@@ -5,7 +5,6 @@ import EditorialTitle from '../ui/EditorialTitle'
 import Icon from '../ui/Icon'
 import goaAerial from '../images/goa.png'
 import goaSunset from '../images/goa-sunset.png'
-import { useGoaTime } from '../../hooks/useGoaTime'
 import { cx } from '../../lib/format'
 
 const ROTATE_MS = 7000
@@ -16,10 +15,9 @@ const SLIDES = [
     src: goaAerial,
     alt: 'Aerial view of a Goa beach with palm trees and turquoise water',
     objectPosition: 'center 35%',
-    eyebrow: 'Once Upon A Time · Goa',
-    accent: 'Every bottle has a past.',
-    rest: 'We give it a future.',
-    lede: 'Premium glassware, candles and kitchen pieces made from reclaimed bottles.',
+    accent: 'Once upon a time,',
+    rest: 'this was a bottle.',
+    lede: 'Now handcrafted into thoughtful pieces for conscious living.',
     promoTitle: '6,000+',
     promoLine: 'bottles given a second life',
   },
@@ -28,10 +26,10 @@ const SLIDES = [
     alt: 'Golden hour light on a Goa beach',
     objectPosition: '55% center',
     eyebrow: 'Handcrafted in Goa',
-    accent: 'Once discarded.',
-    rest: 'Now designed.',
-    lede: 'Glass is upcycled without remelting — a women-led studio by the sea.',
-    promoTitle: 'Low-energy',
+    accent: 'Welcome to the World',
+    rest: 'where creativity meets Consciousness!',
+    lede: 'Every product is lovingly upcycled, designed to be refilled, or chosen for its sustainable values.',
+    promoTitle: 'Low Impact Production Process',
     promoLine: 'upcycled without remelting',
   },
 ]
@@ -41,7 +39,6 @@ export default function Hero() {
   const [reduceMotion, setReduceMotion] = useState(false)
   const slide = SLIDES[active]
   const count = SLIDES.length
-  const goa = useGoaTime()
   const mediaRef = useRef(null)
 
   useEffect(() => {
@@ -125,7 +122,7 @@ export default function Hero() {
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink/55 via-ink/20 to-transparent"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-cream/90 via-cream/60 to-transparent"
       />
       <div
         aria-hidden="true"
@@ -135,43 +132,44 @@ export default function Hero() {
       <Container className="relative z-[1] flex flex-1 flex-col justify-center py-20 pb-28 sm:py-24 md:pb-32 md:pt-24">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-8">
           {/* Left: headline + CTAs */}
-          <div className="hero-copy lg:col-span-6 xl:col-span-5">
-            <p className="eyebrow text-cream" aria-live="polite">
-              {slide.eyebrow}
-            </p>
+          <div className="hero-copy-light lg:col-span-7">
+            {slide.eyebrow && (
+              <p className="eyebrow text-primary" aria-live="polite">
+                {slide.eyebrow}
+              </p>
+            )}
             <EditorialTitle
               as="h1"
               id="hero-title"
-              size="xl"
-              onDark
+              size="hero"
+              accentTone="primary"
+              stacked
               accent={slide.accent}
               rest={slide.rest}
-              className="mt-5"
+              className={slide.eyebrow ? 'mt-5' : undefined}
             />
-            <p className="mt-6 max-w-md text-base leading-relaxed text-cream/90 md:text-lg">{slide.lede}</p>
+            <p className="mt-6 max-w-md text-base leading-relaxed text-ink md:text-lg">{slide.lede}</p>
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Button to="/shop" variant="solid">
                 Shop the collection
               </Button>
-              <Button to="/story" variant="inverse">
+              <Button to="/story" variant="outline">
                 Our story
               </Button>
             </div>
-            <p className="mt-6 flex items-center gap-2.5 font-sans text-xs tracking-wide text-cream/85">
-              <span className="goa-live-dot h-1.5 w-1.5 rounded-full bg-cream" aria-hidden="true" />
-              {goa.time} in Goa · {goa.moment}
-            </p>
           </div>
 
           {/* Right: quiet promo block (desktop), like reference deal panel */}
           <div className="hidden text-right lg:col-span-4 lg:col-start-9 lg:block">
-            <div className="hero-copy inline-block border border-cream/40 bg-black/25 px-8 py-8 text-left backdrop-blur-[2px] lg:text-right">
-              <p className="font-sans text-xs font-medium uppercase tracking-eyebrow text-cream/80">Impact</p>
-              <p className="mt-3 font-display text-4xl text-cream" aria-live="polite">
+            {/* Frosted clear glass: light tint, heavy blur, bright edge + top highlight.
+                Fixed size so the box does not jump between slides. */}
+            <div className="inline-flex h-[17rem] w-[20rem] flex-col items-end justify-center border border-white/60 bg-white/20 bg-gradient-to-br from-white/35 to-white/5 px-8 py-8 text-left shadow-[inset_0_1px_0_rgb(255_255_255/0.7),0_16px_40px_rgb(45_45_45/0.12)] backdrop-blur-xl backdrop-saturate-150 lg:text-right">
+              <p className="font-sans text-xs font-medium uppercase tracking-eyebrow text-ink-soft">Impact</p>
+              <p className="mt-3 text-balance font-display text-[2rem] leading-[1.1] text-primary" aria-live="polite">
                 {slide.promoTitle}
               </p>
-              <p className="mt-2 max-w-[14rem] text-sm text-cream/90 lg:ml-auto">{slide.promoLine}</p>
-              <Button to="/shop" variant="inverse" size="sm" className="mt-6">
+              <p className="mt-2 max-w-[14rem] text-sm text-ink lg:ml-auto">{slide.promoLine}</p>
+              <Button to="/shop" variant="solid" size="sm" className="mt-6">
                 Shop now
               </Button>
             </div>
@@ -184,7 +182,7 @@ export default function Hero() {
         <button
           type="button"
           onClick={prev}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-cream/40 text-cream transition-colors hover:border-cream hover:bg-cream/10"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/30 text-ink transition-colors hover:border-ink hover:bg-ink/5"
           aria-label="Previous slide"
         >
           <Icon name="arrowLeft" size={18} />
@@ -201,7 +199,7 @@ export default function Hero() {
               onClick={() => goTo(i)}
               className={cx(
                 'h-2 rounded-full transition-all duration-200',
-                i === active ? 'w-6 bg-cream' : 'w-2 bg-cream/40 hover:bg-cream/60',
+                i === active ? 'w-6 bg-primary' : 'w-2 bg-ink/25 hover:bg-ink/40',
               )}
             />
           ))}
@@ -210,7 +208,7 @@ export default function Hero() {
         <button
           type="button"
           onClick={next}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-cream/40 text-cream transition-colors hover:border-cream hover:bg-cream/10"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/30 text-ink transition-colors hover:border-ink hover:bg-ink/5"
           aria-label="Next slide"
         >
           <Icon name="arrowRight" size={18} />

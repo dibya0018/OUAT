@@ -32,7 +32,7 @@ export default function Header() {
 
   const overHero = pathname === '/'
   const transparent = overHero && !scrolled && !menuOpen
-  const navLinkClass = cx('link-underline text-sm tracking-wide', transparent && 'text-cream')
+  const navLinkClass = 'link-underline text-sm tracking-wide'
 
   useEffect(() => {
     const onScroll = () => setScrolled(isScrolled())
@@ -52,7 +52,7 @@ export default function Header() {
     <header
       className={cx(
         'fixed inset-x-0 top-0 z-40 pt-[env(safe-area-inset-top,0px)] transition-colors duration-200',
-        transparent ? 'bg-transparent text-cream' : 'border-b border-line bg-white text-ink',
+        transparent ? 'bg-transparent text-ink' : 'border-b border-line bg-white text-ink',
       )}
     >
       <a
@@ -70,7 +70,7 @@ export default function Header() {
           className="shrink-0"
           aria-label={`${SITE.name} home`}
         >
-          <Logo inverse={transparent} className="h-8 md:h-11" fallbackClassName="text-xl sm:text-2xl" />
+          <Logo className="h-8 md:h-11" fallbackClassName="text-xl sm:text-2xl" />
         </Link>
 
         {/* Desktop nav */}
@@ -78,10 +78,10 @@ export default function Header() {
           <ul className="flex items-center gap-10">
             {NAV_LINKS.map((link) =>
               link.to === '/shop' ? (
-                <ShopNavMenu key={link.to} transparent={transparent} />
+                <ShopNavMenu key={link.to} />
               ) : (
                 <li key={link.to}>
-                  <NavLink to={link.to} className="link-underline text-sm tracking-wide">
+                  <NavLink to={link.to} end={link.to === '/'} className="link-underline text-sm tracking-wide">
                     {link.label}
                   </NavLink>
                 </li>
@@ -98,7 +98,6 @@ export default function Header() {
               <HeaderAccountMenu
                 user={user}
                 firstName={firstName}
-                transparent={transparent}
                 onLogout={logout}
               />
             ) : (
@@ -119,7 +118,7 @@ export default function Header() {
                   aria-hidden="true"
                   className={cx(
                     'absolute top-0 right-0 flex h-4 min-w-4 items-center justify-center rounded-full px-1 font-sans text-[0.625rem]',
-                    transparent ? 'bg-cream text-primary' : 'bg-primary text-cream',
+                    'bg-primary text-cream',
                   )}
                 >
                   {activeOrders > 9 ? '9+' : activeOrders}
@@ -129,7 +128,7 @@ export default function Header() {
           )}
           <span
             aria-hidden
-            className={cx('hidden h-5 w-px sm:block', transparent ? 'bg-cream/30' : 'bg-line')}
+            className={cx('hidden h-5 w-px sm:block', 'bg-line')}
           />
           <button
             type="button"
@@ -146,7 +145,7 @@ export default function Header() {
                 aria-hidden="true"
                 className={cx(
                   'absolute top-0 right-0 flex h-4 min-w-4 items-center justify-center rounded-full px-1 font-sans text-[0.625rem]',
-                  transparent ? 'bg-cream text-primary' : 'bg-primary text-cream',
+                  'bg-primary text-cream',
                 )}
               >
                 {count}
@@ -181,7 +180,7 @@ export default function Header() {
                   <ShopNavMobile key={link.to} onNavigate={closeMenu} />
                 ) : (
                   <li key={link.to}>
-                    <NavLink to={link.to} onClick={closeMenu} className="font-display text-3xl font-normal text-ink">
+                    <NavLink to={link.to} end={link.to === '/'} onClick={closeMenu} className="font-display text-3xl font-normal text-ink">
                       {link.label}
                     </NavLink>
                   </li>

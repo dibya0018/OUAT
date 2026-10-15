@@ -6,10 +6,12 @@ export const SITE = {
   name: 'O.U.A.T.',
   longName: 'Once Upon A Time',
   url: 'https://ouat.in', // update when the real domain is live
-  tagline: 'Every bottle has a past. We give it a future.',
+  tagline: 'Welcome to the World where creativity meets Consciousness!',
   secondaryLines: ['Once discarded. Now designed.', 'Once Upon A Time… a bottle. Now, a glass.'],
   location: 'Goa, India',
-  email: 'hello@ouat.in',
+  email: 'info@indieyaa.com',
+  phone: '+91 78386 15859',
+  phoneHref: 'tel:+917838615859',
   instagramHandle: 'ouat_goa',
   instagramUrl: 'https://www.instagram.com/ouat_goa/',
   whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER || '',
@@ -40,6 +42,7 @@ export const IMPACT_PER_KG = [
 ]
 
 export const NAV_LINKS = [
+  { to: '/', label: 'Home' },
   { to: '/shop', label: 'Shop' },
   { to: '/story', label: 'Our Story' },
   { to: '/impact', label: 'Impact' },

@@ -24,3 +24,19 @@ export function collectionChipLabel(collection) {
   if (collection.slug === 'kitchen-storage') return 'Kitchen'
   return collection.name
 }
+
+/** Shop menu labels, in the order the menu lists them. */
+export const SHOP_MENU = [
+  { slug: 'candles', label: 'Candles' },
+  { slug: 'kitchen-storage', label: 'Kitchenware' },
+  { slug: 'glassware', label: 'Glassware' },
+  { slug: 'jewellery', label: 'Jewellery' },
+]
+
+/** Collections in Shop-menu order, each carrying its short menu `label`. */
+export function shopMenuCollections(collections) {
+  return SHOP_MENU.map(({ slug, label }) => {
+    const c = collections.find((col) => col.slug === slug)
+    return c ? { ...c, label } : null
+  }).filter(Boolean)
+}

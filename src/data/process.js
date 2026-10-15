@@ -6,7 +6,7 @@ import processReborn from '../components/images/process-reborn.png'
 export const PROCESS_STEPS = [
   {
     step: '01',
-    title: 'Rescued',
+    title: 'Collected',
     text: 'Bottles are collected from restaurants, bars and homes across Goa, sorted by colour and washed.',
     image: {
       src: processRescued,
@@ -16,7 +16,7 @@ export const PROCESS_STEPS = [
   },
   {
     step: '02',
-    title: 'Reshaped',
+    title: 'Hand-cut',
     text: 'Each bottle is scored, cut and ground by hand. No remelting, so the glass keeps its original character.',
     image: {
       src: processReshaped,
@@ -26,7 +26,7 @@ export const PROCESS_STEPS = [
   },
   {
     step: '03',
-    title: 'Reborn',
+    title: 'Finished',
     text: 'Rims are polished, candles poured, lids fitted. The bottle leaves the studio as something new.',
     image: {
       src: processReborn,

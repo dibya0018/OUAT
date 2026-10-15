@@ -5,6 +5,8 @@ const sizes = {
   md: 'text-[1.75rem] leading-[1.15] sm:text-3xl md:text-4xl',
   lg: 'text-[2rem] leading-[1.12] sm:text-4xl md:text-5xl',
   xl: 'text-[2rem] leading-[1.1] sm:text-4xl md:text-6xl',
+  /** Long hero headlines: smaller steps so whole words fit the column. */
+  hero: 'text-[1.9rem] leading-[1.12] sm:text-[2.5rem] md:text-5xl xl:text-[3.5rem] [overflow-wrap:normal] hyphens-none',
 }
 
 /**
@@ -18,25 +20,31 @@ export default function EditorialTitle({
   size = 'md',
   inverse = false,
   onDark = false,
+  stacked = false,
+  accentTone,
   className,
   id,
 }) {
   let accentClass = 'text-accent'
   let restClass = 'text-ink'
   if (onDark) {
-    accentClass = 'text-accent'
+    accentClass = 'text-accent-light'
     restClass = 'text-cream'
   } else if (inverse) {
     accentClass = 'text-cream'
     restClass = 'text-cream/95'
   }
+  if (accentTone === 'primary') accentClass = 'text-primary'
 
   return (
-    <Tag id={id} className={cx('display-title max-w-full [overflow-wrap:anywhere]', sizes[size], className)}>
-      {accent && <span className={accentClass}>{accent}</span>}
+    <Tag
+      id={id}
+      className={cx('display-title max-w-full', size !== 'hero' && '[overflow-wrap:anywhere]', sizes[size], className)}
+    >
+      {accent && <span className={cx(accentClass, stacked && 'block')}>{accent}</span>}
       {rest && (
         <>
-          {accent ? ' ' : null}
+          {accent && !stacked ? ' ' : null}
           <span className={restClass}>{rest}</span>
         </>
       )}

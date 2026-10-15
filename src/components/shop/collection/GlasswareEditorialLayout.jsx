@@ -1,17 +1,17 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Container from '../../ui/Container'
+import ProductGrid from '../../product/ProductGrid'
 import Button from '../../ui/Button'
 import EditorialTitle from '../../ui/EditorialTitle'
 import Accordion from '../../ui/Accordion'
 import CollectionStoryPanel from '../CollectionStoryPanel'
 import CollectionNewsletterBand from '../CollectionNewsletterBand'
 import CollectionSortControl from './CollectionSortControl'
-import { AddToCartButton, Crumbs, PieceCount, ProductPhoto, StockBadge } from './parts'
+import { Crumbs, PieceCount } from './parts'
 import { useCollectionPage } from './useCollectionPage'
 import { BELOW_HEADER, HEADER_PAD } from '../../../lib/collectionUi'
 import { cx } from '../../../lib/format'
-import PriceTag from '../../product/PriceTag'
 
 const FAQ = [
   {
@@ -32,36 +32,6 @@ const FAQ = [
     content: 'Orders ship from Goa within 3–5 working days, packed in recycled card.',
   },
 ]
-
-/** Shop tile with quick add: the photo carries the badge and the add button. */
-function GlassCard({ product, priority }) {
-  return (
-    <article className="group">
-      <div className="relative">
-        <Link to={`/product/${product.slug}`} className="block" aria-label={product.name}>
-          <ProductPhoto product={product} priority={priority} className="aspect-product w-full" />
-        </Link>
-        <StockBadge product={product} className="absolute top-3 left-3" />
-        <div className="absolute inset-x-3 bottom-3 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
-          <AddToCartButton
-            product={product}
-            label="Quick add"
-            className="w-full border-white bg-white/95 text-primary backdrop-blur-sm [--btn-fill:var(--color-primary)] hover:border-primary hover:text-cream"
-          />
-        </div>
-      </div>
-      <Link to={`/product/${product.slug}`} className="mt-4 block text-ink">
-        <div className="flex items-baseline justify-between gap-3">
-          <h3 className="min-w-0 font-display text-lg leading-tight">{product.name}</h3>
-          <p className="shrink-0 font-sans text-sm tabular-nums"><PriceTag product={product} /></p>
-        </div>
-        <p className="mt-1 text-xs text-ink-soft">
-          {[product.colour, product.origin && `once a ${product.origin}`].filter(Boolean).join(' · ')}
-        </p>
-      </Link>
-    </article>
-  )
-}
 
 /** Glassware — gallery shop: split hero, sticky filter bar, quick-add grid, care FAQ. */
 export default function GlasswareEditorialLayout({ collection, products, loading, collectionSlug }) {
@@ -88,9 +58,9 @@ export default function GlasswareEditorialLayout({ collection, products, loading
               <EditorialTitle as="h1" size="xl" accent={heroAccent} rest={heroRest} className="mt-4" />
               <p className="mt-6 max-w-lg text-ink-soft">{description}</p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-                <Button href={`#${editorial.piecesId}`}>Shop glassware</Button>
-                <Button to="/impact" variant="text">
-                  How it helps the planet
+                <Button href={`#${editorial.piecesId}`}>{editorial.hero.primary}</Button>
+                <Button href={`#${editorial.piecesId}`} variant="text">
+                  {editorial.hero.secondary}
                 </Button>
               </div>
               <dl className="mt-12 grid grid-cols-3 gap-4 border-t border-line pt-6">
@@ -157,23 +127,7 @@ export default function GlasswareEditorialLayout({ collection, products, loading
       {/* Grid */}
       <section className="py-12 md:py-16" aria-label="Glassware pieces">
         <Container>
-          {loading ? (
-            <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:gap-x-6 lg:grid-cols-3" aria-busy="true">
-              {[0, 1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="aspect-product w-full animate-pulse bg-sand" />
-              ))}
-            </div>
-          ) : shown.length === 0 ? (
-            <p className="py-20 text-center text-ink-soft">No pieces here yet.</p>
-          ) : (
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-12 md:gap-x-6 md:gap-y-16 lg:grid-cols-3">
-              {shown.map((product, i) => (
-                <li key={product.id} className="min-w-0">
-                  <GlassCard product={product} priority={i < 3} />
-                </li>
-              ))}
-            </ul>
-          )}
+          <ProductGrid products={shown} loading={loading} columns={4} />
         </Container>
       </section>
 

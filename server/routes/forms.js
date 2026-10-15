@@ -24,16 +24,18 @@ router.post('/contact', async (req, res, next) => {
   try {
     const name = String(req.body?.name ?? '').trim()
     const email = String(req.body?.email ?? '').trim()
+    const subject = String(req.body?.subject ?? '').trim()
     const message = String(req.body?.message ?? '').trim()
     const errors = {}
     if (!name) errors.name = 'This field is required.'
     if (!email || !EMAIL_RE.test(email)) errors.email = 'Please enter a valid email address.'
-    if (!message || message.length < 10) errors.message = 'Please enter at least 10 characters.'
+    if (!subject) errors.subject = 'This field is required.'
     if (Object.keys(errors).length) return res.status(400).json({ ok: false, errors })
 
+    // The table has no subject column, so the subject leads the stored message (message itself is optional).
     await query(
       'INSERT INTO contact_messages (name, email, message) VALUES (:name, :email, :message)',
-      { name, email, message },
+      { name, email, message: message ? `Subject: ${subject}\n\n${message}` : `Subject: ${subject}` },
     )
     res.json({ ok: true })
   } catch (err) {
@@ -46,27 +48,22 @@ router.post('/enquiries', async (req, res, next) => {
     const payload = req.body ?? {}
     const name = String(payload.name ?? '').trim()
     const email = String(payload.email ?? '').trim()
-    const company = String(payload.company ?? '').trim()
-    const businessType = String(payload.businessType ?? '').trim()
-    const quantity = String(payload.quantity ?? '').trim()
-    const productInterest = String(payload.productInterest ?? '').trim()
+    const subject = String(payload.subject ?? '').trim()
     const message = String(payload.message ?? '').trim()
 
     const errors = {}
     if (!name) errors.name = 'This field is required.'
     if (!email || !EMAIL_RE.test(email)) errors.email = 'Please enter a valid email address.'
-    if (!company) errors.company = 'This field is required.'
-    if (!businessType) errors.businessType = 'This field is required.'
-    if (!quantity) errors.quantity = 'This field is required.'
-    if (!productInterest) errors.productInterest = 'This field is required.'
-    if (message && message.length < 10) errors.message = 'Please enter at least 10 characters.'
+    if (!subject) errors.subject = 'This field is required.'
     if (Object.keys(errors).length) return res.status(400).json({ ok: false, errors })
 
+    // The gifting form only asks for name, email, subject and an optional message. The table's older
+    // business columns are NOT NULL, so they get fixed gifting values and the subject leads the message.
     await query(
       `INSERT INTO b2b_enquiries
         (name, email, company, business_type, quantity, product_interest, message)
-       VALUES (:name, :email, :company, :businessType, :quantity, :productInterest, :message)`,
-      { name, email, company, businessType, quantity, productInterest, message: message || null },
+       VALUES (:name, :email, '', 'corporate-gifting', '', 'gift-boxes', :message)`,
+      { name, email, message: message ? `Subject: ${subject}\n\n${message}` : `Subject: ${subject}` },
     )
     res.json({ ok: true })
   } catch (err) {

@@ -8,7 +8,7 @@ import reborn from '../images/process-reborn.png'
 import './Manifesto.css'
 
 /** The closing ticker: the brand line in two halves, then the three steps of the making. */
-const TICKER = ['Once discarded', 'Now designed', 'Rescued', 'Reshaped', 'Reborn']
+const TICKER = ['Once discarded', 'Now designed', 'Collected', 'Hand-cut', 'Finished']
 const TICKER_GAP = 'clamp(1.5rem, 4.5vw, 4.5rem)'
 
 /**

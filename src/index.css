@@ -151,6 +151,11 @@
     text-shadow: 0 1px 2px rgb(0 0 0 / 0.55), 0 4px 24px rgb(0 0 0 / 0.35);
   }
 
+  /* Dark hero copy over a light veil: a soft cream halo keeps it crisp on busy photo areas. */
+  .hero-copy-light {
+    text-shadow: 0 0 18px rgb(240 233 211 / 0.7);
+  }
+
   /* Alternating section backgrounds: white (default) + warm cream bands. */
   .section-cream {
     @apply bg-cream;

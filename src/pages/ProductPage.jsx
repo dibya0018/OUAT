@@ -27,6 +27,7 @@ import { getCollectionPath } from '../lib/collections'
 import { stockState } from '../lib/collectionUi'
 import { defaultOption, offerFor, packOptions } from '../lib/productOffer'
 import { SITE } from '../lib/site'
+import { PRODUCT_FAQ } from '../data/productFaq'
 
 /**
  * Loads the product for the current slug, then renders <ProductDetail>.
@@ -400,6 +401,23 @@ function ProductDetail({ product, collection, related }) {
       <ProductImpact product={product} />
 
       <ProductReviews productId={product.id} productName={product.name} onLoaded={onReviewsLoaded} />
+
+      {/* FAQ */}
+      <section className="border-t border-line py-24 md:py-32" aria-labelledby="faq-title">
+        <Container>
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-12">
+            <Reveal className="md:col-span-4">
+              <p className="eyebrow">Good to know</p>
+              <h2 id="faq-title" className="mt-4 text-3xl md:text-4xl">
+                Frequently asked questions
+              </h2>
+            </Reveal>
+            <Reveal delay={100} className="md:col-span-7 md:col-start-6">
+              <Accordion items={PRODUCT_FAQ} />
+            </Reveal>
+          </div>
+        </Container>
+      </section>
 
       {/* Related */}
       {related.length > 0 && (

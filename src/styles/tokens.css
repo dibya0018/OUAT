@@ -20,6 +20,8 @@
   /* Terracotta emphasis on display titles (reference: “Best Sellers …”). */
   --color-accent: #a05d49;
   --color-accent-hover: #8b4f3e;
+  /* Light sage-green accent for headlines set over photos (terracotta is too dark there). */
+  --color-accent-light: #bcd99b;
   /* Cream bands; sand = subtle fill for placeholders on white pages. */
   --color-sand: #f3f1ec;
   --color-line: #4d694e33;
