@@ -9,20 +9,13 @@ import { useCollectionPage } from './useCollectionPage'
 import { HEADER_PAD } from '../../../lib/collectionUi'
 import { cx } from '../../../lib/format'
 
-/** The three scents in the range, as described on the product pages. */
-const SCENTS = [
-  { name: 'Cedar & orange peel', mood: 'Warm and woody, for the evening.', glass: 'Amber glass' },
-  { name: 'Sea salt & sage', mood: 'Clean and grounding, for the morning.', glass: 'Green glass' },
-  { name: 'Unscented', mood: 'Only the glow, nothing else.', glass: 'Clear glass' },
-]
-
 const RITUAL = [
   { title: 'Trim the wick', text: 'Cut it to 5 mm before each burn for a steady, clean flame.' },
   { title: 'Let it rest', text: 'Burn for no more than four hours at a time, away from drafts.' },
   { title: 'Keep the glass', text: 'When the wax is gone, wash it out. The bottle stays on as a tumbler or vase.' },
 ]
 
-/** Candles — after-dark mood: full-bleed hero, scent guide, one feature row per candle, burn ritual. */
+/** Candles — after-dark mood: full-bleed hero, product grid, burn ritual. */
 export default function CandlesEditorialLayout({ collection, products, loading, collectionSlug }) {
   const { editorial, banner, sort, setSort, sortOptions, heroAccent, heroRest, description } =
     useCollectionPage(collectionSlug, collection)
@@ -50,13 +43,14 @@ export default function CandlesEditorialLayout({ collection, products, loading, 
           <p className="eyebrow text-accent">{editorial.heroEyebrow}</p>
           <EditorialTitle
             as="h1"
-            size="xl"
+            size="lg"
+            stacked
             inverse
             accent={heroAccent}
             rest={heroRest}
             className="hero-copy mt-5 max-w-3xl"
           />
-          <p className="mt-6 max-w-xl text-cream/85">{description}</p>
+          <p className="mt-6 max-w-2xl text-balance text-lg text-cream/85">{description}</p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-8">
             <a
               href={`#${editorial.piecesId}`}
@@ -64,34 +58,7 @@ export default function CandlesEditorialLayout({ collection, products, loading, 
             >
               {editorial.hero.primary}
             </a>
-            <a href={`#${editorial.piecesId}`} className="link-underline font-sans text-sm tracking-wide text-cream/85">
-              {editorial.hero.secondary}
-            </a>
           </div>
-        </Container>
-      </section>
-
-      {/* Scent guide */}
-      <section className="border-y border-cream/10 py-14 md:py-20" aria-labelledby="scent-guide">
-        <Container>
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="eyebrow text-accent">Scent guide</p>
-              <h2 id="scent-guide" className="mt-3 font-display text-3xl text-cream md:text-4xl">
-                Three quiet scents
-              </h2>
-            </div>
-            <p className="max-w-sm text-sm text-cream/60">100% soy wax and a cotton wick, poured by hand in Goa.</p>
-          </div>
-          <ul className="mt-10 grid grid-cols-1 divide-y divide-cream/10 border-y border-cream/10 md:grid-cols-3 md:divide-x md:divide-y-0">
-            {SCENTS.map((s, i) => (
-              <Reveal as="li" key={s.name} delay={i * 80} className="py-8 md:px-8 md:first:pl-0 md:last:pr-0">
-                <p className="font-sans text-xs uppercase tracking-eyebrow text-cream/50">{s.glass}</p>
-                <h3 className="mt-3 font-display text-2xl text-cream">{s.name}</h3>
-                <p className="mt-2 text-sm text-cream/70">{s.mood}</p>
-              </Reveal>
-            ))}
-          </ul>
         </Container>
       </section>
 

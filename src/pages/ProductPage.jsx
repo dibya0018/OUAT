@@ -5,6 +5,8 @@ import Container from '../components/ui/Container'
 import EditorialTitle, { splitEditorialTitle } from '../components/ui/EditorialTitle'
 import Button from '../components/ui/Button'
 import Accordion from '../components/ui/Accordion'
+import RichText from '../components/ui/RichText'
+import { productTitleParts } from '../lib/productTitle'
 import Icon from '../components/ui/Icon'
 import Reveal from '../components/ui/Reveal'
 import ProductGallery from '../components/product/ProductGallery'
@@ -143,7 +145,7 @@ function ProductDetail({ product, collection, related }) {
     name: product.name,
     description: product.shortStory,
     sku: product.id,
-    brand: { '@type': 'Brand', name: `${SITE.name} — ${SITE.longName}` },
+    brand: { '@type': 'Brand', name: `${SITE.name} ${SITE.longName}` },
     image: product.images.filter((i) => i.src).map((i) => i.src),
     material: product.details.material,
     offers: {
@@ -164,13 +166,21 @@ function ProductDetail({ product, collection, related }) {
   }
 
   const isJewellery = collection?.slug === 'jewellery'
+  const titleParts = productTitleParts(product.name)
 
-  const accordionItems = [
-    { title: 'Material', content: product.details.material },
-    { title: 'Size', content: product.details.size },
-    { title: 'Care', content: product.details.care },
-    { title: 'Shipping', content: product.details.shipping },
-  ]
+  // Per-product tabs (Key Features, Care Instructions, …) when the catalogue has them; else the four basics.
+  const accordionItems = product.details.sections?.length
+    ? product.details.sections.map((s) => ({ title: s.title, content: <RichText text={s.content} /> }))
+    : [
+        { title: 'Material', content: product.details.material },
+        { title: 'Size', content: product.details.size },
+        { title: 'Care', content: product.details.care },
+        { title: 'Shipping', content: product.details.shipping },
+      ].filter((item) => item.content)
+
+  // Show the description only when it adds something beyond the lead line.
+  const showDescription =
+    product.description && !product.description.trim().startsWith(product.shortStory?.trim() || '\u0000')
 
   return (
     <>
@@ -211,7 +221,7 @@ function ProductDetail({ product, collection, related }) {
               )}
               <li aria-hidden="true">/</li>
               <li aria-current="page" className="text-ink">
-                {product.name}
+                {titleParts.title}
               </li>
             </ol>
           </nav>
@@ -231,12 +241,10 @@ function ProductDetail({ product, collection, related }) {
                     {isJewellery ? 'For her' : collection.name}
                   </p>
                 )}
-                <EditorialTitle
-                  as="h1"
-                  size="md"
-                  className="mt-3"
-                  {...splitEditorialTitle(product.name)}
-                />
+                <EditorialTitle as="h1" size="md" className="mt-3" {...splitEditorialTitle(titleParts.title)} />
+                {titleParts.details && (
+                  <p className="mt-2 text-sm leading-relaxed tracking-wide text-ink-soft">{titleParts.details}</p>
+                )}
                 <p className="mt-4 font-sans text-lg">
                   <PriceTag product={product} option={option} />
                 </p>
@@ -247,8 +255,12 @@ function ProductDetail({ product, collection, related }) {
                   </a>
                 )}
 
-                <p className="mt-8 text-base leading-relaxed text-ink md:text-lg">{product.shortStory}</p>
-                <p className="mt-4 text-sm leading-relaxed text-ink-soft">{product.description}</p>
+                {product.shortStory && (
+                  <p className="mt-8 text-base leading-relaxed text-ink md:text-lg">{product.shortStory}</p>
+                )}
+                {showDescription && (
+                  <RichText text={product.description} className="mt-4 text-sm leading-relaxed text-ink-soft" />
+                )}
                 {isJewellery && collection?.audienceLine && (
                   <p className="mt-6 text-base leading-relaxed text-ink">
                     {collection.audienceLine}
@@ -351,7 +363,7 @@ function ProductDetail({ product, collection, related }) {
                       </span>
                       <span className="mt-1 block text-xs text-ink-soft">
                         {isJewellery
-                          ? 'Arrives in a cotton pouch inside recycled card — perfect for her birthday, your best friend, or yourself.'
+                          ? 'Arrives in a cotton pouch inside recycled card. Perfect for her birthday, your best friend, or yourself.'
                           : 'Wrapped in recycled card with a handwritten note. Add your message at checkout.'}
                       </span>
                     </span>
@@ -387,7 +399,7 @@ function ProductDetail({ product, collection, related }) {
       >
         <div className="flex items-center gap-4">
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm text-ink">{product.name}</p>
+            <p className="truncate text-sm text-ink">{titleParts.title}</p>
             <p className="text-sm tabular-nums text-ink-soft">
               <PriceTag product={product} option={option} />
             </p>
@@ -398,7 +410,7 @@ function ProductDetail({ product, collection, related }) {
         </div>
       </div>
 
-      <ProductImpact product={product} />
+      <ProductImpact />
 
       <ProductReviews productId={product.id} productName={product.name} onLoaded={onReviewsLoaded} />
 

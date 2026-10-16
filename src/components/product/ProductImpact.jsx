@@ -1,119 +1,83 @@
 import Container from '../ui/Container'
 import Reveal from '../ui/Reveal'
+import SectionHeading from '../ui/SectionHeading'
 
-/** Recycling loop shared by the two "what it is made of" marks; the centre says which. */
-const loop = (
-  <>
-    <path d="M38 24a14 14 0 0 1-23.9 9.9" />
-    <path d="M14.1 39.5v-5.6h5.6" />
-    <path d="M10 24a14 14 0 0 1 23.9-9.9" />
-    <path d="M33.9 8.5v5.6h-5.6" />
-  </>
-)
-
+/** Line marks drawn on a 48×48 grid, 1.5px stroke, so all four read as one set. */
 const ICONS = {
-  waste: (
-    <>
-      {loop}
-      {/* bottle */}
-      <path d="M22.3 16.5h3.4v3.2l1.8 2.8v8a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-8l1.8-2.8z" />
-    </>
-  ),
-  natural: (
-    <>
-      {loop}
-      {/* leaf */}
-      <path d="M24 32c-5.5-2.6-6-8.6 0-15 6 6.4 5.5 12.4 0 15z" />
-      <path d="M24 32v-8.5" />
-    </>
-  ),
-  lowImpact: (
-    <>
-      <path d="M24 25c-6-3-6.5-10 0-17.5 6.5 7.5 6 14.5 0 17.5z" />
-      <path d="M24 25V14" />
-      <path d="M7 27c4.5 0 8 2 10 5.5l3 5.5" />
-      <path d="M41 27c-4.5 0-8 2-10 5.5l-3 5.5" />
-      <path d="M17 41h14" />
-    </>
-  ),
-  ethical: (
-    <>
-      <circle cx="24" cy="24" r="18" />
-      <path d="M24 13.5v20" />
-      <path d="M19 33.5h10" />
-      <path d="M15 17.5h18" />
-      <path d="M11.5 26.5l3.5-9 3.5 9a3.5 2.6 0 0 1-7 0z" />
-      <path d="M29.5 26.5l3.5-9 3.5 9a3.5 2.6 0 0 1-7 0z" />
-    </>
-  ),
+  // Open hand, palm facing out.
   handcrafted: (
     <>
-      <path
-        d="M24 41S7 30.5 7 18.5a8.5 8.5 0 0 1 17-2.5 8.5 8.5 0 0 1 17 2.5C41 30.5 24 41 24 41z"
-        strokeDasharray="2 3"
-      />
-      {/* needle and thread */}
-      <path d="M17 30l14-14" />
-      <path d="M31 16l2.5-2.5" />
-      <path d="M17 30c-3 1-3.5 4-1 5s5-1.5 8-1 4 2 6 1.5" />
+      <path d="M17 25V13.5a2.5 2.5 0 0 1 5 0V23" />
+      <path d="M22 22V10.5a2.5 2.5 0 0 1 5 0V22" />
+      <path d="M27 22V12.5a2.5 2.5 0 0 1 5 0V24" />
+      <path d="M32 24v-6.5a2.5 2.5 0 0 1 5 0v10C37 35.5 31.5 41 24.5 41h-1c-4 0-6.6-1.6-8.8-4.6L9.6 29.3a2.6 2.6 0 0 1 3.9-3.4L17 29" />
     </>
   ),
+  // Two women side by side.
   women: (
     <>
-      <path d="M36.7 11.3A18 18 0 1 0 42 24" />
-      <path d="M40 4.5v7" />
-      <path d="M36.5 8h7" />
-      <circle cx="24" cy="20" r="6" />
-      <path d="M24 26v10" />
-      <path d="M20 31.5h8" />
+      <circle cx="17" cy="15" r="5" />
+      <path d="M8 38v-3.5a9 9 0 0 1 18 0V38" />
+      <circle cx="32" cy="17" r="4.5" />
+      <path d="M29 26.4a8 8 0 0 1 11 7.6V38" />
+    </>
+  ),
+  // A bottle held inside a closed loop of arrows.
+  waste: (
+    <>
+      <path d="M39 24a15 15 0 0 1-25.6 10.6" />
+      <path d="M13.4 40.2v-5.6H19" />
+      <path d="M9 24a15 15 0 0 1 25.6-10.6" />
+      <path d="M34.6 7.8v5.6H29" />
+      <path d="M22 15.5h4v3.6l2 3.1v9.3a1.5 1.5 0 0 1-1.5 1.5h-5a1.5 1.5 0 0 1-1.5-1.5v-9.3l2-3.1z" />
+      <path d="M20 26h8" />
+    </>
+  ),
+  // A single leaf with its vein, for lower-energy making.
+  leaf: (
+    <>
+      <path d="M11 37C11 21 22 11 38 10c0 16-10 27-25.5 27z" />
+      <path d="M11 37c6.5-8 13-14 21-20" />
+      <path d="M20 28.5l-.5-6M25.5 23.5l-.5-5.5M20 28.5l6 .5M25.5 23.5l5.5.5" />
     </>
   ),
 }
 
-/** Candles are poured from soy wax; everything else leads with the reclaimed glass. */
-function impactPoints(product) {
-  const first =
-    product.collection === 'candles'
-      ? { icon: 'natural', label: '100% natural & quickly renewable' }
-      : { icon: 'waste', label: 'Made from waste' }
-  return [
-    first,
-    { icon: 'lowImpact', label: 'Low impact production process' },
-    { icon: 'ethical', label: 'Ethical & socially responsible' },
-    { icon: 'handcrafted', label: 'Handcrafted & creates jobs' },
-    { icon: 'women', label: 'Empowers women' },
-  ]
-}
+const POINTS = [
+  { icon: 'handcrafted', label: 'Handcrafted', text: 'Cut, ground and finished by hand in our Goa studio.' },
+  { icon: 'women', label: 'Women-Owned', text: 'A studio owned and run by women.' },
+  { icon: 'waste', label: 'Waste Reimagined', text: 'Every piece begins as a discarded glass bottle.' },
+  { icon: 'leaf', label: 'Lower-Impact Making', text: 'No remelting, and minimal electricity.' },
+]
 
-/** "This product makes impact": five marks, the first chosen by what the product is made of. */
-export default function ProductImpact({ product }) {
+/** "Made with Purpose": four brand promises under every product, in the same style as the Impact page values. */
+export default function ProductImpact() {
   return (
     <section className="section-cream border-t border-line py-20 md:py-28" aria-labelledby="impact-title">
       <Container>
         <Reveal>
-          <p className="eyebrow">Impact</p>
-          <h2 id="impact-title" className="mt-4 text-3xl md:text-4xl">
-            This product makes impact
-          </h2>
+          <SectionHeading eyebrow="Our promise" titleAccent="Made with" titleRest="Purpose" id="impact-title" />
         </Reveal>
-        <ul className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:mt-16 lg:grid-cols-5">
-          {impactPoints(product).map((point, i) => (
-            <Reveal as="li" key={point.icon} delay={i * 60} className="flex flex-col items-center text-center max-sm:last:odd:col-span-2">
-              <svg
-                width="64"
-                height="64"
-                viewBox="0 0 48 48"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-                className="text-primary"
-              >
-                {ICONS[point.icon]}
-              </svg>
-              <p className="mt-5 max-w-[11rem] text-sm text-ink">{point.label}</p>
+        <ul className="mt-12 grid grid-cols-1 gap-x-10 gap-y-10 sm:grid-cols-2 md:mt-16 lg:grid-cols-4">
+          {POINTS.map((point, i) => (
+            <Reveal as="li" key={point.icon} delay={i * 80} className="border-t border-line pt-6">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-cream">
+                <svg
+                  width="26"
+                  height="26"
+                  viewBox="0 0 48 48"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.25"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  {ICONS[point.icon]}
+                </svg>
+              </span>
+              <h3 className="mt-5 font-display text-2xl">{point.label}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-ink-soft">{point.text}</p>
             </Reveal>
           ))}
         </ul>

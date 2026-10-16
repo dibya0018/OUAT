@@ -89,7 +89,7 @@ export default function CartPage() {
                     Proceed to checkout
                   </Button>
                   <p className="mt-4 text-xs text-ink-soft">
-                    Pieces ship from Goa within 3–5 working days, packed in recycled card.
+                    Pieces ship from Goa within 3 to 5 working days, packed in recycled card.
                   </p>
                 </div>
               </aside>

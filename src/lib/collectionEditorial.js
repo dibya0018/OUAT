@@ -24,7 +24,6 @@ export const COLLECTION_EDITORIAL = {
       rest: 'I Was a Bottle',
       lede: 'Now I’m ready to raise a glass to new beginnings. Every sip celebrates thoughtful design and the beauty of upcycling.',
       primary: 'Shop Glassware',
-      secondary: 'Explore All Glassware',
     },
     heroOnDark: false,
     heroPrimaryCta: { label: 'Discover the collection', href: '#collection-pieces' },
@@ -43,12 +42,12 @@ export const COLLECTION_EDITORIAL = {
         {
           icon: 'gift',
           title: 'Food-safe glass',
-          text: 'Ready for everyday pours — no remelting, low energy.',
+          text: 'Ready for everyday pours. No remelting, low energy.',
         },
         {
           icon: 'mail',
           title: 'Ships from Goa',
-          text: 'Packed with care; 3–5 working days across India.',
+          text: 'Packed with care; 3 to 5 working days across India.',
         },
         {
           icon: 'sparkle',
@@ -59,7 +58,7 @@ export const COLLECTION_EDITORIAL = {
     },
     story: {
       eyebrow: 'From bottle to tumbler',
-      title: 'Cut, ground and polished — glass with a past.',
+      title: 'Cut, ground and polished: glass with a past.',
       body: 'We rescue bottles from restaurants and celebrations, then reshape them into tumblers, carafes and glasses you will reach for daily. Nothing is remelted; the colour and character stay.',
       image: processReshaped,
       imageAlt: 'Artisan reshaping reclaimed glass at the studio',
@@ -81,7 +80,7 @@ export const COLLECTION_EDITORIAL = {
         {
           label: 'Carafe',
           slug: 'carafe',
-          blurb: 'Pour at the table — a bottle reborn as a centrepiece.',
+          blurb: 'Pour at the table, a bottle reborn as a centrepiece.',
           imageSrc: processReshaped,
           imageAlt: 'Reclaimed glass carafe',
         },
@@ -110,7 +109,6 @@ export const COLLECTION_EDITORIAL = {
       rest: 'I Was a Beer Bottle',
       lede: 'Now I glow with a new purpose, bringing warmth and ambience to your home.',
       primary: 'Shop Candles',
-      secondary: 'Explore All Candles',
     },
     heroOnDark: true,
     heroPrimaryCta: { label: 'Discover the collection', href: '#collection-pieces' },
@@ -125,7 +123,7 @@ export const COLLECTION_EDITORIAL = {
         {
           icon: 'sparkle',
           title: '100% soy wax',
-          text: 'Clean burn with cotton wicks — poured by hand.',
+          text: 'Clean burn with cotton wicks, poured by hand.',
         },
         {
           icon: 'gift',
@@ -135,19 +133,19 @@ export const COLLECTION_EDITORIAL = {
         {
           icon: 'mail',
           title: 'Ships from Goa',
-          text: 'Gift-ready packaging; 3–5 working days.',
+          text: 'Gift-ready packaging; 3 to 5 working days.',
         },
         {
           icon: 'sparkle',
           title: 'Quiet scents',
-          text: 'Cedar, sea salt & sage — or unscented.',
+          text: 'Cedar, sea salt & sage, or unscented.',
         },
       ],
     },
     story: {
       eyebrow: 'Evening ritual',
       title: 'Light poured into bottles that already hold memories.',
-      body: 'Our candles are hand-poured into reclaimed glass — amber, green and clear. They glow through the same walls that once held wine and whisky, then become tumblers when the wax is finished.',
+      body: 'Our candles are hand-poured into reclaimed glass in amber, green and clear. They glow through the same walls that once held wine and whisky, then become tumblers when the wax is finished.',
       image: processReborn,
       imageAlt: 'Finished candle in reclaimed glass on a warm surface',
       imagePosition: 'object-[55%_center] lg:object-right',
@@ -168,9 +166,9 @@ export const COLLECTION_EDITORIAL = {
         {
           label: 'Candle trio',
           slug: 'candle-trio',
-          blurb: 'Three scents, three tones — our most-gifted set.',
+          blurb: 'Three scents, three tones. Our most-gifted set.',
           imageSrc: goaSunset,
-          imageAlt: 'Golden hour — mood for gifting candles',
+          imageAlt: 'Golden hour, a mood for gifting candles',
         },
       ],
     },
@@ -197,7 +195,6 @@ export const COLLECTION_EDITORIAL = {
       rest: 'I Was a Wine Bottle',
       lede: 'Now I sprout, sip and store, bringing a little more beauty and purpose to your everyday rituals.',
       primary: 'Shop Kitchenware',
-      secondary: 'Explore Sprouters, Sippers & Storage Jars',
     },
     heroOnDark: false,
     heroPrimaryCta: { label: 'Discover the collection', href: '#collection-pieces' },
@@ -221,7 +218,7 @@ export const COLLECTION_EDITORIAL = {
         {
           icon: 'mail',
           title: 'Ships from Goa',
-          text: 'Packed for shelves; 3–5 working days.',
+          text: 'Packed for shelves; 3 to 5 working days.',
         },
         {
           icon: 'sparkle',
@@ -233,7 +230,7 @@ export const COLLECTION_EDITORIAL = {
     story: {
       eyebrow: 'Rescued & reshaped',
       title: 'Bottles gathered, then made useful for daily rituals.',
-      body: 'From storage jars to pourers and planters — we cut and finish rescued glass for the pantry and counter. Stack them on an open shelf and let the colour do the decorating.',
+      body: 'From storage jars to pourers and planters, we cut and finish rescued glass for the pantry and counter. Stack them on an open shelf and let the colour do the decorating.',
       image: processRescued,
       imageAlt: 'Rescued bottles before reshaping into kitchen vessels',
       imagePosition: 'object-[65%_center] lg:object-right',
@@ -284,7 +281,6 @@ export const COLLECTION_EDITORIAL = {
       lede: 'Now I’m a little piece of wearable art. Crafted from upcycled wine, champagne and gin bottles, each piece is transformed into a timeless treasure with its own story to tell.',
       tagline: 'Wear the Change',
       primary: 'Shop Jewellery',
-      secondary: 'Explore All Jewellery',
     },
     heroOnDark: false,
     heroPrimaryCta: { label: 'Discover the collection', href: '#jewellery-pieces' },
@@ -298,7 +294,7 @@ export const COLLECTION_EDITORIAL = {
         {
           icon: 'sparkle',
           title: 'One of a kind',
-          text: 'Every sea-glass fragment is unique — shaped by hand in Goa.',
+          text: 'Every sea-glass fragment is unique, shaped by hand in Goa.',
         },
         {
           icon: 'gift',
@@ -308,7 +304,7 @@ export const COLLECTION_EDITORIAL = {
         {
           icon: 'mail',
           title: 'Ships from Goa',
-          text: 'Packed with care; delivery in 3–5 working days across India.',
+          text: 'Packed with care; delivery in 3 to 5 working days across India.',
         },
         {
           icon: 'sparkle',
@@ -320,7 +316,7 @@ export const COLLECTION_EDITORIAL = {
     story: {
       eyebrow: 'The essence of Goa',
       title: 'Fragments from the bench, worn close to the skin.',
-      body: 'Our glassware leaves beautiful offcuts. We tumble them smooth — like sea glass — and set each piece in brass by hand. No two fragments match; that is the point.',
+      body: 'Our glassware leaves beautiful offcuts. We tumble them smooth, like sea glass, and set each piece in brass by hand. No two fragments match; that is the point.',
       image: jewelleryStory,
       imageAlt: 'Woman wearing sea-glass jewellery on a Goa beach at sunset',
       imagePosition: 'object-[72%_center] lg:object-right',

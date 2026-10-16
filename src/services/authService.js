@@ -37,7 +37,7 @@ export async function login(values) {
   } catch {
     return {
       ok: false,
-      errors: { form: 'Network error — is the API running on port 3001?' },
+      errors: { form: 'Network error. Please try again in a moment.' },
     }
   }
 }

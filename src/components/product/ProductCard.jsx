@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { cx } from '../../lib/format'
 import PriceTag from './PriceTag'
 import { productDisplayImages } from '../../lib/productImages'
+import { productTitleParts } from '../../lib/productTitle'
 
 /**
  * Product tile: 4:5 image (optional second image on hover), name, price.
@@ -11,6 +12,7 @@ export default function ProductCard({ product, className, priority = false }) {
   const coverSrc = primary?.src
   const coverAlt = primary?.alt ?? product.name
   const coverTone = primary?.tone ?? 'sand'
+  const { title } = productTitleParts(product.name)
 
   return (
     <div className={cx('product-card group', className)}>
@@ -33,7 +35,7 @@ export default function ProductCard({ product, className, priority = false }) {
               )}
             >
               <span className="px-4 text-center font-sans text-[0.65rem] uppercase tracking-eyebrow opacity-60">
-                {product.name}
+                {title}
               </span>
             </div>
           )}
@@ -56,11 +58,10 @@ export default function ProductCard({ product, className, priority = false }) {
         <div className="product-card__meta mt-3 sm:mt-4">
           <div className="flex items-baseline justify-between gap-3">
             <h3 className="line-clamp-2 min-w-0 flex-1 font-display text-base leading-tight font-normal sm:text-lg">
-              {product.name}
+              {title}
             </h3>
             <p className="shrink-0 font-sans text-sm tabular-nums"><PriceTag product={product} /></p>
           </div>
-          {product.origin && <p className="mt-1 text-xs text-ink-soft">Once a {product.origin}</p>}
         </div>
       </Link>
     </div>

@@ -46,7 +46,7 @@ export default function InstagramGrid() {
                 target="_blank"
                 rel="noreferrer"
                 className="zoom-media block"
-                aria-label={`${tile.alt} — view on Instagram`}
+                aria-label={`${tile.alt}, view on Instagram`}
               >
                 <ImagePlaceholder ratio="square" src={tile.src} alt="" tone={tile.tone} />
               </a>

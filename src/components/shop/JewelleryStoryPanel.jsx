@@ -16,7 +16,7 @@ export default function JewelleryStoryPanel() {
               Fragments from the bench, worn close to the skin.
             </h2>
             <p className="mt-6 text-base leading-relaxed text-ink-soft md:text-[1.05rem]">
-              Our glassware leaves beautiful offcuts. We tumble them smooth — like sea glass — and set each piece in
+              Our glassware leaves beautiful offcuts. We tumble them smooth, like sea glass, and set each piece in
               brass by hand. No two fragments match; that is the point.
             </p>
             <Link to="/story" className="link-underline mt-8 inline-block text-sm text-primary">

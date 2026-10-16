@@ -27,7 +27,7 @@ const TAGS = {
 const HOLD_ZOOM =
   'motion-safe:group-hover:[transform:scale(1.04)] motion-safe:group-focus-within:[transform:scale(1.04)]'
 
-/** Home shelf tile: photograph, a quiet stock tag, add to cart, then name, origin and price. */
+/** Home shelf tile: photograph, a quiet stock tag, add to cart, then name and price. */
 export default function HomeProductTile({ product, priority = false }) {
   const { addItem } = useCart()
   const { primary, hover, hasHoverSwap } = productDisplayImages(product.images)
@@ -107,8 +107,7 @@ export default function HomeProductTile({ product, priority = false }) {
         </button>
       </div>
 
-      <div className={cx('flex items-center justify-between gap-4', product.origin ? 'mt-1' : '[@media(hover:none)]:mt-1')}>
-        {product.origin && <p className="min-w-0 text-[0.8125rem] leading-5 text-ink-soft">Once a {product.origin}</p>}
+      <div className="flex items-center justify-between gap-4 [@media(hover:none)]:mt-1">
         {/* Touch screens have no hover, so the action stays in view. The negative margin gives a 44px target on a one-line row. */}
         <button
           type="button"

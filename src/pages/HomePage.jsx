@@ -11,7 +11,7 @@ import { SITE } from '../lib/site'
 const ORG_JSON_LD = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: `${SITE.name} — ${SITE.longName}`,
+  name: `${SITE.name} ${SITE.longName}`,
   url: SITE.url,
   logo: `${SITE.url}/favicon.svg`,
   email: SITE.email,

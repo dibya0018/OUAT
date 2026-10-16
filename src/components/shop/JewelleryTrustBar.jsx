@@ -6,7 +6,7 @@ const ITEMS = [
   {
     icon: 'sparkle',
     title: 'One of a kind',
-    text: 'Every sea-glass fragment is unique — shaped by hand in Goa.',
+    text: 'Every sea-glass fragment is unique, shaped by hand in Goa.',
   },
   {
     icon: 'gift',
@@ -16,7 +16,7 @@ const ITEMS = [
   {
     icon: 'mail',
     title: 'Ships from Goa',
-    text: 'Packed with care; delivery in 3–5 working days across India.',
+    text: 'Packed with care; delivery in 3 to 5 working days across India.',
   },
   {
     icon: 'sparkle',

@@ -331,7 +331,7 @@ export default function CheckoutModal() {
             <h2 id="checkout-title" className="font-display text-xl">
               Checkout
             </h2>
-            <p className="text-xs text-ink-soft">Stay on this page — no redirect.</p>
+            <p className="text-xs text-ink-soft">Stay on this page, no redirect.</p>
           </div>
           <button
             ref={closeRef}
@@ -490,7 +490,7 @@ export default function CheckoutModal() {
                       {form.line1}
                       {form.line2 ? `, ${form.line2}` : ''}
                       <br />
-                      {form.city}, {form.state} — {form.pincode}
+                      {form.city}, {form.state} {form.pincode}
                       <br />
                       +91 {form.phone}
                     </p>
@@ -548,7 +548,7 @@ export default function CheckoutModal() {
                           <Icon name="check" size={16} className="mt-0.5 shrink-0 text-primary" />
                           <span>
                             Coupon <strong className="font-medium">{couponApplied.code}</strong> applied. You save{' '}
-                            {formatPrice(discount)} — new total {formatPrice(total)}.
+                            {formatPrice(discount)}. New total {formatPrice(total)}.
                           </span>
                         </span>
                         <button type="button" className="link-underline shrink-0 text-xs text-primary" onClick={removeCoupon}>

@@ -7,7 +7,7 @@ export function productImagesPublic(product) {
   const files = galleryFilesForProduct(product.slug, product.collection)
   return files.map((file, i) => ({
     src: `/images/${file}`,
-    alt: `${product.name} — ${IMAGE_FILES[file] ?? 'product photo'}`,
+    alt: `${product.name}, ${IMAGE_FILES[file] ?? 'product photo'}`,
     tone: TONES[i % TONES.length],
   }))
 }

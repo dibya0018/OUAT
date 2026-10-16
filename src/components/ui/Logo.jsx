@@ -19,7 +19,7 @@ export default function Logo({ inverse = false, className, fallbackClassName }) 
   return (
     <img
       src={LOGO_SRC}
-      alt={`${SITE.name} — ${SITE.longName}`}
+      alt={`${SITE.name} ${SITE.longName}`}
       className={cx('block w-auto transition-[filter] duration-200', inverse && 'brightness-0 invert', className)}
       onError={() => setFailed(true)}
     />

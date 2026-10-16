@@ -89,7 +89,7 @@ export default function Footer() {
 
         <div className="mt-12 border-t border-white/20 pt-6 text-xs leading-relaxed text-cream/60 md:mt-14 md:flex md:items-center md:justify-between md:gap-8">
           <p className="md:max-w-[min(100%,28rem)]">
-            © {YEAR} {SITE.name} — {SITE.longName}. All rights reserved.
+            © {YEAR} {SITE.name} {SITE.longName}. All rights reserved.
           </p>
           <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 md:mt-0 md:justify-end">
             {POLICY_LINKS.map((l) => (

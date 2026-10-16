@@ -4,7 +4,7 @@ import { Marquee } from '../home/kit'
 
 const ITEMS = [
   { label: 'Handcrafted in Goa', href: '/story' },
-  { label: 'Reclaimed glass — never remelted', href: '/story' },
+  { label: 'Reclaimed glass, never remelted', href: '/story' },
   { label: 'Women-led studio', href: '/story' },
   { label: 'Ships across India', href: '/shop' },
   { label: 'Plastic-free packaging', href: '/shop' },

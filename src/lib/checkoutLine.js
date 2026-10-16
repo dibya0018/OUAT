@@ -8,7 +8,7 @@ export function buildCheckoutLine(product, { qty = 1, gift = false, option } = {
     key: `${id}${offer.option ? `:${offer.option}` : ''}${gift ? ':gift' : ''}`,
     id,
     slug: product.slug,
-    name: offer.option ? `${product.name} — ${offer.option}` : product.name,
+    name: offer.option ? `${product.name}, ${offer.option}` : product.name,
     option: offer.option,
     price: offer.price,
     image: product.images?.[0] ?? null,

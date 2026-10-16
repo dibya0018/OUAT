@@ -24,7 +24,7 @@ export const POLICIES = {
       },
       {
         heading: 'Delivery Information',
-        body: 'Deliveries are made between 9 AM – 7 PM, Monday to Friday.\n\nDelays may occur due to unforeseen circumstances or courier issues.',
+        body: 'Deliveries are made between 9 AM and 7 PM, Monday to Friday.\n\nDelays may occur due to unforeseen circumstances or courier issues.',
       },
       {
         heading: 'Note',

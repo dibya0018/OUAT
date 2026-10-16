@@ -3,7 +3,7 @@
  */
 import rows from './website-details.json' with { type: 'json' }
 
-const SHIPPING = 'Ships from Goa within 3–5 working days, packed in recycled card.'
+const SHIPPING = 'Ships from Goa within 3 to 5 working days, packed in recycled card.'
 
 const CANDLE_JAR_CARE =
   'This handcrafted candle is made from non-toxic, biodegradable natural soy wax housed in an upcycled beer bottle. Due to the natural characteristics of soy wax, slight discoloration and texture variations may occur, which do not affect the candle’s performance or quality. To ensure longevity and prevent evaporation of natural oils, keep the candle covered with the lid when not in use. Over time, the upcycled jar may develop a white film; apply a light coating of oil to restore its matte appearance.'
@@ -29,7 +29,7 @@ function slugify(name) {
 }
 
 const DISPLAY_NAMES = {
-  'gin to gems-upcycle glass jewels!': 'Gin to Gems — Upcycled Glass Jewels',
+  'gin to gems-upcycle glass jewels!': 'Gin to Gems: Upcycled Glass Jewels',
   'nourishing massage candle collection set of 3': 'Nourishing Massage Candle Collection (Set of 3)',
   'lav ylang-70g': 'Lav Ylang Massage Candle (70g)',
   'muscle melt-70g': 'Muscle Melt Massage Candle (70g)',
@@ -79,6 +79,13 @@ function shouldSkip(row) {
   return false
 }
 
+/** Single 70 g massage candles, no longer sold (the set of 3 stays). */
+const DISCONTINUED = new Set(['lav ylang-70g', 'muscle melt-70g', 'love potion-70g'])
+
+function isDiscontinued(row) {
+  return DISCONTINUED.has((row.Product ?? '').trim().toLowerCase())
+}
+
 function inferPrice(row, collection) {
   const name = row.Product.toLowerCase()
   if (name.includes('chakra')) return 4200
@@ -114,7 +121,7 @@ function buildDetails(row, collection) {
     if (!size) {
       if (isChakra) size = 'Each box contains seven 50 g chakra candles in upcycled beer-bottle containers.'
       else if (isMassage || /-70g/i.test(name)) size = 'Net qty 70 g massage candle.'
-      else size = 'Net qty 200 g. Burn time approx. 60–80 hours.'
+      else size = 'Net qty 200 g. Burn time approx. 60 to 80 hours.'
     }
     if (!careText || careText === 'all candles same -') careText = CANDLE_JAR_CARE
     const burnNote = isMassage ? instruction : instruction || CANDLE_BURN_INSTRUCTION
@@ -144,6 +151,8 @@ export function buildProductsFromWebsiteRows(sourceRows) {
   for (const row of sourceRows) {
     if (shouldSkip(row)) continue
     id += 1
+    // Removed from the range; skipped after numbering so every other product keeps its id.
+    if (isDiscontinued(row)) continue
     const name = displayName(row.Product)
     const collection = mapCollection(row.category, name)
     const description = (row.Description ?? row.Features ?? '').trim()

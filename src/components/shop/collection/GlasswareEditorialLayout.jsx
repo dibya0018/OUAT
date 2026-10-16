@@ -29,7 +29,7 @@ const FAQ = [
   },
   {
     title: 'How long does delivery take?',
-    content: 'Orders ship from Goa within 3–5 working days, packed in recycled card.',
+    content: 'Orders ship from Goa within 3 to 5 working days, packed in recycled card.',
   },
 ]
 
@@ -55,18 +55,15 @@ export default function GlasswareEditorialLayout({ collection, products, loading
             <div className="w-full max-w-xl">
               <Crumbs name={collection?.name ?? 'Glassware'} />
               <p className="eyebrow mt-8 text-primary">{editorial.heroEyebrow}</p>
-              <EditorialTitle as="h1" size="xl" accent={heroAccent} rest={heroRest} className="mt-4" />
-              <p className="mt-6 max-w-lg text-ink-soft">{description}</p>
+              <EditorialTitle as="h1" size="lg" stacked accent={heroAccent} rest={heroRest} className="mt-4" />
+              <p className="mt-6 max-w-lg text-balance text-ink-soft">{description}</p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
                 <Button href={`#${editorial.piecesId}`}>{editorial.hero.primary}</Button>
-                <Button href={`#${editorial.piecesId}`} variant="text">
-                  {editorial.hero.secondary}
-                </Button>
               </div>
               <dl className="mt-12 grid grid-cols-3 gap-4 border-t border-line pt-6">
                 <div>
                   <dt className="text-xs text-ink-soft">In the collection</dt>
-                  <dd className="mt-1 font-display text-2xl text-primary">{loading ? '—' : list.length}</dd>
+                  <dd className="mt-1 font-display text-2xl text-primary">{loading ? '' : list.length}</dd>
                 </div>
                 <div>
                   <dt className="text-xs text-ink-soft">Made in</dt>
@@ -74,7 +71,7 @@ export default function GlasswareEditorialLayout({ collection, products, loading
                 </div>
                 <div>
                   <dt className="text-xs text-ink-soft">Ships in</dt>
-                  <dd className="mt-1 font-display text-2xl text-primary">3–5 days</dd>
+                  <dd className="mt-1 font-display text-2xl text-primary">3 to 5 days</dd>
                 </div>
               </dl>
             </div>

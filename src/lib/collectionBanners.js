@@ -24,7 +24,7 @@ export const COLLECTION_BANNERS = {
   candles: {
     variant: 'candles',
     src: goaSunset,
-    alt: 'Golden hour light on the coast — evening mood for soy candles in glass',
+    alt: 'Golden hour light on the coast, an evening mood for soy candles in glass',
     objectPosition: '55% center',
     objectClass: 'object-[60%_center] lg:object-[65%_center]',
   },

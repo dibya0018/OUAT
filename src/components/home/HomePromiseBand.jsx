@@ -2,8 +2,8 @@ import Container from '../ui/Container'
 
 const PROMISES = [
   'Hand cut & fire-polished',
-  'Ships from Goa in 3–5 days',
-  'Rescued glass — never remelted',
+  'Ships from Goa in 3 to 5 days',
+  'Rescued glass, never remelted',
   'Women-led studio',
 ]
 

@@ -14,7 +14,7 @@ export default function Seo({
   jsonLd,
   noIndex = false,
 }) {
-  const fullTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} — ${SITE.longName}`
+  const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name} | ${SITE.longName}`
   const url = `${SITE.url}${path}`
   const imageUrl = image.startsWith('http') ? image : `${SITE.url}${image}`
 

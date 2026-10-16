@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import Container from '../../ui/Container'
 import ProductGrid from '../../product/ProductGrid'
-import Button from '../../ui/Button'
 import EditorialTitle from '../../ui/EditorialTitle'
 import CollectionNewsletterBand from '../CollectionNewsletterBand'
 import JewellerySurface from '../JewellerySurface'
@@ -53,8 +52,8 @@ export default function JewelleryEditorialLayout({ collection, products, loading
             <Arch src={pendant.imageSrc} alt={pendant.imageAlt} className="mx-auto hidden w-full max-w-[15rem] lg:block" />
             <div className="text-center">
               <p className="eyebrow text-accent">{editorial.heroEyebrow}</p>
-              <EditorialTitle as="h1" size="xl" accent={heroAccent} rest={heroRest} className="mt-5" />
-              <p className="mx-auto mt-6 max-w-md text-ink-soft">{description}</p>
+              <EditorialTitle as="h1" size="md" stacked accent={heroAccent} rest={heroRest} className="mt-5" />
+              <p className="mx-auto mt-6 max-w-md text-balance text-ink-soft">{description}</p>
               {editorial.hero.tagline && (
                 <p className="mx-auto mt-4 max-w-md font-display text-lg italic text-ink/90">{editorial.hero.tagline}</p>
               )}
@@ -65,9 +64,6 @@ export default function JewelleryEditorialLayout({ collection, products, loading
                 >
                   {editorial.hero.primary}
                 </a>
-                <Button href={`#${editorial.piecesId}`} variant="text" className="text-accent">
-                  {editorial.hero.secondary}
-                </Button>
               </div>
             </div>
             <Arch
