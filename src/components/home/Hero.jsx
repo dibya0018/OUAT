@@ -30,7 +30,6 @@ const SLIDES = [
     rest: 'where creativity meets Consciousness!',
     lede: 'Every product is lovingly upcycled, designed to be refilled, or chosen for its sustainable values.',
     promoTitle: 'Low Impact Production Process',
-    promoLine: 'upcycled without remelting',
   },
 ]
 
@@ -168,7 +167,9 @@ export default function Hero() {
               <p className="mt-3 text-balance font-display text-[2rem] leading-[1.1] text-primary" aria-live="polite">
                 {slide.promoTitle}
               </p>
-              <p className="mt-2 max-w-[14rem] text-sm text-ink lg:ml-auto">{slide.promoLine}</p>
+              {slide.promoLine && (
+                <p className="mt-2 max-w-[14rem] text-sm text-ink lg:ml-auto">{slide.promoLine}</p>
+              )}
               <Button to="/shop" variant="solid" size="sm" className="mt-6">
                 Shop now
               </Button>

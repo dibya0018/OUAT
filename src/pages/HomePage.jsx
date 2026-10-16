@@ -4,7 +4,6 @@ import BrandStatement from '../components/home/BrandStatement'
 import CollectionsGrid from '../components/home/CollectionsGrid'
 import FeaturedProducts from '../components/home/FeaturedProducts'
 import B2BBand from '../components/home/B2BBand'
-import ImpactStrip from '../components/home/ImpactStrip'
 import InstagramGrid from '../components/home/InstagramGrid'
 import Newsletter from '../components/home/Newsletter'
 import { SITE } from '../lib/site'
@@ -34,7 +33,6 @@ export default function HomePage() {
       <FeaturedProducts />
       <CollectionsGrid />
       <B2BBand />
-      <ImpactStrip />
       <InstagramGrid />
       <Newsletter />
     </>

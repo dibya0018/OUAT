@@ -158,16 +158,9 @@ export default function ImpactPage() {
       </section>
 
       {/* Values */}
-      <section className="section-cream py-24 md:py-32" aria-labelledby="values-title">
+      <section className="section-cream py-24 md:py-32" aria-label="What we stand for">
         <Container>
-          <Reveal>
-            <SectionHeading
-              eyebrow="What we stand for"
-              title="With care for the planet and the people involved"
-              id="values-title"
-            />
-          </Reveal>
-          <ul className="mt-16 grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
             {VALUES.map((v, i) => (
               <Reveal as="li" key={v.title} delay={(i % 3) * 80} className="border-t border-line pt-6">
                 <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-cream">

@@ -40,6 +40,8 @@
   /* ---- Type ---------------------------------------------------------- */
   --font-display: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-sans: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Handwritten voice for personal notes (e.g. the founder's letter). */
+  --font-hand: 'Caveat', 'Segoe Print', 'Bradley Hand', cursive;
 
   --text-xs: 0.75rem;
   --text-xs--line-height: 1.5;
