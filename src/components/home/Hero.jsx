@@ -4,7 +4,7 @@ import Button from '../ui/Button'
 import EditorialTitle from '../ui/EditorialTitle'
 import Icon from '../ui/Icon'
 import goaAerial from '../images/goa.png'
-import goaSunset from '../images/goa-sunset.png'
+import heroEarthEssence from '../images/banners/hero-earth-essence.webp'
 import { cx } from '../../lib/format'
 
 const ROTATE_MS = 7000
@@ -22,14 +22,14 @@ const SLIDES = [
     promoLine: 'bottles given a second life',
   },
   {
-    src: goaSunset,
-    alt: 'Golden hour light on a Goa beach',
-    objectPosition: '55% center',
+    src: heroEarthEssence,
+    product: true,
+    alt: 'O.U.A.T. Earth Essence soy candle and its kraft box on a block of red laterite stone in warm light',
+    objectPosition: '72% center',
     eyebrow: 'Handcrafted in Goa',
     accent: 'Welcome to the World',
     rest: 'where creativity meets Consciousness!',
     lede: 'Every product is lovingly upcycled, designed to be refilled, or chosen for its sustainable values.',
-    promoTitle: 'Low Impact Production Process',
   },
 ]
 
@@ -104,15 +104,38 @@ export default function Hero() {
               i === active ? 'opacity-100' : 'opacity-0',
             )}
           >
-            <img
-              src={s.src}
-              alt=""
-              loading={i === 0 ? 'eager' : 'lazy'}
-              decoding="async"
-              fetchPriority={i === 0 ? 'high' : 'auto'}
-              className="goa-kenburns absolute inset-0 h-full w-full object-cover"
-              style={{ objectPosition: s.objectPosition }}
-            />
+            {s.product ? (
+              // Product shot: no slow zoom. On desktop the whole photo sits at full hero height on the right,
+              // over a blurred copy of itself so its feathered left edge blends with no seam.
+              <>
+                <img
+                  src={s.src}
+                  alt=""
+                  loading="eager"
+                  decoding="async"
+                  className="absolute inset-0 hidden h-full w-full scale-110 object-cover blur-2xl lg:block"
+                />
+                <img
+                  src={s.src}
+                  alt=""
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority={i === 0 ? 'high' : 'auto'}
+                  className="absolute inset-0 h-full w-full object-cover lg:right-0 lg:left-auto lg:w-auto lg:max-w-none lg:[mask-image:linear-gradient(to_right,transparent,black_22%)]"
+                  style={{ objectPosition: s.objectPosition }}
+                />
+              </>
+            ) : (
+              <img
+                src={s.src}
+                alt=""
+                loading="eager"
+                decoding="async"
+                fetchPriority={i === 0 ? 'high' : 'auto'}
+                className="goa-kenburns absolute inset-0 h-full w-full object-cover"
+                style={{ objectPosition: s.objectPosition }}
+              />
+            )}
           </div>
         ))}
           </div>
@@ -125,7 +148,11 @@ export default function Hero() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-cream to-transparent md:h-40"
+        className={cx(
+          'pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-cream to-transparent transition-opacity duration-700 md:h-40',
+          // Product shots keep their stone crisp to the edge; only the scenic slides fade into the page.
+          slide.product && 'opacity-0',
+        )}
       />
 
       <Container className="relative z-[1] flex flex-1 flex-col justify-center py-20 pb-28 sm:py-24 md:pb-32 md:pt-24">
@@ -159,7 +186,7 @@ export default function Hero() {
           </div>
 
           {/* Right: quiet promo block (desktop), like reference deal panel */}
-          <div className="hidden text-right lg:col-span-4 lg:col-start-9 lg:block">
+          <div className={cx('hidden text-right lg:col-span-4 lg:col-start-9', slide.promoTitle && 'lg:block')}>
             {/* Frosted clear glass: light tint, heavy blur, bright edge + top highlight.
                 Fixed size so the box does not jump between slides. */}
             <div className="inline-flex h-[17rem] w-[20rem] flex-col items-end justify-center border border-white/60 bg-white/20 bg-gradient-to-br from-white/35 to-white/5 px-8 py-8 text-left shadow-[inset_0_1px_0_rgb(255_255_255/0.7),0_16px_40px_rgb(45_45_45/0.12)] backdrop-blur-xl backdrop-saturate-150 lg:text-right">
