@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom'
-import { collectionChipLabel, getCollectionPath } from '../../lib/collections'
+import { getCollectionPath, shopMenuCollections } from '../../lib/collections'
 import { cx } from '../../lib/format'
 
 function chipClass(active) {
@@ -15,6 +15,8 @@ function chipClass(active) {
 export default function CollectionNav({ collections, activeSlug = null, className }) {
   const [searchParams] = useSearchParams()
   const search = searchParams.toString() ? `?${searchParams}` : ''
+  // Same order and names as the Shop menu: Candles, Kitchenware, Glassware, Jewellery.
+  const items = shopMenuCollections(collections)
 
   return (
     <>
@@ -36,14 +38,14 @@ export default function CollectionNav({ collections, activeSlug = null, classNam
               All
             </Link>
           </li>
-          {collections.map((c) => (
+          {items.map((c) => (
             <li key={c.slug} className="snap-start">
               <Link
                 to={`${getCollectionPath(c.slug)}${search}`}
                 className={chipClass(activeSlug === c.slug)}
                 aria-current={activeSlug === c.slug ? 'page' : undefined}
               >
-                {collectionChipLabel(c)}
+                {c.label}
               </Link>
             </li>
           ))}
@@ -65,7 +67,7 @@ export default function CollectionNav({ collections, activeSlug = null, classNam
               All
             </Link>
           </li>
-          {collections.map((c) => (
+          {items.map((c) => (
             <li key={c.slug}>
               <Link
                 to={`${getCollectionPath(c.slug)}${search}`}
@@ -75,7 +77,7 @@ export default function CollectionNav({ collections, activeSlug = null, classNam
                 )}
                 aria-current={activeSlug === c.slug ? 'page' : undefined}
               >
-                {c.name}
+                {c.label}
               </Link>
             </li>
           ))}

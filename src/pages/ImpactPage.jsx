@@ -69,12 +69,12 @@ const VALUES = [
     text: 'Our studio is owned and run by women. Your purchase directly supports a woman-led business and the livelihoods that grow from it.',
   },
   {
-    icon: 'heart',
+    icon: 'rabbit',
     title: 'Cruelty Free',
     text: 'At O.U.A.T., we cherish all creatures and proudly uphold our commitment as a vegan brand. Our candles are crafted without any animal-based materials, reflecting our commitment to compassion and ethical practices.',
   },
   {
-    icon: 'pin',
+    icon: 'handmade',
     title: 'From Goa, India',
     text: 'Designed and handmade in Goa. Buying from us supports local craft and community.',
   },
@@ -181,7 +181,6 @@ export default function ImpactPage() {
             <SectionHeading
               eyebrow="Sustainability in action"
               title="What 1 kg of upcycled glass saves"
-              lede="Every kilogram of glass we upcycle, instead of letting it go to waste, adds up to this."
               inverse
               id="per-kg-title"
             />

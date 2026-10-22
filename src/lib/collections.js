@@ -19,12 +19,6 @@ export function isCollectionSlug(slug) {
   return slug in COLLECTION_PATHS
 }
 
-/** Shorter labels for mobile category chips. */
-export function collectionChipLabel(collection) {
-  if (collection.slug === 'kitchen-storage') return 'Kitchen'
-  return collection.name
-}
-
 /** Shop menu labels, in the order the menu lists them. */
 export const SHOP_MENU = [
   { slug: 'candles', label: 'Candles' },

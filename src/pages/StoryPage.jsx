@@ -116,9 +116,8 @@ export default function StoryPage() {
         <Container>
           <Reveal>
             <SectionHeading
-              eyebrow="Before and after"
-              title="Same glass, second life"
-              lede="Nothing is remelted. The bottle you see on the left is, quite literally, the piece on the right."
+              title="Beauty, Reborn"
+              lede="Giving discarded bottles a new life through thoughtful design and creative upcycling."
               id="pairs-title"
             />
           </Reveal>
@@ -139,10 +138,10 @@ export default function StoryPage() {
       {/* Philosophy */}
       <section className="section-white py-24 md:py-32" aria-label="Philosophy">
         <Container>
-          <Reveal className="mx-auto max-w-3xl text-center">
-            <p className="eyebrow">Philosophy</p>
-            <p className="mt-8 font-display text-3xl font-light text-ink md:text-5xl">
-              <span className="text-primary">Welcome to the World</span> where creativity meets Consciousness!
+          <Reveal className="mx-auto max-w-5xl text-center">
+            <p className="font-display text-2xl leading-tight font-light text-ink md:text-3xl lg:text-4xl">
+              <span className="block text-primary lg:whitespace-nowrap">Together, let’s create a world</span>
+              <span className="block lg:whitespace-nowrap">where beauty meets sustainability!</span>
             </p>
             <div className="mt-12">
               <Button to="/shop" variant="solid">

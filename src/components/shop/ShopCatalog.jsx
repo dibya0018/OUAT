@@ -29,9 +29,7 @@ export default function ShopCatalog({
 
   const title = collection?.name ?? 'All Collections'
   const { accent: titleAccent, rest: titleRest } = splitEditorialTitle(title)
-  const description =
-    collection?.description ??
-    'Glassware, candles, kitchen pieces and jewellery made from reclaimed bottles. Handcrafted by local artisans in Goa.'
+  const description = collection?.description
 
   const heroClass = theme?.hero ?? 'section-white'
   const bodyClass = theme?.body ?? 'section-white'
@@ -68,7 +66,9 @@ export default function ShopCatalog({
                 {collection.tagline}
               </p>
             )}
-            <p className={cx('mt-4 text-base', theme?.introClass ?? 'text-ink-soft')}>{description}</p>
+            {description && (
+              <p className={cx('mt-4 text-base', theme?.introClass ?? 'text-ink-soft')}>{description}</p>
+            )}
             {audienceLine && (
               <p className="mt-6 font-display text-lg leading-snug text-ink italic md:text-xl">{audienceLine}</p>
             )}

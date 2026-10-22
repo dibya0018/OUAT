@@ -72,12 +72,6 @@ export default function ContactPage() {
                 className="aspect-[5/3] w-full object-cover"
               />
 
-              <h2 className="mt-8 font-display text-2xl text-ink md:text-3xl">Frequently Asked Questions</h2>
-              <p className="mt-4 text-ink-soft">
-                Find quick answers about our products, process, and policies. If you still need help, feel free to
-                reach out; we’re always here for you.
-              </p>
-
               <p className="mt-8 font-sans text-xs font-medium uppercase tracking-eyebrow text-ink">Contact us</p>
               <div className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div className="flex items-start gap-4">
