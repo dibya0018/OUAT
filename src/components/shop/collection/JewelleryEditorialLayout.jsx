@@ -9,6 +9,7 @@ import JewelleryComingSoon from './JewelleryComingSoon'
 import { Crumbs, PieceCount } from './parts'
 import { useCollectionPage } from './useCollectionPage'
 import { HEADER_PAD } from '../../../lib/collectionUi'
+import { collectionLabel } from '../../../lib/collections'
 import { cx } from '../../../lib/format'
 
 /** Set to false to open the collection: removes the frosted "Coming soon" pane. */
@@ -47,7 +48,7 @@ export default function JewelleryEditorialLayout({ collection, products, loading
       <section className={cx('relative', HEADER_PAD)}>
         <JewellerySurface className="opacity-50" />
         <Container className="relative py-10 md:py-16">
-          <Crumbs name={collection?.name ?? 'Jewellery'} className="flex justify-center" />
+          <Crumbs name={collectionLabel('jewellery')} className="flex justify-center" />
           <div className="mt-10 grid grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_minmax(0,30rem)_1fr] lg:gap-14">
             <Arch src={pendant.imageSrc} alt={pendant.imageAlt} className="mx-auto hidden w-full max-w-[15rem] lg:block" />
             <div className="text-center">

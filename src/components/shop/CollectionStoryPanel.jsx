@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 
 export default function CollectionStoryPanel({
   eyebrow,
+  titleAccent, // optional green opening words of the title
   title,
   body,
   image,
@@ -16,14 +17,15 @@ export default function CollectionStoryPanel({
       className={`flex items-center px-6 py-14 sm:px-10 md:py-16 lg:min-h-[32rem] lg:px-14 lg:py-16 xl:px-20 ${textClass}`}
     >
           <div className="w-full max-w-lg">
-            <p className="eyebrow text-accent">{eyebrow}</p>
+            {eyebrow && <p className="eyebrow mb-5 text-accent">{eyebrow}</p>}
             <h2
               id="collection-story"
-              className="mt-5 font-display text-3xl leading-snug text-ink md:text-4xl lg:text-[2.75rem] lg:leading-[1.15]"
+              className="font-display text-3xl leading-snug text-ink md:text-4xl lg:text-[2.75rem] lg:leading-[1.15]"
             >
+              {titleAccent && <span className="text-primary">{titleAccent} </span>}
               {title}
             </h2>
-            <p className="mt-6 text-base leading-relaxed text-ink-soft md:text-[1.05rem]">{body}</p>
+            {body && <p className="mt-6 text-base leading-relaxed text-ink-soft md:text-[1.05rem]">{body}</p>}
             <Link to={storyLink} className="link-underline mt-8 inline-block text-sm text-primary">
               Read our story
             </Link>

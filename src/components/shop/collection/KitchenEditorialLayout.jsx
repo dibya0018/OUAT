@@ -6,6 +6,7 @@ import CollectionSortControl from './CollectionSortControl'
 import { AddToCartButton, Crumbs, PieceCount } from './parts'
 import { useCollectionPage } from './useCollectionPage'
 import { BELOW_HEADER, HEADER_PAD } from '../../../lib/collectionUi'
+import { collectionLabel } from '../../../lib/collections'
 import { cx } from '../../../lib/format'
 import PriceTag from '../../product/PriceTag'
 
@@ -42,7 +43,7 @@ export default function KitchenEditorialLayout({ collection, products, loading, 
           className="absolute inset-0 -z-10 bg-gradient-to-r from-cream via-cream/85 to-cream/10 max-lg:to-cream/60"
         />
         <Container className="py-14 md:py-24">
-          <Crumbs name={collection?.name ?? 'Kitchen & Storage'} />
+          <Crumbs name={collectionLabel('kitchen-storage')} />
           <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-7">
               <p className="eyebrow text-primary">{editorial.heroEyebrow}</p>

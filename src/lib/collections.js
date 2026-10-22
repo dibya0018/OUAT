@@ -27,6 +27,11 @@ export const SHOP_MENU = [
   { slug: 'jewellery', label: 'Jewellery' },
 ]
 
+/** A collection's Shop-menu name ("Glassware", "Kitchenware", …), falling back to its catalogue name. */
+export function collectionLabel(slug, fallback = '') {
+  return SHOP_MENU.find((item) => item.slug === slug)?.label ?? fallback
+}
+
 /** Collections in Shop-menu order, each carrying its short menu `label`. */
 export function shopMenuCollections(collections) {
   return SHOP_MENU.map(({ slug, label }) => {

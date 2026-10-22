@@ -25,7 +25,7 @@ import { trackEvent } from '../lib/analytics'
 import { cx } from '../lib/format'
 import JewellerySurface from '../components/shop/JewellerySurface'
 import JewelleryGoaDecor from '../components/motifs/JewelleryGoaDecor'
-import { getCollectionPath } from '../lib/collections'
+import { collectionLabel, getCollectionPath } from '../lib/collections'
 import { stockState } from '../lib/collectionUi'
 import { defaultOption, offerFor, packOptions } from '../lib/productOffer'
 import { SITE } from '../lib/site'
@@ -214,7 +214,7 @@ function ProductDetail({ product, collection, related }) {
                   <li aria-hidden="true">/</li>
                   <li>
                     <Link to={getCollectionPath(collection.slug)} className="link-underline">
-                      {collection.name}
+                      {collectionLabel(collection.slug, collection.name)}
                     </Link>
                   </li>
                 </>
@@ -236,14 +236,32 @@ function ProductDetail({ product, collection, related }) {
             {/* Details */}
             <div className="md:col-span-4 md:col-start-9">
               <div className="md:sticky md:top-28">
-                {collection && (
-                  <p className={cx('eyebrow', isJewellery && 'text-accent')}>
-                    {isJewellery ? 'For her' : collection.name}
-                  </p>
-                )}
-                <EditorialTitle as="h1" size="md" className="mt-3" {...splitEditorialTitle(titleParts.title)} />
+                <EditorialTitle as="h1" size="md" {...splitEditorialTitle(titleParts.title)} />
                 {titleParts.details && (
-                  <p className="mt-2 text-sm leading-relaxed tracking-wide text-ink-soft">{titleParts.details}</p>
+                  <p className="mt-2 text-sm leading-relaxed tracking-wide text-ink-soft">
+                    {/* Sizes ("Set of 4 · 250 ml each") share a line; wording without numbers gets its own line,
+                        tinted like the bottle it came from: amber for beer, blue for clear glass, else green. */}
+                    {[
+                      { text: titleParts.details.split(' · ').filter((part) => /\d/.test(part)).join(' · ') },
+                      ...titleParts.details
+                        .split(' · ')
+                        .filter((part) => !/\d/.test(part))
+                        .map((text) => ({
+                          text,
+                          tint: /beer/i.test(text)
+                            ? 'text-glass-amber'
+                            : /clear/i.test(text)
+                              ? 'text-glass-clear'
+                              : 'text-primary',
+                        })),
+                    ]
+                      .filter((line) => line.text)
+                      .map((line) => (
+                        <span key={line.text} className={cx('block', line.tint)}>
+                          {line.text}
+                        </span>
+                      ))}
+                  </p>
                 )}
                 <p className="mt-4 font-sans text-lg">
                   <PriceTag product={product} option={option} />
@@ -256,7 +274,7 @@ function ProductDetail({ product, collection, related }) {
                 )}
 
                 {product.shortStory && (
-                  <p className="mt-8 text-base leading-relaxed text-ink md:text-lg">{product.shortStory}</p>
+                  <p className="mt-8 text-[0.8125rem] leading-relaxed text-ink-soft italic md:text-sm">{product.shortStory}</p>
                 )}
                 {showDescription && (
                   <RichText text={product.description} className="mt-4 text-sm leading-relaxed text-ink-soft" />
@@ -372,16 +390,17 @@ function ProductDetail({ product, collection, related }) {
 
                 <ProductOffers className="mt-10" />
 
-                {/* Upcycling note */}
-                <p className="mt-10 border border-line p-5 text-sm leading-relaxed text-ink-soft">
-                  Our products are upcycled from materials that were once considered waste once upon a time. This
-                  process may result in variations, flaws, and imperfections, which are natural in handmade items.
-                  These unique characteristics should be celebrated for their uniqueness.
-                </p>
-
                 <Accordion items={accordionItems} defaultOpen={null} className="mt-12" />
 
-                <p className="mt-8 text-xs text-ink-soft">Handcrafted by local artisans in Goa.</p>
+                {/* Per-product note (e.g. "A Note on Uniqueness") */}
+                {product.details.note?.content && (
+                  <div className="mt-10 border border-line p-5 text-sm leading-relaxed text-primary">
+                    {product.details.note.title && (
+                      <p className="mb-3 font-medium text-ink">{product.details.note.title}</p>
+                    )}
+                    <RichText text={product.details.note.content} />
+                  </div>
+                )}
               </div>
             </div>
           </div>

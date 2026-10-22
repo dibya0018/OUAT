@@ -6,11 +6,11 @@ import Button from '../../ui/Button'
 import EditorialTitle from '../../ui/EditorialTitle'
 import Accordion from '../../ui/Accordion'
 import CollectionStoryPanel from '../CollectionStoryPanel'
-import CollectionNewsletterBand from '../CollectionNewsletterBand'
 import CollectionSortControl from './CollectionSortControl'
-import { Crumbs, PieceCount } from './parts'
+import { Crumbs } from './parts'
 import { useCollectionPage } from './useCollectionPage'
 import { BELOW_HEADER, HEADER_PAD } from '../../../lib/collectionUi'
+import { collectionLabel } from '../../../lib/collections'
 import { cx } from '../../../lib/format'
 
 const FAQ = [
@@ -25,11 +25,11 @@ const FAQ = [
   },
   {
     title: 'Is the rim safe to drink from?',
-    content: 'Each rim is ground and polished by hand until it is smooth to the lip.',
+    content: 'Each rim is thoroughly cleaned, ground, and fire-polished by hand to achieve a smooth, refined finish.',
   },
   {
     title: 'How long does delivery take?',
-    content: 'Orders ship from Goa within 3 to 5 working days, packed in recycled card.',
+    content: 'Orders ship from Goa within 3 to 5 working days, packed in recycled cardboard.',
   },
 ]
 
@@ -44,7 +44,7 @@ export default function GlasswareEditorialLayout({ collection, products, loading
   const shown = colour === 'all' ? list : list.filter((p) => p.colour === colour)
 
   if (!editorial) return null
-  const { story, newsletter } = editorial
+  const { story } = editorial
 
   return (
     <div className="overflow-x-clip bg-white">
@@ -53,27 +53,25 @@ export default function GlasswareEditorialLayout({ collection, products, loading
         <div className="grid grid-cols-1 lg:grid-cols-2">
           <div className="flex items-center px-4 py-12 sm:px-6 md:px-10 md:py-16 lg:py-24 xl:pl-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))]">
             <div className="w-full max-w-xl">
-              <Crumbs name={collection?.name ?? 'Glassware'} />
+              <Crumbs name={collectionLabel('glassware')} />
               <p className="eyebrow mt-8 text-primary">{editorial.heroEyebrow}</p>
               <EditorialTitle as="h1" size="lg" stacked accent={heroAccent} rest={heroRest} className="mt-4" />
-              <p className="mt-6 max-w-lg text-balance text-ink-soft">{description}</p>
+              <p className="mt-6 max-w-xl text-balance whitespace-pre-line text-ink-soft">
+                {/* "upcycling" picks up the brown of the title's accent line. */}
+                {description.split(/(upcycling)/i).map((part, i) =>
+                  i % 2 ? (
+                    <span key={i} className="text-accent">
+                      {part}
+                    </span>
+                  ) : (
+                    part
+                  ),
+                )}
+              </p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
                 <Button href={`#${editorial.piecesId}`}>{editorial.hero.primary}</Button>
               </div>
-              <dl className="mt-12 grid grid-cols-3 gap-4 border-t border-line pt-6">
-                <div>
-                  <dt className="text-xs text-ink-soft">In the collection</dt>
-                  <dd className="mt-1 font-display text-2xl text-primary">{loading ? '' : list.length}</dd>
-                </div>
-                <div>
-                  <dt className="text-xs text-ink-soft">Made in</dt>
-                  <dd className="mt-1 font-display text-2xl text-primary">Goa</dd>
-                </div>
-                <div>
-                  <dt className="text-xs text-ink-soft">Ships in</dt>
-                  <dd className="mt-1 font-display text-2xl text-primary">3 to 5 days</dd>
-                </div>
-              </dl>
+              <p className="mt-12 border-t border-line pt-6 font-display text-2xl text-primary">Handcrafted in Goa</p>
             </div>
           </div>
           <div className="relative min-h-[20rem] lg:min-h-[38rem]">
@@ -94,7 +92,6 @@ export default function GlasswareEditorialLayout({ collection, products, loading
       >
         <Container className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-3">
           <div className="flex min-w-0 items-center gap-4">
-            <PieceCount count={shown.length} loading={loading} className="shrink-0 text-ink-soft" />
             {colours.length > 1 && (
               <ul className="flex gap-2 overflow-x-auto" aria-label="Filter by glass colour">
                 {['all', ...colours].map((c) => (
@@ -150,7 +147,6 @@ export default function GlasswareEditorialLayout({ collection, products, loading
         </Container>
       </section>
 
-      <CollectionNewsletterBand {...newsletter} />
     </div>
   )
 }

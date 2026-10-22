@@ -15,7 +15,7 @@ export const PRODUCT_FAQ = [
   {
     title: 'Why do products look slightly different?',
     content:
-      'Every O.U.A.T. product begins its journey as a once-discarded glass bottle. Because of this, variations in shape, colour, and texture are natural. These subtle imperfections are not flaws; they are what make each piece truly one of a kind.',
+      'Each piece is handcrafted from reclaimed bottles, so slight variations in colour, shape, and size are natural. These unique details reflect the character of upcycled glass and the hand-finished process.',
   },
   {
     title: 'Are your products safe to use?',

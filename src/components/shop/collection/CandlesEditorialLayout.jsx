@@ -7,6 +7,7 @@ import CollectionSortControl from './CollectionSortControl'
 import { Crumbs, PieceCount } from './parts'
 import { useCollectionPage } from './useCollectionPage'
 import { HEADER_PAD } from '../../../lib/collectionUi'
+import { collectionLabel } from '../../../lib/collections'
 import { cx } from '../../../lib/format'
 
 const RITUAL = [
@@ -37,10 +38,9 @@ export default function CandlesEditorialLayout({ collection, products, loading, 
         />
         <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-[#17130f]/70 via-[#17130f]/55 to-[#17130f]" />
         <Container className="pt-6">
-          <Crumbs name={collection?.name ?? 'Candles'} dark />
+          <Crumbs name={collectionLabel('candles')} dark />
         </Container>
         <Container className="flex flex-1 flex-col items-center justify-center py-16 text-center">
-          <p className="eyebrow text-accent">{editorial.heroEyebrow}</p>
           <EditorialTitle
             as="h1"
             size="lg"
@@ -48,7 +48,7 @@ export default function CandlesEditorialLayout({ collection, products, loading, 
             inverse
             accent={heroAccent}
             rest={heroRest}
-            className="hero-copy mt-5 max-w-3xl"
+            className="hero-copy max-w-3xl"
           />
           <p className="mt-6 max-w-2xl text-balance text-lg text-cream/85">{description}</p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-8">

@@ -47,7 +47,7 @@ const POINTS = [
   { icon: 'handcrafted', label: 'Handcrafted', text: 'Cut, ground and finished by hand in our Goa studio.' },
   { icon: 'women', label: 'Women-Owned', text: 'A studio owned and run by women.' },
   { icon: 'waste', label: 'Waste Reimagined', text: 'Every piece begins as a discarded glass bottle.' },
-  { icon: 'leaf', label: 'Lower-Impact Making', text: 'No remelting, and minimal electricity.' },
+  { icon: 'leaf', label: 'Low-Impact Production', text: 'Upcycled using a low-energy process.' },
 ]
 
 /** "Made with Purpose": four brand promises under every product, in the same style as the Impact page values. */
