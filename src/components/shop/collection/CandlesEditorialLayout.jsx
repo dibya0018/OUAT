@@ -11,9 +11,12 @@ import { collectionLabel } from '../../../lib/collections'
 import { cx } from '../../../lib/format'
 
 const RITUAL = [
-  { title: 'Trim the wick', text: 'Cut it to 5 mm before each burn for a steady, clean flame.' },
-  { title: 'Let it rest', text: 'Burn for no more than four hours at a time, away from drafts.' },
-  { title: 'Keep the glass', text: 'When the wax is gone, wash it out. The bottle stays on as a tumbler or vase.' },
+  { title: 'Trim the Wick', text: 'Trim the wick to 6 mm before each use for a clean, steady flame.' },
+  { title: 'Burn with Care', text: 'Burn for no more than 2 hours at a time, away from drafts and breezes.' },
+  {
+    title: 'Give the Glass a Second Life',
+    text: 'Reuse the cleaned glass as a tumbler or pen stand once the candle is finished.',
+  },
 ]
 
 /** Candles — after-dark mood: full-bleed hero, product grid, burn ritual. */
@@ -85,7 +88,7 @@ export default function CandlesEditorialLayout({ collection, products, loading, 
             <div className="lg:col-span-4">
               <p className="eyebrow text-accent">The ritual</p>
               <h2 id="burn-ritual" className="mt-3 font-display text-3xl md:text-4xl">
-                Burn it well, then keep the glass
+                A glow that lives on.
               </h2>
               <p className="mt-5 text-ink-soft">{story.body}</p>
             </div>

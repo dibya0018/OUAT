@@ -4,7 +4,7 @@ import Button from '../ui/Button'
 import { PalmLineArt } from '../motifs/PalmMotifs'
 import { subscribeNewsletter } from '../../services/formService'
 
-export default function CollectionNewsletterBand({ id, eyebrow, title, titleLine2, variant = 'light' }) {
+export default function CollectionNewsletterBand({ id, eyebrow, title, titleLine2, body, variant = 'light' }) {
   const dark = variant === 'dark'
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState('idle')
@@ -41,6 +41,7 @@ export default function CollectionNewsletterBand({ id, eyebrow, title, titleLine
           {title}
           {titleLine2 && <span className="block">{titleLine2}</span>}
         </h2>
+        {body && <p className={`mt-4 text-base ${dark ? 'text-cream/80' : 'text-ink-soft'}`}>{body}</p>}
         {status === 'success' ? (
           <p className={`mt-6 font-display text-xl ${dark ? 'text-cream' : 'text-primary'}`} role="status">
             Thank you. We will write when something new arrives.

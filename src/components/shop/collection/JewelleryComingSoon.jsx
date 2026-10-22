@@ -141,7 +141,7 @@ export default function JewelleryComingSoon() {
           {['tl', 'tr', 'bl', 'br'].map((corner) => (
             <span key={corner} aria-hidden className={`glass-tape glass-tape--${corner}`} />
           ))}
-          <p className="eyebrow text-[0.65rem] text-accent sm:text-xs">Jewellery · Sea glass, set in brass</p>
+          <p className="eyebrow text-[0.65rem] text-accent sm:text-xs">Upcycled Jewellery</p>
           <h1 id="jewellery-soon" className="mt-4 font-display text-[2.75rem] leading-none text-ink sm:mt-5 sm:text-6xl">
             Coming <span className="italic text-accent">soon</span>
           </h1>

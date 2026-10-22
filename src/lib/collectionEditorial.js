@@ -144,7 +144,7 @@ export const COLLECTION_EDITORIAL = {
     story: {
       eyebrow: 'Evening ritual',
       title: 'Light poured into bottles that already hold memories.',
-      body: 'Our candles are hand-poured into reclaimed glass in amber, green and clear. They glow through the same walls that once held wine and whisky, then become tumblers when the wax is finished.',
+      body: 'Hand-poured into reclaimed amber beer bottles, our candles bring warmth to your space. Once the wax is gone, the glass finds a new purpose as a tumbler or pen stand.',
       image: processReborn,
       imageAlt: 'Finished candle in reclaimed glass on a warm surface',
       imagePosition: 'object-[55%_center] lg:object-right',
@@ -180,8 +180,8 @@ export const COLLECTION_EDITORIAL = {
     newsletter: {
       id: 'candles-newsletter',
       eyebrow: 'Stay close',
-      title: 'Receive a little of Goa,',
-      titleLine2: 'new candles first.',
+      title: 'Good things, coming your way.',
+      body: 'Be the first to discover new collections, thoughtful designs and little stories from Goa.',
     },
   },
   'kitchen-storage': {
@@ -227,9 +227,8 @@ export const COLLECTION_EDITORIAL = {
       ],
     },
     story: {
-      eyebrow: 'Rescued & reshaped',
-      title: 'Bottles gathered, then made useful for daily rituals.',
-      body: 'From storage jars to pourers and planters, we cut and finish rescued glass for the pantry and counter. Stack them on an open shelf and let the colour do the decorating.',
+      titleAccent: 'It’s not a Trend, it’s a Lifestyle!',
+      title: 'Choose Consciously!',
       image: processRescued,
       imageAlt: 'Rescued bottles before reshaping into kitchen vessels',
       imagePosition: 'object-[65%_center] lg:object-right',

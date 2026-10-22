@@ -5,9 +5,8 @@
  *   node server/scripts/apply-candle-layout.js          # preview only
  *   node server/scripts/apply-candle-layout.js --apply  # write to the DB
  *
- * The tabs come from server/data/product-updates/bugg-off.json. Lines that only describe Bugg Off
- * (its fragrance, weights, box size, burn time) and the "two designs" sentence are left out, so no
- * other candle shows Bugg Off's numbers.
+ * The tabs come from server/data/product-updates/bugg-off.json. Only Bugg Off's "Fragrance: Citronella"
+ * line and the "two designs" sentence are left out; the rest of the details list is shared by every candle.
  */
 import { readFile } from 'node:fs/promises'
 import { query } from '../config/db.js'
@@ -15,7 +14,8 @@ import { query } from '../config/db.js'
 const apply = process.argv[2] === '--apply'
 const template = JSON.parse(await readFile('server/data/product-updates/bugg-off.json', 'utf8'))
 
-const BUGG_OFF_ONLY = /^•\s*(Fragrance|Net Candle Weight|Gross Weight|Packaging Dimensions|Burn Time):/
+// Every candle shares Bugg Off's details list (asked for 2026-10-22), except its citronella fragrance.
+const BUGG_OFF_ONLY = /^•\s*Fragrance:/
 const sections = template.details.sections.map((s) =>
   s.title === 'Key Features'
     ? { ...s, content: s.content.split('\n').filter((line) => !BUGG_OFF_ONLY.test(line.trim())).join('\n') }
