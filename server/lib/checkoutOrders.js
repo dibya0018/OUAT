@@ -1,6 +1,7 @@
 import crypto from 'node:crypto'
 import { callProcedure, query } from '../config/db.js'
 import { createRazorpayOrder, getRazorpayCredentials, verifyRazorpaySignature } from './razorpay.js'
+import { queueOrderEmails } from './orderEmails.js'
 
 function orderNumber() {
   const n = Date.now().toString(36).toUpperCase()
@@ -282,6 +283,8 @@ export async function createCodOrder(payload, userId) {
   if (coupon.couponId) {
     await query('UPDATE coupons SET use_count = use_count + 1 WHERE id = :id', { id: coupon.couponId })
   }
+  // COD orders are confirmed when placed: email the confirmation + passport (in the background).
+  queueOrderEmails(orderId)
 
   return {
     orderId,
@@ -382,6 +385,8 @@ export async function completeRazorpayPayment({ orderId, razorpayOrderId, razorp
     { pid: razorpayPaymentId, oid: razorpayOrderId, id: order.id },
   )
   await deductOrderStock(order.id)
+  // Payment captured: email the confirmation + passport (in the background, sent once).
+  queueOrderEmails(order.id)
 
   return { orderNumber: order.order_number, total: order.total, status: 'completed', alreadyPaid: false }
 }

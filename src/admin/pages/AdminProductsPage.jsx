@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import AdminPageHeader from '../components/AdminPageHeader'
-import { fetchAdminProducts, patchProduct } from '../services/adminService'
+import { deleteProduct, fetchAdminProducts, patchProduct } from '../services/adminService'
 import { formatPrice } from '../../lib/format'
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [deletingId, setDeletingId] = useState(null)
+  const [error, setError] = useState('')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -29,6 +31,25 @@ export default function AdminProductsPage() {
     load()
   }
 
+  const removeProduct = async (p) => {
+    const sure = window.confirm(
+      `Delete "${p.name}" permanently?
+
+Its photos and reviews will be removed too. This can't be undone.`,
+    )
+    if (!sure) return
+    setError('')
+    setDeletingId(p.id)
+    try {
+      await deleteProduct(p.id)
+      setProducts((list) => list.filter((x) => x.id !== p.id))
+    } catch (err) {
+      setError(err.message || 'Could not delete this product.')
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
   return (
     <>
       <AdminPageHeader title="Products" onRefresh={load} refreshing={loading}>
@@ -36,6 +57,12 @@ export default function AdminProductsPage() {
           + New product
         </Link>
       </AdminPageHeader>
+
+      {error && (
+        <p role="alert" className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          {error}
+        </p>
+      )}
 
       <div className="admin-panel overflow-x-auto">
         <table className="admin-table admin-table--stack admin-table--products w-full md:min-w-[640px]">
@@ -92,6 +119,14 @@ export default function AdminProductsPage() {
                     </Link>
                     <button type="button" className="admin-btn-ghost text-xs" onClick={() => toggleActive(p)}>
                       {p.active ? 'Archive' : 'Restore'}
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-btn-ghost text-xs text-red-400"
+                      disabled={deletingId === p.id}
+                      onClick={() => removeProduct(p)}
+                    >
+                      {deletingId === p.id ? 'Deleting…' : 'Delete'}
                     </button>
                   </div>
                 </td>

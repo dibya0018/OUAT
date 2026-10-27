@@ -26,6 +26,10 @@ export function patchProduct(id, body) {
   return apiPatch(`/admin/products/${id}`, body, auth)
 }
 
+export function deleteProduct(id) {
+  return apiDelete(`/admin/products/${id}`, auth)
+}
+
 export function uploadProductImage(id, body) {
   return apiPost(`/admin/products/${id}/images`, body, auth)
 }
@@ -102,4 +106,33 @@ export function fetchSettings() {
 
 export function saveSettings(body) {
   return apiPut('/admin/settings', body, auth)
+}
+
+export function fetchDelhiveryStatus() {
+  return apiGet('/admin/delhivery/status', auth)
+}
+
+export function checkDelhiveryPincode(pincode) {
+  return apiGet(`/admin/delhivery/serviceability/${encodeURIComponent(pincode)}`, auth)
+}
+
+export function shipWithDelhivery(id) {
+  return apiPost(`/admin/orders/${id}/delhivery`, {}, auth)
+}
+
+export function trackDelhivery(id) {
+  return apiGet(`/admin/orders/${id}/delhivery/track`, auth)
+}
+
+export function fetchDelhiveryLabel(id) {
+  return apiGet(`/admin/orders/${id}/delhivery/label`, auth)
+}
+
+export function cancelDelhiveryShipment(id) {
+  return apiPost(`/admin/orders/${id}/delhivery/cancel`, {}, auth)
+}
+
+/** Resend the order confirmation (with invoice) and bottle passport emails. only: 'confirmation' | 'passport' */
+export function resendOrderEmails(id, only) {
+  return apiPost(`/admin/orders/${id}/resend-emails`, only ? { only } : {}, auth)
 }

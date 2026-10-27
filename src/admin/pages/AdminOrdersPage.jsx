@@ -1,5 +1,7 @@
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import AdminPageHeader from '../components/AdminPageHeader'
+import DelhiveryPanel from '../components/DelhiveryPanel'
+import OrderEmailsPanel from '../components/OrderEmailsPanel'
 import { fetchOrder, fetchOrders, patchOrderStatus } from '../services/adminService'
 import { formatPrice } from '../../lib/format'
 
@@ -38,6 +40,9 @@ function statusTone(status) {
   return 'progress'
 }
 
+/** Set only by Delhivery tracking once an order has an AWB. */
+const TRACKED_STATUSES = ['shipped', 'out_for_delivery', 'delivered']
+
 /** Statuses that make sense for this order (its current one is always kept). */
 function statusOptions(order) {
   const paidOnline = Boolean(order.razorpay_payment_id)
@@ -45,6 +50,7 @@ function statusOptions(order) {
   return FILTERS.filter((s) => {
     if (s === 'all') return false
     if (s === order.status) return true
+    if (order.delhivery_awb && TRACKED_STATUSES.includes(s)) return false
     if (s === 'payment_pending') return !paidOnline && !cod
     if (s === 'pending') return cod
     if (s === 'completed') return paidOnline
@@ -53,7 +59,7 @@ function statusOptions(order) {
 }
 
 /** What to pack and where to send it, shown under an order row. */
-function OrderDetails({ detail }) {
+function OrderDetails({ detail, onChanged }) {
   if (detail === 'loading') return <p className="text-sm text-admin-muted">Loading order…</p>
   if (!detail) return <p className="text-sm text-red-400">Could not load this order.</p>
   const a = detail.address
@@ -102,6 +108,8 @@ function OrderDetails({ detail }) {
           {detail.customerPhone || 'No phone'} · {detail.customerEmail}
         </p>
       </div>
+      <DelhiveryPanel detail={detail} onChanged={onChanged} />
+      <OrderEmailsPanel detail={detail} onChanged={onChanged} />
     </div>
   )
 }
@@ -131,6 +139,15 @@ export default function AdminOrdersPage() {
     }
   }
 
+  const reloadDetail = async (id) => {
+    try {
+      const res = await fetchOrder(id)
+      setDetails((d) => ({ ...d, [id]: res.order }))
+    } catch {
+      /* keep the old details */
+    }
+  }
+
   const load = useCallback(async () => {
     setLoading(true)
     try {
@@ -157,6 +174,7 @@ export default function AdminOrdersPage() {
     try {
       const res = await patchOrderStatus(order.id, status)
       if (res.refunded) window.alert(`Order cancelled. ${formatPrice(order.total)} refunded via Razorpay.`)
+      if (res.courierWarning) window.alert(res.courierWarning)
     } catch (err) {
       window.alert(err.message || 'Could not update order status')
     }
@@ -274,6 +292,7 @@ export default function AdminOrdersPage() {
                     // A refunded cancellation can't be reopened — the money has gone back.
                     disabled={o.status === 'cancelled' && Boolean(o.razorpay_payment_id)}
                     aria-label={`Update status for order ${o.order_number ?? o.id}`}
+                    title={o.delhivery_awb ? `Delhivery AWB ${o.delhivery_awb} — shipping updates come from tracking` : undefined}
                   >
                     {statusOptions(o).map((s) => (
                       <option key={s} value={s}>
@@ -281,6 +300,11 @@ export default function AdminOrdersPage() {
                       </option>
                     ))}
                   </select>
+                  {o.delhivery_awb && (
+                    <span className="mt-1 block text-[11px] text-admin-muted">
+                      Delhivery · <span className="tabular-nums">{o.delhivery_awb}</span>
+                    </span>
+                  )}
                 </td>
                 <td className="text-xs text-admin-muted">
                   {o.created_at ? new Date(o.created_at).toLocaleString('en-IN') : '—'}
@@ -289,7 +313,13 @@ export default function AdminOrdersPage() {
               {openId === o.id && (
                 <tr>
                   <td colSpan={6} className="bg-admin-panel-2">
-                    <OrderDetails detail={details[o.id]} />
+                    <OrderDetails
+                      detail={details[o.id]}
+                      onChanged={() => {
+                        reloadDetail(o.id)
+                        load()
+                      }}
+                    />
                   </td>
                 </tr>
               )}

@@ -4,6 +4,7 @@ import Container from '../components/ui/Container'
 import EditorialTitle from '../components/ui/EditorialTitle'
 import Button from '../components/ui/Button'
 import FormField from '../components/ui/FormField'
+import FormAlert from '../components/ui/FormAlert'
 import PostCheckoutAuthNotice from '../components/auth/PostCheckoutAuthNotice'
 import { useForm } from '../hooks/useForm'
 import { useAuth } from '../hooks/useAuth'
@@ -60,7 +61,7 @@ export default function LoginPage() {
               required
               value={values.login}
               onChange={handleChange}
-              error={errors.login ?? errors.form}
+              error={errors.login}
             />
             <FormField
               label="Password"
@@ -72,8 +73,17 @@ export default function LoginPage() {
               onChange={handleChange}
               error={errors.password}
             />
+            <Link
+              to="/forgot-password"
+              state={{ email: values.login }}
+              className="link-underline -mt-5 self-end text-sm text-primary"
+            >
+              Forgot password?
+            </Link>
 
-            <Button type="submit" disabled={status === 'submitting'}>
+            <FormAlert message={errors.form} />
+
+            <Button type="submit" disabled={status === 'submitting'} aria-busy={status === 'submitting'}>
               {status === 'submitting' ? 'Signing in…' : 'Sign in'}
             </Button>
           </form>

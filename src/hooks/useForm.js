@@ -15,12 +15,16 @@ export function useForm(initialValues, submitFn, onSuccess) {
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target
     setValues((v) => ({ ...v, [name]: type === 'checkbox' ? checked : value }))
-    setErrors((err) => (err[name] ? { ...err, [name]: undefined } : err))
+    // Editing a field clears its own error and any form-level error.
+    setErrors((err) =>
+      err[name] || err.form ? { ...err, [name]: undefined, form: undefined } : err,
+    )
   }, [])
 
   const handleSubmit = useCallback(
     async (e) => {
       e?.preventDefault?.()
+      setErrors({})
       setStatus('submitting')
       try {
         const result = await submitFn(values)

@@ -3,9 +3,7 @@ import Hero from '../components/home/Hero'
 import BrandStatement from '../components/home/BrandStatement'
 import CollectionsGrid from '../components/home/CollectionsGrid'
 import FeaturedProducts from '../components/home/FeaturedProducts'
-import B2BBand from '../components/home/B2BBand'
 import InstagramGrid from '../components/home/InstagramGrid'
-import Newsletter from '../components/home/Newsletter'
 import { SITE } from '../lib/site'
 
 const ORG_JSON_LD = {
@@ -32,9 +30,7 @@ export default function HomePage() {
       <BrandStatement />
       <FeaturedProducts />
       <CollectionsGrid />
-      <B2BBand />
       <InstagramGrid />
-      <Newsletter />
     </>
   )
 }

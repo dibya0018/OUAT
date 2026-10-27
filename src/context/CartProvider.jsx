@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { CartContext } from './cartContext'
 import { trackEvent } from '../lib/analytics'
 import { buildCheckoutLine } from '../lib/checkoutLine'
+import { apiGet } from '../lib/api'
 
 const STORAGE_KEY = 'ouat.cart.v1'
 
@@ -54,6 +55,29 @@ export function CartProvider({ children }) {
       /* storage unavailable (private mode, quota) — cart stays in memory */
     }
   }, [lines])
+
+  // Drop saved lines whose product has since been archived or deleted. The shop API only
+  // returns live products, so anything missing from the answer is no longer for sale.
+  // If the API can't be reached, the cart is left as it is.
+  useEffect(() => {
+    const ids = [...new Set(lines.map((line) => line.id).filter(Boolean))]
+    if (!ids.length) return
+    let alive = true
+    apiGet(`/products?ids=${ids.map(encodeURIComponent).join(',')}`)
+      .then((live) => {
+        if (!alive || !Array.isArray(live)) return
+        const liveIds = new Set(live.map((p) => String(p.id)))
+        for (const line of lines) {
+          if (line.id && !liveIds.has(String(line.id))) dispatch({ type: 'remove', key: line.key })
+        }
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+    // Only on first load: lines added later come from live product pages.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const addItem = useCallback((product, { qty = 1, gift = false, open = true, option } = {}) => {
     const item = buildCheckoutLine(product, { qty: 1, gift, option })

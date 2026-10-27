@@ -4,6 +4,7 @@ import Container from '../components/ui/Container'
 import EditorialTitle from '../components/ui/EditorialTitle'
 import Button from '../components/ui/Button'
 import FormField from '../components/ui/FormField'
+import FormAlert from '../components/ui/FormAlert'
 import PostCheckoutAuthNotice from '../components/auth/PostCheckoutAuthNotice'
 import { useForm } from '../hooks/useForm'
 import { useAuth } from '../hooks/useAuth'
@@ -95,13 +96,9 @@ export default function RegisterPage() {
               error={errors.passwordConfirm}
             />
 
-            {errors.form && (
-              <p role="alert" className="text-xs text-primary">
-                {errors.form}
-              </p>
-            )}
+            <FormAlert message={errors.form} />
 
-            <Button type="submit" disabled={status === 'submitting'}>
+            <Button type="submit" disabled={status === 'submitting'} aria-busy={status === 'submitting'}>
               {status === 'submitting' ? 'Creating account…' : 'Create account'}
             </Button>
           </form>

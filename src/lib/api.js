@@ -34,7 +34,7 @@ export async function apiGet(path, { auth = false } = {}) {
   const headers = auth ? authHeaders() : {}
   const res = await fetch(`${apiBase()}${path}`, { headers })
   const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(data.error || `API ${res.status}`)
+  if (!res.ok) throw new Error(data.error || data.message || `API ${res.status}`)
   return data
 }
 
@@ -47,7 +47,7 @@ async function apiJson(method, path, body, { auth = false } = {}) {
     body: body != null ? JSON.stringify(body) : undefined,
   })
   const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(data.error || `API ${res.status}`)
+  if (!res.ok) throw new Error(data.error || data.message || `API ${res.status}`)
   return data
 }
 

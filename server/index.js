@@ -14,6 +14,9 @@ import adminRouter from './routes/admin.js'
 import paymentsRouter from './routes/payments.js'
 import analyticsRouter from './routes/analytics.js'
 import adminProductMediaRouter from './routes/adminProductMedia.js'
+import courierWebhookRouter from './routes/courierWebhook.js'
+import passportRouter from './routes/passport.js'
+import instagramRouter from './routes/instagram.js'
 import { optionalAuth } from './middleware/auth.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -25,12 +28,25 @@ const port = Number(process.env.PORT || 3001)
 
 const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173'
 app.use(cors({ origin: corsOrigin.split(',').map((s) => s.trim()) }))
+// Before optionalAuth: the courier's Bearer token is not a login JWT.
+app.use('/api', courierWebhookRouter)
 app.use(optionalAuth)
 // Product image routes carry base64 uploads and parse their own (larger) body.
 const jsonBody = express.json({ limit: '256kb' })
 const IMAGE_UPLOAD_PATH = /^\/api\/admin\/products\/[^/]+\/images(\/|$)/
 app.use((req, res, next) => (IMAGE_UPLOAD_PATH.test(req.path) ? next() : jsonBody(req, res, next)))
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')))
+// Photos uploaded on the deployed site are saved on that server's disk, but the DB is shared,
+// so a local copy may not have them. With MEDIA_BASE_URL set (local .env only), send those
+// requests to the deployed server instead of returning 404.
+const mediaBaseUrl = String(process.env.MEDIA_BASE_URL || '').trim().replace(/\/+$/, '')
+if (mediaBaseUrl) {
+  const mediaHost = new URL(mediaBaseUrl).host
+  app.use('/uploads', (req, res, next) => {
+    if (req.headers.host === mediaHost) return next() // never redirect the deployed site to itself
+    res.redirect(302, `${mediaBaseUrl}/uploads${req.url}`)
+  })
+}
 
 app.use('/api/health', healthRouter)
 app.use('/api', catalogRouter)
@@ -38,6 +54,8 @@ app.use('/api', formsRouter)
 app.use('/api', authRouter)
 app.use('/api', accountRouter)
 app.use('/api', paymentsRouter)
+app.use('/api', passportRouter)
+app.use('/api', instagramRouter)
 app.use('/api', analyticsRouter)
 app.use('/api', adminRouter)
 app.use('/api', adminProductMediaRouter)

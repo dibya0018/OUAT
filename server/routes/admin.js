@@ -5,6 +5,18 @@ import { logAdminActivity } from '../lib/adminLog.js'
 import { createRazorpayOrder, getRazorpayCredentials, refundRazorpayPayment } from '../lib/razorpay.js'
 import { imagesByProductIds, replaceProductImages } from '../lib/productImagesDb.js'
 import { deductOrderStock, restoreOrderStock } from '../lib/checkoutOrders.js'
+import { sendOrderEmails } from '../lib/orderEmails.js'
+import { isMailConfigured } from '../lib/mailer.js'
+import {
+  cancelDelhiveryShipment,
+  checkServiceability,
+  delhiveryEnv,
+  getLabelUrl,
+  isDelhiveryConfigured,
+  shipOrder,
+  trackOrder,
+  trackingUrl,
+} from '../lib/delhivery.js'
 
 function jsonField(value, fallback) {
   if (value == null) return fallback
@@ -353,7 +365,8 @@ adminApi.get('/orders', async (req, res, next) => {
   try {
     const status = req.query.status ? String(req.query.status) : null
     let sql = `SELECT id, order_number, customer_email, customer_name, total, status,
-                      payment_method, razorpay_order_id, razorpay_payment_id, created_at
+                      payment_method, razorpay_order_id, razorpay_payment_id, created_at,
+                      JSON_UNQUOTE(JSON_EXTRACT(shipping_json, '$.delhivery.awb')) AS delhivery_awb
                FROM orders`
     const params = {}
     const where = []
@@ -411,6 +424,16 @@ adminApi.get('/orders/:id', async (req, res, next) => {
         couponCode: shipping.couponCode ?? null,
         giftNote: shipping.giftNote ?? '',
         giftItems: Array.isArray(shipping.giftItems) ? shipping.giftItems : [],
+        delhivery: shipping.delhivery ? { ...shipping.delhivery, trackUrl: trackingUrl(shipping.delhivery.awb) } : null,
+        emails: {
+          mailConfigured: isMailConfigured(),
+          confirmation: shipping.orderEmail ?? null,
+          confirmationAt: shipping.orderEmailAt ?? null,
+          confirmationError: shipping.orderEmailError ?? null,
+          passport: shipping.passportEmail ?? null,
+          passportAt: shipping.passportEmailAt ?? null,
+          passportError: shipping.passportEmailError ?? null,
+        },
         address: {
           line1: shipping.line1 ?? '',
           line2: shipping.line2 ?? '',
@@ -431,16 +454,45 @@ adminApi.get('/orders/:id', async (req, res, next) => {
   }
 })
 
+/** Resend the order confirmation (with invoice) and the bottle passport email. */
+adminApi.post('/orders/:id/resend-emails', async (req, res, next) => {
+  try {
+    const id = Number(req.params.id)
+    const only = ['confirmation', 'passport', 'owner'].includes(req.body?.only) ? req.body.only : undefined
+    const result = await sendOrderEmails(id, { force: true, only })
+    if (!result.results.length) return res.status(400).json({ ok: false, error: result.error })
+    await logAdminActivity(`Admin resent order emails for order #${id}`, req.user.userId)
+    const failed = result.results.filter((r) => r.status === 'failed')
+    if (failed.length) {
+      return res.status(502).json({ ok: false, error: failed.map((r) => `${r.kind}: ${r.error}`).join('; '), results: result.results })
+    }
+    res.json({ ok: true, results: result.results })
+  } catch (err) {
+    next(err)
+  }
+})
+
+const TRACKED_STATUSES = ['shipped', 'out_for_delivery', 'delivered']
+
 adminApi.patch('/orders/:id/status', async (req, res, next) => {
   try {
     const status = String(req.body.status ?? '')
     if (!status) return res.status(400).json({ ok: false, error: 'status required' })
     const id = Number(req.params.id)
     const [order] = await query(
-      'SELECT status, order_number, payment_method, razorpay_payment_id FROM orders WHERE id = :id LIMIT 1',
+      `SELECT status, order_number, payment_method, razorpay_payment_id,
+              JSON_UNQUOTE(JSON_EXTRACT(shipping_json, '$.delhivery.awb')) AS delhivery_awb
+       FROM orders WHERE id = :id LIMIT 1`,
       { id },
     )
     if (!order) return res.status(404).json({ ok: false, error: 'Order not found' })
+    // Once Delhivery has the parcel, its tracking sets these statuses — not the admin.
+    if (order.delhivery_awb && TRACKED_STATUSES.includes(status) && status !== order.status) {
+      return res.status(400).json({
+        ok: false,
+        error: 'This order ships with Delhivery, so Shipped / Out for delivery / Delivered are set by tracking.',
+      })
+    }
 
     // Cancelling an order that was paid online sends the money back first;
     // if the refund fails the order is left as it was.
@@ -457,6 +509,15 @@ adminApi.patch('/orders/:id/status', async (req, res, next) => {
     }
 
     await query('UPDATE orders SET status = :status WHERE id = :id', { status, id })
+    // Cancel the Delhivery shipment too; the order stays cancelled here even if that fails.
+    let courierWarning = null
+    if (status === 'cancelled' && order.status !== 'cancelled' && order.delhivery_awb && isDelhiveryConfigured()) {
+      try {
+        await cancelDelhiveryShipment(id)
+      } catch (err) {
+        courierWarning = `Cancel AWB ${order.delhivery_awb} in the Delhivery panel manually: ${err.message}`
+      }
+    }
     // Cancelling puts the items back into stock; reopening a cancelled order takes them out again.
     if (status === 'cancelled' && order.status !== 'cancelled') {
       await restoreOrderStock(id)
@@ -472,9 +533,94 @@ adminApi.patch('/orders/:id/status', async (req, res, next) => {
         req.user.userId,
       )
     }
-    res.json({ ok: true, refunded: Boolean(refund), refundId: refund?.id ?? null })
+    res.json({ ok: true, refunded: Boolean(refund), refundId: refund?.id ?? null, courierWarning })
   } catch (err) {
     next(err)
+  }
+})
+
+function delhiveryErrorStatus(err) {
+  if (err.code === 'ORDER_NOT_FOUND') return 404
+  if (err.code === 'DELHIVERY_NOT_CONFIGURED') return 503
+  if (['ORDER_CANCELLED', 'ORDER_UNPAID', 'NOT_SHIPPED', 'NOT_SERVICEABLE', 'BAD_PINCODE'].includes(err.code)) return 400
+  if (['DELHIVERY_API_ERROR', 'PICKUP_FAILED'].includes(err.code)) return 502
+  return null
+}
+
+function sendDelhiveryError(err, res, next) {
+  const code = delhiveryErrorStatus(err)
+  if (code) return res.status(code).json({ ok: false, error: err.message, code: err.code })
+  next(err)
+}
+
+adminApi.get('/delhivery/status', async (_req, res) => {
+  const e = (k, d) => process.env[k]?.trim() || d
+  const base = {
+    ok: true,
+    env: delhiveryEnv(),
+    pickupLocation: e('DELHIVERY_PICKUP_LOCATION', ''),
+    shippingMode: e('DELHIVERY_SHIPPING_MODE', 'Surface'),
+    pickupTime: e('DELHIVERY_PICKUP_TIME', '14:00:00'),
+    package: {
+      weightG: Number(e('DELHIVERY_DEFAULT_WEIGHT_G', 500)),
+      lengthCm: Number(e('DELHIVERY_DEFAULT_LENGTH_CM', 20)),
+      breadthCm: Number(e('DELHIVERY_DEFAULT_BREADTH_CM', 15)),
+      heightCm: Number(e('DELHIVERY_DEFAULT_HEIGHT_CM', 10)),
+    },
+  }
+  if (!isDelhiveryConfigured()) return res.json({ ...base, configured: false })
+  try {
+    // A serviceability lookup is the cheapest call that proves the token works.
+    await checkServiceability('110001')
+    res.json({ ...base, configured: true, connected: true })
+  } catch (err) {
+    res.json({ ...base, configured: true, connected: false, error: err.message })
+  }
+})
+
+adminApi.get('/delhivery/serviceability/:pincode', async (req, res, next) => {
+  try {
+    res.json({ ok: true, serviceability: await checkServiceability(req.params.pincode) })
+  } catch (err) {
+    sendDelhiveryError(err, res, next)
+  }
+})
+
+adminApi.post('/orders/:id/delhivery', async (req, res, next) => {
+  const id = Number(req.params.id)
+  try {
+    const delhivery = await shipOrder(id)
+    await logAdminActivity(`Shipped order #${id} via Delhivery (AWB ${delhivery.awb})`, req.user.userId)
+    res.json({ ok: true, delhivery: { ...delhivery, trackUrl: trackingUrl(delhivery.awb) } })
+  } catch (err) {
+    sendDelhiveryError(err, res, next)
+  }
+})
+
+adminApi.get('/orders/:id/delhivery/track', async (req, res, next) => {
+  try {
+    res.json({ ok: true, tracking: await trackOrder(Number(req.params.id)) })
+  } catch (err) {
+    sendDelhiveryError(err, res, next)
+  }
+})
+
+adminApi.post('/orders/:id/delhivery/cancel', async (req, res, next) => {
+  const id = Number(req.params.id)
+  try {
+    const cancelled = await cancelDelhiveryShipment(id)
+    if (cancelled) await logAdminActivity(`Cancelled Delhivery shipment for order #${id}`, req.user.userId)
+    res.json({ ok: true, cancelled })
+  } catch (err) {
+    sendDelhiveryError(err, res, next)
+  }
+})
+
+adminApi.get('/orders/:id/delhivery/label', async (req, res, next) => {
+  try {
+    res.json({ ok: true, url: await getLabelUrl(Number(req.params.id)) })
+  } catch (err) {
+    sendDelhiveryError(err, res, next)
   }
 })
 

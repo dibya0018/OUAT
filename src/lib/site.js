@@ -1,11 +1,26 @@
 /**
+ * Public URL of the storefront, used for canonical, Open Graph and JSON-LD links.
+ * APP_ENV=local (in .env) → this local site, but only on the Vite dev server, so a production
+ * build can never ship localhost links. Otherwise → SITE_URL (the live site).
+ */
+function resolveSiteUrl() {
+  const env = import.meta.env
+  const local = String(env.APP_ENV ?? '').trim().toLowerCase() === 'local'
+  if (local && env.DEV) {
+    if (typeof window !== 'undefined') return window.location.origin
+    return String(env.LOCAL_SITE_URL || 'http://localhost:5173').replace(/\/+$/, '')
+  }
+  return String(env.SITE_URL || 'https://ouatworld.com').replace(/\/+$/, '')
+}
+
+/**
  * Brand-wide constants and copy used across pages.
  * Keep approved claims here so wording stays consistent and on-brand.
  */
 export const SITE = {
   name: 'O.U.A.T.',
   longName: 'Once Upon A Time',
-  url: 'https://ouat.in', // update when the real domain is live
+  url: resolveSiteUrl(),
   tagline: 'Welcome to the World where creativity meets Consciousness!',
   secondaryLines: ['Once discarded. Now designed.', 'Once Upon A Time… a bottle. Now, a glass.'],
   location: 'Goa, India',

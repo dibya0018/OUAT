@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useId, useState } from 'react'
 import { cx } from '../../lib/format'
 
 const controlBase =
@@ -23,6 +23,8 @@ export default function FormField({
   ...rest
 }) {
   const id = useId()
+  const [showPassword, setShowPassword] = useState(false)
+  const isPassword = type === 'password' && !as && !options
   const errorId = `${id}-error`
   const hintId = `${id}-hint`
   const describedBy = [error && errorId, hint && hintId].filter(Boolean).join(' ') || undefined
@@ -51,6 +53,14 @@ export default function FormField({
         ))}
       </select>
     )
+  } else if (isPassword) {
+    control = (
+      <input
+        {...shared}
+        type={showPassword ? 'text' : 'password'}
+        className={cx(shared.className, 'pr-14')}
+      />
+    )
   } else {
     control = <input type={type} {...shared} />
   }
@@ -67,6 +77,43 @@ export default function FormField({
       </label>
       <div className="relative">
         {control}
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-pressed={showPassword}
+            aria-controls={id}
+            /* 40px target; 20px icon centred in it sits ~12px in from the field's right edge. */
+            className="absolute top-1/2 right-0.5 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-xs text-primary/80 transition-colors hover:text-primary focus-visible:text-primary focus-visible:outline-1 focus-visible:outline-offset-0 focus-visible:outline-primary"
+          >
+            <svg
+              aria-hidden="true"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              {showPassword ? (
+                <>
+                  <path d="M3 3l18 18" />
+                  <path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6 0 9.5 7 9.5 7a17 17 0 0 1-2.9 3.8" />
+                  <path d="M6.6 6.6C3.9 8.4 2.5 12 2.5 12s3.5 7 9.5 7a9.6 9.6 0 0 0 5.4-1.6" />
+                  <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+                </>
+              ) : (
+                <>
+                  <path d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7z" />
+                  <circle cx="12" cy="12" r="3" />
+                </>
+              )}
+            </svg>
+          </button>
+        )}
         {options && (
           <svg
             aria-hidden="true"

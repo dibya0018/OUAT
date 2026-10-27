@@ -21,7 +21,10 @@ const PolicyPage = lazy(() => import('./pages/policies/PolicyPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
 const AccountPage = lazy(() => import('./pages/AccountPage'))
+const PassportPage = lazy(() => import('./pages/PassportPage'))
 const AdminRoutes = lazy(() => import('./admin/AdminRoutes'))
 
 /** Old `/shop/:slug` URLs → dedicated category pages. */
@@ -61,11 +64,14 @@ export default function App() {
         <Route path="gifting-b2b" element={<B2BPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route path="account" element={<AccountPage />} />
         <Route path="contact" element={<ContactPage />} />
         <Route path="cart" element={<CartPage />} />
         <Route path="checkout" element={<CheckoutPage />} />
         <Route path="policies/:policySlug" element={<PolicyPage />} />
+        <Route path="passport/:passportId" element={<PassportPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
