@@ -20,6 +20,8 @@ import instagramRouter from './routes/instagram.js'
 import { optionalAuth } from './middleware/auth.js'
 import { retryInterruptedOrderEmails } from './lib/orderEmails.js'
 import { securityHeaders, trustProxySetting } from './lib/securityHeaders.js'
+import { UPLOAD_ROOT, usingDefaultUploadRoot } from './lib/productImageUpload.js'
+import { isLocal } from './lib/appEnv.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const distDir = path.join(__dirname, '../dist')
@@ -40,7 +42,13 @@ app.use(optionalAuth)
 const jsonBody = express.json({ limit: '256kb' })
 const IMAGE_UPLOAD_PATH = /^\/api\/admin\/products\/[^/]+\/images(\/|$)/
 app.use((req, res, next) => (IMAGE_UPLOAD_PATH.test(req.path) ? next() : jsonBody(req, res, next)))
-app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')))
+// Admin-uploaded photos: served from UPLOAD_DIR (outside the app on the live server, so deploys keep them).
+app.use('/uploads', express.static(UPLOAD_ROOT, { maxAge: '7d' }))
+if (!isLocal() && usingDefaultUploadRoot) {
+  console.warn(
+    '[uploads] UPLOAD_DIR is not set: uploaded photos are saved inside the app folder and the next deploy will delete them. Set UPLOAD_DIR in .env to a folder outside the app.',
+  )
+}
 // Photos uploaded on the deployed site are saved on that server's disk, but the DB is shared,
 // so a local copy may not have them. With MEDIA_BASE_URL set (local .env only), send those
 // requests to the deployed server instead of returning 404.

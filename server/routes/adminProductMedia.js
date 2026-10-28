@@ -18,7 +18,7 @@ const router = Router()
 const adminApi = Router()
 adminApi.use(requireAdmin)
 
-/** Remove public/uploads/products/{id}/ if it is now empty. */
+/** Remove {UPLOAD_DIR}/products/{id}/ if it is now empty. */
 function removeProductUploadDir(id) {
   if (!/^[\w-]+$/.test(id)) return
   try {

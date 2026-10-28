@@ -4,7 +4,22 @@ import { randomBytes } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-export const UPLOAD_ROOT = path.join(__dirname, '../../public/uploads')
+const DEFAULT_UPLOAD_ROOT = path.join(__dirname, '../../public/uploads')
+
+/**
+ * Where photos uploaded in Admin are saved. On the live server set UPLOAD_DIR to a folder OUTSIDE
+ * the app (e.g. /home/<account>/ouat-uploads): each deploy replaces the app folder, so anything
+ * saved inside it (the public/uploads default) is deleted on the next deploy.
+ * The public URLs stay /uploads/..., whichever folder holds the files.
+ */
+export const UPLOAD_ROOT = path.resolve(String(process.env.UPLOAD_DIR || '').trim() || DEFAULT_UPLOAD_ROOT)
+export const usingDefaultUploadRoot = UPLOAD_ROOT === path.resolve(DEFAULT_UPLOAD_ROOT)
+
+try {
+  fs.mkdirSync(UPLOAD_ROOT, { recursive: true })
+} catch (err) {
+  console.error(`[uploads] Cannot create upload folder ${UPLOAD_ROOT}:`, err.message)
+}
 
 const MAX_BYTES = 5 * 1024 * 1024
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
@@ -28,7 +43,7 @@ function extForMime(mime) {
   return 'jpg'
 }
 
-/** Persist upload under public/uploads/products/{productId}/ and return public URL path. */
+/** Persist upload under {UPLOAD_ROOT}/products/{productId}/ and return its public URL path. */
 export function saveProductImageFile(productId, dataUrl) {
   const parsed = parseDataUrl(dataUrl)
   if (!parsed) {
@@ -48,7 +63,7 @@ export function deleteUploadedImageSrc(src) {
   if (typeof src !== 'string' || !src.startsWith('/uploads/')) return
   const rel = src.replace(/^\/uploads\//, '')
   const filePath = path.join(UPLOAD_ROOT, rel)
-  if (!filePath.startsWith(UPLOAD_ROOT)) return
+  if (!filePath.startsWith(UPLOAD_ROOT + path.sep)) return
   try {
     fs.unlinkSync(filePath)
   } catch {
