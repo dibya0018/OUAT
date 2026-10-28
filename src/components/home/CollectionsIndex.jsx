@@ -216,7 +216,6 @@ export default function CollectionsIndex() {
                           <img
                             src={entry.src}
                             alt=""
-                            loading="lazy"
                             decoding="async"
                             className={cx('absolute left-0 w-full max-w-none object-cover', entry.framing)}
                           />

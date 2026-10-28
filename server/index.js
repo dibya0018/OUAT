@@ -70,7 +70,26 @@ let clientMode = 'api'
 /** @type {import('vite').ViteDevServer | undefined} */
 let viteDevServer
 
+/**
+ * Product photos are stored in the database as /images/….png or .jpg. Each has a much smaller
+ * .webp copy next to it; send that instead when the browser says it accepts WebP (all modern ones do).
+ */
+function preferWebp(req, res, next) {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next()
+  if (!/^\/images\/.+\.(png|jpe?g)$/i.test(req.path)) return next()
+  res.vary('Accept')
+  if (!/image\/webp/.test(req.headers.accept || '')) return next()
+  const webpPath = req.path.replace(/\.(png|jpe?g)$/i, '.webp')
+  const file = path.join(distDir, decodeURIComponent(webpPath))
+  if (!file.startsWith(distDir)) return next()
+  fs.access(file, fs.constants.R_OK, (err) => {
+    if (!err) req.url = webpPath + (req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '')
+    next()
+  })
+}
+
 function attachDistClient() {
+  app.use(preferWebp)
   app.use(express.static(distDir, { index: false }))
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next()

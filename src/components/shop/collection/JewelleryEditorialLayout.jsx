@@ -119,7 +119,6 @@ export default function JewelleryEditorialLayout({ collection, products, loading
               src={story.image}
               alt={story.imageAlt}
               className="absolute inset-0 h-full w-full object-cover object-[72%_center]"
-              loading="lazy"
             />
           </div>
           <div className="flex items-center px-6 py-14 sm:px-10 lg:px-16">

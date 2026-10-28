@@ -1,7 +1,7 @@
-import glasswareHero from '../components/images/glassware-hero.png'
-import goaSunset from '../components/images/goa-sunset.png'
-import processRescued from '../components/images/process-rescued.png'
-import jewelleryHero from '../components/images/jewellery-hero.png'
+import glasswareHero from '../components/images/glassware-hero.webp'
+import goaSunset from '../components/images/goa-sunset.webp'
+import processRescued from '../components/images/process-rescued.webp'
+import jewelleryHero from '../components/images/jewellery-hero.webp'
 
 /**
  * @typedef {Object} CollectionBannerConfig

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import jewelleryStory from '../images/jewellery-story.png'
+import jewelleryStory from '../images/jewellery-story.webp'
 
 /** 50/50 story band — aligned columns, lifestyle photo on the right. */
 export default function JewelleryStoryPanel() {
@@ -30,7 +30,6 @@ export default function JewelleryStoryPanel() {
             src={jewelleryStory}
             alt="Woman wearing sea-glass jewellery on a Goa beach at sunset"
             className="absolute inset-0 h-full w-full object-cover object-[72%_center] lg:object-right"
-            loading="lazy"
           />
         </div>
       </div>

@@ -7,17 +7,17 @@ import Reveal from '../ui/Reveal'
 import Icon from '../ui/Icon'
 import { getCollectionPath, shopMenuCollections } from '../../lib/collections'
 import { getCollections } from '../../services/productService'
-import candlesImg from '../images/process-reborn.png'
-import kitchenImg from '../images/process-rescued.png'
-import glasswareImg from '../images/impact-glassware.jpg'
-import jewelleryImg from '../images/jewellery-pendant.png'
+import candlesImg from '../images/collection-candles.webp'
+import kitchenImg from '../images/collection-kitchenware.webp'
+import glasswareImg from '../images/collection-glassware.webp'
+import jewelleryImg from '../images/collection-jewellery.webp'
 
 /** Tall photos for the home tiles; the catalogue's own collection images are wide banners. */
 const TILE_IMAGES = {
-  candles: { src: candlesImg, alt: 'A green glass tumbler and a lit candle on a stone by the sea at sunset' },
-  'kitchen-storage': { src: kitchenImg, alt: 'Green, amber and clear bottles standing in the sand before reshaping' },
-  glassware: { src: glasswareImg, alt: 'Tumblers and vases cut from green, amber and clear bottles on a sunlit table' },
-  jewellery: { src: jewelleryImg, alt: 'A teardrop pendant of green bottle glass in a gold-toned setting' },
+  candles: { src: candlesImg, alt: 'A lit candle in an amber glass jar beside its cork lid marked Goa, in warm evening light' },
+  'kitchen-storage': { src: kitchenImg, alt: 'Green and olive glass storage jars with wooden lids, one tipped over spilling seeds' },
+  glassware: { src: glasswareImg, alt: 'Six green and amber tumblers cut from wine bottles on a sunlit stone counter' },
+  jewellery: { src: jewelleryImg, alt: 'A woman by the sea at sunset wearing flower earrings, ring, necklace and bracelet of clear and blue glass' },
 }
 
 export default function CollectionsGrid() {

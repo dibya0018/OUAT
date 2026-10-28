@@ -22,7 +22,7 @@ export default function ProductCard({ product, className, priority = false }) {
             <img
               src={coverSrc}
               alt={coverAlt}
-              loading={priority ? 'eager' : 'lazy'}
+              loading="eager"
               decoding={priority ? 'async' : 'async'}
               fetchPriority={priority ? 'high' : 'auto'}
               className="block h-full w-full object-cover"
@@ -44,7 +44,6 @@ export default function ProductCard({ product, className, priority = false }) {
               src={hover.src}
               alt=""
               aria-hidden
-              loading="lazy"
               className="pointer-events-none absolute inset-0 block h-full w-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100"
             />
           )}

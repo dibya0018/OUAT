@@ -1,8 +1,8 @@
 import Container from '../ui/Container'
 import { SITE } from '../../lib/site'
 import { ArrowLink, Eyebrow, FadeUp, RevealImage, RevealLines } from './kit'
-import handsAtWork from '../images/process-reshaped.png'
-import goaSunset from '../images/goa-sunset.png'
+import handsAtWork from '../images/process-reshaped.webp'
+import goaSunset from '../images/goa-sunset.webp'
 import './StudioStory.css'
 
 /** 06 — The studio: who makes the pieces, and the place they are made in. */

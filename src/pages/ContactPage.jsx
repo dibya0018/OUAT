@@ -8,7 +8,7 @@ import { useForm } from '../hooks/useForm'
 import { submitContact } from '../services/formService'
 import { trackEvent } from '../lib/analytics'
 import { SITE } from '../lib/site'
-import contactPhoto from '../components/images/gifting-4.png'
+import contactPhoto from '../components/images/gifting-4.webp'
 
 const INITIAL = { name: '', email: '', subject: '', message: '' }
 
@@ -67,7 +67,6 @@ export default function ContactPage() {
               <img
                 src={contactPhoto}
                 alt="O.U.A.T. gift box with upcycled green glassware on a wooden table"
-                loading="lazy"
                 decoding="async"
                 className="aspect-[5/3] w-full object-cover"
               />

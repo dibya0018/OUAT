@@ -1,4 +1,4 @@
-import jewelleryHero from '../images/jewellery-hero.png'
+import jewelleryHero from '../images/jewellery-hero.webp'
 
 /**
  * Full-width jewellery banner — lifestyle photo on the right, copy on the left.
@@ -11,7 +11,9 @@ export default function JewelleryHeroVisual({ children }) {
         alt=""
         aria-hidden
         className="absolute inset-0 h-full w-full object-cover object-[70%_center] sm:object-[68%_center] lg:object-[right_center]"
+        loading="eager"
         fetchPriority="high"
+        decoding="async"
       />
       {/* Solid read zone — avoids showing baked-in text from wrong assets */}
       <div

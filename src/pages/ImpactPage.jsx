@@ -7,10 +7,10 @@ import Reveal from '../components/ui/Reveal'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
 import { IMPACT_PER_KG } from '../lib/site'
-import impactCollecting from '../components/images/impact-collecting.jpg'
-import impactBottles from '../components/images/impact-bottles.jpg'
+import impactCollecting from '../components/images/impact-collecting.webp'
+import impactBottles from '../components/images/impact-bottles.webp'
 import impactGrinding from '../components/images/impact-grinding.webp'
-import impactGlassware from '../components/images/impact-glassware.jpg'
+import impactGlassware from '../components/images/impact-glassware.webp'
 
 /*
  * Copy and figures here come from the brand's own About page (ouatworld.com/about)

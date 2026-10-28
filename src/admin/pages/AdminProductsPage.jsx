@@ -96,7 +96,7 @@ Its photos and reviews will be removed too. This can't be undone.`,
                   <div className="flex items-center gap-3">
                     <div className="h-11 w-11 shrink-0 overflow-hidden rounded-full bg-admin-panel-2">
                       {p.imageSrc ? (
-                        <img src={p.imageSrc} alt="" className="h-full w-full object-cover" />
+                        <img src={p.imageSrc} alt="" decoding="async" className="h-full w-full object-cover" />
                       ) : null}
                     </div>
                     <div className="min-w-0">

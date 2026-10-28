@@ -66,7 +66,7 @@ export default function RevealImage({
           alt={alt}
           sizes={sizes}
           className={cx('home-image__img', imgClassName)}
-          {...(priority ? { loading: 'eager', fetchPriority: 'high' } : { loading: 'lazy', decoding: 'async' })}
+          {...(priority ? { loading: 'eager', fetchPriority: 'high' } : { decoding: 'async' })}
         />
       </div>
     </div>

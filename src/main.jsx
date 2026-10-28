@@ -7,10 +7,13 @@ import { CartProvider } from './context/CartProvider'
 import { CheckoutProvider } from './context/CheckoutProvider'
 import { AuthProvider } from './context/AuthProvider'
 import { initAnalytics } from './lib/analytics'
+import { initImageSkeleton } from './lib/imageSkeleton'
 import './index.css'
 
 // Loads GA4 / Meta Pixel / GTM only when their env IDs are present.
 initAnalytics()
+// Shimmer placeholder behind every photo until it has loaded.
+initImageSkeleton()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

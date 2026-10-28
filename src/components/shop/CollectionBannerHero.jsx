@@ -69,6 +69,9 @@ export default function CollectionBannerHero({ banner, children, align = 'left' 
         src={banner.src}
         alt=""
         aria-hidden
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
         className={cx(
           'absolute inset-0 h-full w-full object-cover',
           banner.objectClass ?? 'object-[70%_center] sm:object-[68%_center] lg:object-[right_center]',

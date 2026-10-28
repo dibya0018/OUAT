@@ -2,9 +2,9 @@ import { Fragment } from 'react'
 import Container from '../ui/Container'
 import { cx } from '../../lib/format'
 import { ArrowLink, Eyebrow, FadeUp, Marquee } from './kit'
-import rescued from '../images/process-rescued.png'
-import reshaped from '../images/process-reshaped.png'
-import reborn from '../images/process-reborn.png'
+import rescued from '../images/process-rescued.webp'
+import reshaped from '../images/process-reshaped.webp'
+import reborn from '../images/process-reborn.webp'
 import './Manifesto.css'
 
 /** The closing ticker: the brand line in two halves, then the three steps of the making. */
@@ -18,7 +18,7 @@ const TICKER_GAP = 'clamp(1.5rem, 4.5vw, 4.5rem)'
 function Tile({ src, focus, order, mid = false }) {
   return (
     <span className={cx('home-manifesto__tile', mid && 'home-manifesto__tile--mid')} style={{ '--tile-order': order }}>
-      <img src={src} alt="" loading="lazy" decoding="async" style={{ objectPosition: focus }} />
+      <img src={src} alt="" decoding="async" style={{ objectPosition: focus }} />
     </span>
   )
 }

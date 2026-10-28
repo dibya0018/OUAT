@@ -43,7 +43,7 @@ export function ProductPhoto({ product, className, priority = false, swap = true
         <img
           src={primary.src}
           alt={primary.alt ?? product.name}
-          loading={priority ? 'eager' : 'lazy'}
+          loading="eager"
           decoding="async"
           className="block h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
@@ -66,7 +66,6 @@ export function ProductPhoto({ product, className, priority = false, swap = true
           src={hover.src}
           alt=""
           aria-hidden
-          loading="lazy"
           className="pointer-events-none absolute inset-0 block h-full w-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         />
       )}

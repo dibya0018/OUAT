@@ -3,7 +3,7 @@ import Container from '../ui/Container'
 import Button from '../ui/Button'
 import EditorialTitle from '../ui/EditorialTitle'
 import Icon from '../ui/Icon'
-import goaAerial from '../images/goa.png'
+import goaAerial from '../images/goa.webp'
 import heroEarthEssence from '../images/banners/hero-earth-essence.webp'
 import { cx } from '../../lib/format'
 

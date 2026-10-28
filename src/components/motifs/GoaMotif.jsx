@@ -17,13 +17,13 @@ export default function GoaMotif({ name, size = 48, className, reveal: _reveal }
 
   return (
     <img
+      data-no-skeleton
       src={src}
       alt=""
       aria-hidden
       width={size}
       height={size}
       className={cx('object-contain', className)}
-      loading="lazy"
       decoding="async"
     />
   )

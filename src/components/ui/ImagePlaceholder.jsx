@@ -41,7 +41,7 @@ export default function ImagePlaceholder({
           srcSet={srcSet}
           sizes={sizes}
           alt={alt}
-          loading={priority ? 'eager' : 'lazy'}
+          loading="eager"
           decoding={priority ? 'sync' : 'async'}
           fetchPriority={priority ? 'high' : 'auto'}
           className={cx('block h-full w-full object-cover', imgClassName)}

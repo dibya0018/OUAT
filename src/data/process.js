@@ -1,6 +1,6 @@
-import processRescued from '../components/images/process-rescued.png'
-import processReshaped from '../components/images/process-reshaped.png'
-import processReborn from '../components/images/process-reborn.png'
+import processRescued from '../components/images/process-rescued.webp'
+import processReshaped from '../components/images/process-reshaped.webp'
+import processReborn from '../components/images/process-reborn.webp'
 
 /** The three-step "Bottle to Product" story, shared by Home and Our Story. */
 export const PROCESS_STEPS = [

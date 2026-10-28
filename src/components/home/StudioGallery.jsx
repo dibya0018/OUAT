@@ -2,11 +2,11 @@ import Container from '../ui/Container'
 import { cx } from '../../lib/format'
 import { SITE } from '../../lib/site'
 import { ArrowLink, Eyebrow, RevealImage, RevealLines } from './kit'
-import rescuedImg from '../images/process-rescued.png'
-import reshapedImg from '../images/process-reshaped.png'
-import rebornImg from '../images/process-reborn.png'
-import ledgeImg from '../images/goa.png'
-import pendantImg from '../images/jewellery-pendant.png'
+import rescuedImg from '../images/process-rescued.webp'
+import reshapedImg from '../images/process-reshaped.webp'
+import rebornImg from '../images/process-reborn.webp'
+import ledgeImg from '../images/goa.webp'
+import pendantImg from '../images/jewellery-pendant.webp'
 
 /** One photograph of the spread with its caption. */
 function Plate({ src, alt, ratio, parallax, imgClassName, className, children }) {

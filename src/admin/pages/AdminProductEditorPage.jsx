@@ -392,7 +392,7 @@ export default function AdminProductEditorPage() {
                           </span>
                         ) : null}
                         {img.src ? (
-                          <img src={img.src} alt="" className="h-full w-full object-cover" />
+                          <img src={img.src} alt="" decoding="async" className="h-full w-full object-cover" />
                         ) : (
                           <div className="flex h-full items-center justify-center text-xs text-admin-muted">No src</div>
                         )}
@@ -468,7 +468,7 @@ export default function AdminProductEditorPage() {
                             className="flex w-full items-center gap-2 rounded-lg border border-admin-border px-2 py-1.5 text-left text-sm disabled:opacity-50"
                             onClick={() => onUseAsThumbnail(i)}
                           >
-                            <img src={img.src} alt="" className="h-8 w-8 rounded object-cover" />
+                            <img src={img.src} alt="" decoding="async" className="h-8 w-8 rounded object-cover" />
                             <span>{i === 0 ? 'Current cover' : `Photo ${i + 1}`}</span>
                           </button>
                         </li>

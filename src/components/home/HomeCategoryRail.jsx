@@ -45,7 +45,6 @@ export default function HomeCategoryRail() {
                     <img
                       src={banner.src}
                       alt=""
-                      loading="lazy"
                       decoding="async"
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                       style={{ objectPosition: banner.objectPosition ?? 'center' }}

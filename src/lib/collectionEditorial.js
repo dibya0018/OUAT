@@ -1,11 +1,11 @@
-import glasswareHero from '../components/images/glassware-hero.png'
-import processReshaped from '../components/images/process-reshaped.png'
-import goaSunset from '../components/images/goa-sunset.png'
-import processReborn from '../components/images/process-reborn.png'
-import processRescued from '../components/images/process-rescued.png'
-import jewelleryStory from '../components/images/jewellery-story.png'
-import jewelleryPendant from '../components/images/jewellery-pendant.png'
-import jewelleryEarrings from '../components/images/jewellery-earrings.png'
+import glasswareHero from '../components/images/glassware-hero.webp'
+import processReshaped from '../components/images/process-reshaped.webp'
+import goaSunset from '../components/images/goa-sunset.webp'
+import processReborn from '../components/images/process-reborn.webp'
+import processRescued from '../components/images/process-rescued.webp'
+import jewelleryStory from '../components/images/jewellery-story.webp'
+import jewelleryPendant from '../components/images/jewellery-pendant.webp'
+import jewelleryEarrings from '../components/images/jewellery-earrings.webp'
 
 /** @typedef {'accent'|'primary'} EditorialAccent */
 

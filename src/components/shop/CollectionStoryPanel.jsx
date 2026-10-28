@@ -39,7 +39,6 @@ export default function CollectionStoryPanel({
         src={image}
         alt={imageAlt}
         className={`absolute inset-0 h-full w-full object-cover ${imagePosition ?? 'object-[72%_center] lg:object-right'}`}
-        loading="lazy"
       />
     </div>
   )

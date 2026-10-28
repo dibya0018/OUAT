@@ -48,7 +48,7 @@ export default function HomeProductTile({ product, priority = false }) {
               alt={primary.alt ?? product.name}
               draggable={false}
               decoding="async"
-              {...(priority ? { loading: 'eager', fetchPriority: 'high' } : { loading: 'lazy' })}
+              {...(priority ? { loading: 'eager', fetchPriority: 'high' } : {})}
               className={cx('absolute inset-0 block h-full w-full object-cover', HOLD_ZOOM)}
             />
           )}
@@ -58,7 +58,6 @@ export default function HomeProductTile({ product, priority = false }) {
               alt=""
               aria-hidden="true"
               draggable={false}
-              loading="lazy"
               decoding="async"
               className={cx(
                 'pointer-events-none absolute inset-0 block h-full w-full object-cover opacity-0',

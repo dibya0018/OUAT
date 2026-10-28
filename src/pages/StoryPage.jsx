@@ -5,7 +5,7 @@ import SectionHeading from '../components/ui/SectionHeading'
 import ImagePlaceholder from '../components/ui/ImagePlaceholder'
 import Reveal from '../components/ui/Reveal'
 import Button from '../components/ui/Button'
-import founderPortrait from '../components/images/founder-atika.jpg'
+import founderPortrait from '../components/images/founder-atika.webp'
 
 /**
  * Story film banner. Set `src` to a video (e.g. an import from ../components/videos/story.mp4)
