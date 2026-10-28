@@ -274,21 +274,6 @@ function stamp(p) {
 
 function passportCard(p) {
   const nowLower = p.now.toLowerCase()
-  const journey = p.journey
-    .map(
-      (s, i) => `<tr>
-      <td width="22" valign="top" style="padding-top:5px;">
-        <div style="width:9px;height:9px;border:1.5px solid ${C.green};border-radius:6px;font-size:0;line-height:0;">&nbsp;</div>
-      </td>
-      <td valign="top" style="padding-bottom:${i === p.journey.length - 1 ? 0 : 14}px;">
-        <div style="font-family:${SANS};font-size:14px;font-weight:bold;color:${C.green};">${esc(s.title)}</div>
-        <div style="font-family:${SANS};font-size:13px;line-height:19px;color:${C.ink};padding-top:2px;">${esc(s.text)}</div>
-        <div style="font-family:${MONO};font-size:12px;color:${C.muted};padding-top:3px;">${esc(formatDate(s.date))}</div>
-      </td>
-    </tr>`,
-    )
-    .join('')
-
   const villages = p.villages
     .map((v) => {
       const mine = v.name === p.village
@@ -298,9 +283,6 @@ function passportCard(p) {
     </tr>`
     })
     .join('')
-
-  const kept = p.keptOut === 1 ? '1 bottle kept out of landfill' : `${p.keptOut} bottles kept out of landfill`
-  const more = Math.max(0, p.villageTotal - p.keptOut)
 
   return card(`
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
@@ -326,37 +308,19 @@ function passportCard(p) {
       <td width="48%" valign="top" style="border-top:1px solid ${C.line};padding-top:10px;">${label('Rescue date')}<div style="font-family:${SANS};font-size:14px;color:${C.ink};padding-top:3px;">${esc(formatDate(p.rescuedOn))}</div></td>
     </tr></table>
 
-    <h2 style="margin:28px 0 12px;font-family:${SERIF};font-weight:normal;font-size:22px;color:${C.green};">Its journey</h2>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${journey}</table>
-
-    <h2 style="margin:28px 0 12px;font-family:${SERIF};font-weight:normal;font-size:22px;color:${C.green};">Made by</h2>
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
-      <td width="40" valign="middle"><div style="width:40px;height:40px;line-height:40px;text-align:center;background:${C.bg};border-radius:20px;font-family:${SERIF};font-size:18px;color:${C.green};">${esc(p.artisan.name.charAt(0))}</div></td>
-      <td style="padding-left:12px;">
-        <div style="font-family:${SANS};font-size:14px;font-weight:bold;color:${C.green};">${esc(p.artisan.name)}</div>
-        <div style="font-family:${SANS};font-size:13px;color:${C.ink};">${esc(p.artisan.role)}, ${esc(p.artisan.studio)}</div>
-      </td>
-    </tr></table>
-
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:26px;"><tr>
-      <td style="background:${C.bg};border-radius:8px;padding:18px 20px;">
-        <div style="font-family:${SERIF};font-size:22px;color:${C.green};">${kept}</div>
-        <div style="font-family:${SANS};font-size:13px;color:${C.ink};padding-top:4px;">Plus ${more} more rescued in ${esc(p.village)} so far.</div>
-      </td>
-    </tr></table>
-
     <h2 style="margin:28px 0 8px;font-family:${SERIF};font-weight:normal;font-size:22px;color:${C.green};">Where our bottles come from</h2>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${villages}</table>
 
     <div style="padding-top:22px;">${button(p.url, 'Open and share your passport')}</div>
     <div style="font-family:${SANS};font-size:12px;line-height:18px;color:${C.muted};padding-top:8px;">Passport link: <a href="${esc(p.url)}" style="color:${C.sage};word-break:break-all;">${esc(p.url)}</a></div>
+    <p style="margin:26px 0 0;padding-top:20px;border-top:1px solid ${C.line};font-family:${SERIF};font-style:italic;font-size:18px;line-height:26px;color:${C.green};text-align:center;">Small choices. Lighter footprints. A kinder planet.</p>
   `)
 }
 
 export function renderPassportEmail(order, passports) {
   const isSample = passports.some((p) => p.isSample)
   const note = isSample
-    ? `<tr><td class="pad" style="padding:14px 28px 0;font-family:${SANS};font-size:11px;line-height:17px;color:${C.muted};text-align:center;">Village, maker and dates are illustrative while we finish recording each batch. Your piece is made from a bottle rescued in Goa.</td></tr>`
+    ? `<tr><td class="pad" style="padding:14px 28px 0;font-family:${SANS};font-size:11px;line-height:17px;color:${C.muted};text-align:center;">Village and dates are illustrative while we finish recording each batch. Your piece is made from a bottle rescued in Goa.</td></tr>`
     : ''
   const intro = `<tr><td class="pad" style="padding:0 28px 16px;font-family:${SERIF};font-size:17px;line-height:26px;color:${C.ink};">${
     passports.length > 1
@@ -378,13 +342,13 @@ export function renderPassportEmail(order, passports) {
       `${p.id}: ${p.headline}`,
       `Once upon a time: ${p.was} -> Now: ${p.now}${p.quantity > 1 ? ` x ${p.quantity}` : ''}`,
       `Rescued in ${p.village} on ${formatDate(p.rescuedOn)}`,
-      ...p.journey.map((s) => `  - ${s.title} (${formatDate(s.date)})`),
-      `Made by ${p.artisan.name}, ${p.artisan.role}, ${p.artisan.studio}`,
       `View: ${p.url}`,
       '',
     ]),
     'A printable PDF copy is attached.',
-    ...(isSample ? ['Village, maker and dates are illustrative while we finish recording each batch.'] : []),
+    '',
+    'Small choices. Lighter footprints. A kinder planet.',
+    ...(isSample ? ['Village and dates are illustrative while we finish recording each batch.'] : []),
   ].join('\n')
 
   const subject =
@@ -499,13 +463,25 @@ export function renderOwnerEmail(order) {
 
 const KEYS = { confirmation: 'orderEmail', passport: 'passportEmail', owner: 'ownerEmail' }
 
-/** Atomically claim an email for sending. Returns false if it was already claimed (or forced is off and it ran). */
+/** A claim still marked 'sending' after this long was cut off (e.g. the server restarted mid-send). */
+const STALE_SENDING_MS = 10 * 60 * 1000
+
+/**
+ * Atomically claim an email for sending. Returns false if it was already sent or is being sent
+ * right now (unless forced). A 'sending' claim older than STALE_SENDING_MS can be claimed again.
+ */
 async function claim(orderId, key, force) {
   const result = await query(
     `UPDATE orders
      SET shipping_json = JSON_SET(COALESCE(shipping_json, JSON_OBJECT()), '$.${key}', 'sending', '$.${key}At', :now)
-     WHERE id = :id ${force ? '' : `AND JSON_EXTRACT(shipping_json, '$.${key}') IS NULL`}`,
-    { id: orderId, now: new Date().toISOString() },
+     WHERE id = :id ${
+       force
+         ? ''
+         : `AND (JSON_EXTRACT(shipping_json, '$.${key}') IS NULL
+                OR (JSON_UNQUOTE(JSON_EXTRACT(shipping_json, '$.${key}')) = 'sending'
+                    AND JSON_UNQUOTE(JSON_EXTRACT(shipping_json, '$.${key}At')) < :staleBefore))`
+     }`,
+    { id: orderId, now: new Date().toISOString(), staleBefore: new Date(Date.now() - STALE_SENDING_MS).toISOString() },
   )
   return result.affectedRows === 1
 }
@@ -594,6 +570,30 @@ export async function sendOrderEmails(orderId, { force = false, only } = {}) {
     )
   }
   return { ok: results.every((r) => r.status !== 'failed'), results }
+}
+
+/**
+ * Finish order emails that were cut off, e.g. by a server restart in the middle of sending.
+ * Only looks at orders from the last 3 days whose emails had already started, so older
+ * orders placed before emails existed are never emailed out of the blue. Runs once at startup.
+ */
+export async function retryInterruptedOrderEmails() {
+  if (!isMailConfigured()) return
+  const staleBefore = new Date(Date.now() - STALE_SENDING_MS).toISOString()
+  const state = (key) => `JSON_UNQUOTE(JSON_EXTRACT(shipping_json, '$.${key}'))`
+  const stale = (key) => `(${state(key)} = 'sending' AND JSON_UNQUOTE(JSON_EXTRACT(shipping_json, '$.${key}At')) < :staleBefore)`
+  const rows = await query(
+    `SELECT id FROM orders
+     WHERE created_at > NOW() - INTERVAL 3 DAY
+       AND (${state('orderEmail')} IS NOT NULL OR ${state('ownerEmail')} IS NOT NULL OR ${state('passportEmail')} IS NOT NULL)
+       AND (${stale('orderEmail')} OR ${stale('ownerEmail')} OR ${stale('passportEmail')}
+            OR ${state('orderEmail')} IS NULL OR ${state('passportEmail')} IS NULL)`,
+    { staleBefore },
+  )
+  for (const { id } of rows) {
+    const result = await sendOrderEmails(id).catch((err) => ({ ok: false, error: err.message }))
+    console.info(`[mail] retried interrupted emails for order ${id}:`, result.ok ? 'ok' : result.error || 'some failed')
+  }
 }
 
 /** Fire-and-forget version for the checkout path: never throws, never delays the response. */

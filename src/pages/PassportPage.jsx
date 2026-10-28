@@ -98,7 +98,6 @@ export default function PassportPage() {
   }
 
   const p = state.passport
-  const more = Math.max(0, p.villageTotal - p.keptOut)
 
   return (
     <section className="bg-sand px-4 py-10 sm:py-16">
@@ -160,46 +159,6 @@ export default function PassportPage() {
             </div>
           </div>
 
-          <Heading>Its journey</Heading>
-          <ol className="space-y-4">
-            {p.journey.map((s) => (
-              <li key={s.key} className="flex gap-3">
-                <span className="mt-1.5 h-3 w-3 shrink-0 rounded-full border-[1.5px]" style={{ borderColor: GREEN }} aria-hidden="true" />
-                <div>
-                  <p className="font-semibold" style={{ color: GREEN }}>
-                    {s.title}
-                  </p>
-                  <p className="text-sm text-ink">{s.text}</p>
-                  <p className="mt-0.5 font-mono text-xs text-ink-soft">{formatDate(s.date)}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-
-          <Heading>Made by</Heading>
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-sand text-lg" style={{ ...SERIF, color: GREEN }}>
-              {p.artisan.name.charAt(0)}
-            </span>
-            <div>
-              <p className="font-semibold" style={{ color: GREEN }}>
-                {p.artisan.name}
-              </p>
-              <p className="text-sm text-ink">
-                {p.artisan.role}, {p.artisan.studio}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-10 rounded-lg bg-sand px-5 py-4">
-            <p className="text-2xl" style={{ ...SERIF, color: GREEN }}>
-              {p.keptOut === 1 ? '1 bottle' : `${p.keptOut} bottles`} kept out of landfill
-            </p>
-            <p className="mt-1 text-sm text-ink">
-              Plus {more} more rescued in {p.village} so far.
-            </p>
-          </div>
-
           <Heading>Where our bottles come from</Heading>
           <ul>
             {p.villages.map((v) => (
@@ -229,11 +188,15 @@ export default function PassportPage() {
               Download PDF
             </a>
           </div>
+
+          <p className="mt-10 border-t border-line pt-6 text-center text-lg italic" style={{ ...SERIF, color: GREEN }}>
+            Small choices. Lighter footprints. A kinder planet.
+          </p>
         </article>
 
         {p.isSample && (
           <p className="mt-6 text-center text-xs text-ink-soft">
-            Village, maker and dates are illustrative while we finish recording each batch. Every piece is made from a bottle
+            Village and dates are illustrative while we finish recording each batch. Every piece is made from a bottle
             rescued in Goa.
           </p>
         )}

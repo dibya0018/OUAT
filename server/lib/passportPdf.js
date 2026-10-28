@@ -119,51 +119,24 @@ function drawPassportPage(doc, p) {
   doc.text(formatDate(p.rescuedOn), x + half + 20, y + 21)
   y += 52
 
-  // Two columns: journey (left) | made by, landfill, villages (right)
-  const colGap = 26
-  const lw = (width - colGap) * 0.52
-  const rx = x + lw + colGap
-  const rw = width - lw - colGap
-
-  doc.font('Times-Roman').fontSize(17).fillColor(C.green).text('Its journey', x, y)
-  let ly = y + 30
-  for (const s of p.journey) {
-    doc.lineWidth(1.2).strokeColor(C.green).circle(x + 4, ly + 5, 4).stroke()
-    doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.green).text(s.title, x + 16, ly, { width: lw - 16 })
-    doc.font('Helvetica').fontSize(9.5).fillColor(C.ink).text(s.text, x + 16, doc.y + 2, { width: lw - 16, lineGap: 1 })
-    doc.font('Courier').fontSize(9).fillColor(C.muted).text(formatDate(s.date), x + 16, doc.y + 3)
-    ly = doc.y + 14
-  }
-
-  doc.font('Times-Roman').fontSize(17).fillColor(C.green).text('Made by', rx, y)
-  let ry = y + 30
-  doc.circle(rx + 16, ry + 16, 16).fill(C.bg)
-  doc.font('Times-Roman').fontSize(15).fillColor(C.green).text(p.artisan.name.charAt(0), rx, ry + 8, { width: 32, align: 'center' })
-  doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.green).text(p.artisan.name, rx + 42, ry + 2, { width: rw - 42 })
-  doc.font('Helvetica').fontSize(9.5).fillColor(C.ink).text(`${p.artisan.role}, ${p.artisan.studio}`, rx + 42, doc.y + 2, { width: rw - 42 })
-  ry = Math.max(doc.y, ry + 32) + 16
-
-  const kept = p.keptOut === 1 ? '1 bottle kept out of landfill' : `${p.keptOut} bottles kept out of landfill`
-  const more = `Plus ${Math.max(0, p.villageTotal - p.keptOut)} more rescued in ${p.village} so far.`
-  doc.font('Times-Roman').fontSize(15)
-  const keptH = doc.heightOfString(kept, { width: rw - 28 })
-  doc.font('Helvetica').fontSize(9.5)
-  const moreH = doc.heightOfString(more, { width: rw - 28 })
-  const boxH = keptH + moreH + 30
-  doc.roundedRect(rx, ry, rw, boxH, 6).fill(C.bg)
-  doc.font('Times-Roman').fontSize(15).fillColor(C.green).text(kept, rx + 14, ry + 12, { width: rw - 28 })
-  doc.font('Helvetica').fontSize(9.5).fillColor(C.ink).text(more, rx + 14, doc.y + 4, { width: rw - 28 })
-  ry += boxH + 20
-
-  doc.font('Times-Roman').fontSize(15).fillColor(C.green).text('Where our bottles come from', rx, ry, { width: rw })
-  ry = doc.y + 8
+  // Where our bottles come from (full width)
+  doc.font('Times-Roman').fontSize(17).fillColor(C.green).text('Where our bottles come from', x, y, { width })
+  let ry = doc.y + 10
   for (const v of p.villages) {
     const mine = v.name === p.village
-    doc.lineWidth(0.6).strokeColor(C.line).moveTo(rx, ry).lineTo(rx + rw, ry).stroke()
-    doc.font(mine ? 'Helvetica-Bold' : 'Helvetica').fontSize(10).fillColor(mine ? C.green : C.ink).text(v.name, rx, ry + 6)
-    doc.font('Helvetica').fontSize(9).fillColor(C.muted).text(`${v.bottles} bottles`, rx, ry + 7, { width: rw, align: 'right' })
-    ry += 22
+    doc.lineWidth(0.6).strokeColor(C.line).moveTo(x, ry).lineTo(x + width, ry).stroke()
+    doc.font(mine ? 'Helvetica-Bold' : 'Helvetica').fontSize(10.5).fillColor(mine ? C.green : C.ink).text(v.name, x, ry + 7)
+    doc.font('Helvetica').fontSize(9.5).fillColor(C.muted).text(`${v.bottles} bottles`, x, ry + 8, { width, align: 'right' })
+    ry += 25
   }
+
+  // Closing line
+  doc.lineWidth(0.8).strokeColor(C.line).moveTo(x, ry + 14).lineTo(x + width, ry + 14).stroke()
+  doc
+    .font('Times-Italic')
+    .fontSize(15)
+    .fillColor(C.green)
+    .text('Small choices. Lighter footprints. A kinder planet.', x, ry + 30, { width, align: 'center' })
 
   // Link (clickable) and footnote, at the bottom of the card
   const fy = bottom - 46
@@ -177,7 +150,7 @@ function drawPassportPage(doc, p) {
       .fontSize(7.5)
       .fillColor(C.muted)
       .text(
-        'Village, maker and dates are illustrative while we finish recording each batch. Every piece is made from a bottle rescued in Goa.',
+        'Village and dates are illustrative while we finish recording each batch. Every piece is made from a bottle rescued in Goa.',
         left,
         doc.page.height - 45,
         { width: right - left, align: 'center', lineBreak: true },

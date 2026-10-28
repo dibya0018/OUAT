@@ -15,6 +15,8 @@ const SLIDES = [
     src: goaAerial,
     alt: 'Aerial view of a Goa beach with palm trees and turquoise water',
     objectPosition: 'center 35%',
+    // Phones: keep the carafe and glasses on the ledge in frame.
+    mobilePosition: '88% center',
     accent: 'Once upon a time,',
     rest: 'this was a bottle.',
     lede: 'Now handcrafted into thoughtful pieces for conscious living.',
@@ -26,6 +28,7 @@ const SLIDES = [
     product: true,
     alt: 'O.U.A.T. Earth Essence soy candle and its kraft box on a block of red laterite stone in warm light',
     objectPosition: '72% center',
+    mobilePosition: '60% center',
     eyebrow: 'Handcrafted in Goa',
     accent: 'Welcome to the World',
     rest: 'where creativity meets Consciousness!',
@@ -88,12 +91,36 @@ export default function Hero() {
 
   return (
     <section
-      className="relative flex min-h-[88svh] items-stretch overflow-hidden bg-ink text-cream md:min-h-[85svh]"
+      className="relative flex flex-col overflow-hidden bg-cream text-ink lg:min-h-[85svh] lg:flex-row lg:items-stretch lg:bg-ink lg:text-cream"
       aria-roledescription="carousel"
       aria-label="Featured stories from Goa"
     >
-      {/* Slides */}
-      <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+      {/* Phones and tablets: the photo runs edge to edge under the fixed header and fades into the
+          cream page; the copy sits below it. */}
+      <div
+        className="relative mt-[calc(3.5rem+env(safe-area-inset-top,0px))] aspect-[16/10] w-full overflow-hidden md:mt-[calc(5rem+env(safe-area-inset-top,0px))] md:aspect-[2/1] lg:hidden"
+        aria-hidden="true"
+      >
+        {SLIDES.map((s, i) => (
+          <img
+            key={s.src}
+            src={s.src}
+            alt=""
+            loading="eager"
+            decoding="async"
+            fetchPriority={i === 0 ? 'high' : 'auto'}
+            className={cx(
+              'absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-[var(--ease-out-soft)]',
+              i === active ? 'opacity-100' : 'opacity-0',
+            )}
+            style={{ objectPosition: s.mobilePosition ?? 'center' }}
+          />
+        ))}
+        <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-cream to-transparent" />
+      </div>
+
+      {/* Laptop and up: photo fills the hero behind the copy */}
+      <div className="absolute inset-0 hidden overflow-hidden lg:block" aria-hidden="true">
         <div ref={mediaRef} className="absolute inset-0 will-change-transform">
           <div className="goa-arrive absolute inset-0">
         {SLIDES.map((s, i) => (
@@ -144,18 +171,18 @@ export default function Hero() {
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-cream/90 via-cream/60 to-transparent"
+        className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-cream/90 via-cream/60 to-transparent lg:block"
       />
       <div
         aria-hidden="true"
         className={cx(
-          'pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-cream to-transparent transition-opacity duration-700 md:h-40',
+          'pointer-events-none absolute inset-x-0 bottom-0 hidden h-40 bg-gradient-to-t from-cream to-transparent transition-opacity duration-700 lg:block',
           // Product shots keep their stone crisp to the edge; only the scenic slides fade into the page.
           slide.product && 'opacity-0',
         )}
       />
 
-      <Container className="relative z-[1] flex flex-1 flex-col justify-center py-20 pb-28 sm:py-24 md:pb-32 md:pt-24">
+      <Container className="relative z-[1] flex flex-1 flex-col justify-center pt-8 pb-2 sm:pt-10 lg:pt-24 lg:pb-32">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-8">
           {/* Left: headline + CTAs */}
           <div className="hero-copy-light lg:col-span-7">
@@ -206,7 +233,7 @@ export default function Hero() {
       </Container>
 
       {/* Carousel controls — bottom center */}
-      <div className="absolute inset-x-0 bottom-20 z-10 flex items-center justify-center gap-4 md:bottom-28">
+      <div className="relative z-10 flex items-center justify-center gap-4 pt-8 pb-12 lg:absolute lg:inset-x-0 lg:bottom-28 lg:p-0">
         <button
           type="button"
           onClick={prev}

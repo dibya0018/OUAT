@@ -41,10 +41,19 @@ export async function optionalAuth(req, _res, next) {
     const apiKey = req.headers['x-api-key']
 
     if (bearer) {
-      const payload = verifyAccessToken(bearer)
-      const row = await userById(payload.sub)
-      if (row && row.is_active !== 0) req.user = publicUser(row)
-      req.authMethod = 'jwt'
+      // An expired or invalid token just means "not signed in" here; routes that need a user
+      // use requireAuth, which answers 401 so the app can ask the person to sign in again.
+      let payload = null
+      try {
+        payload = verifyAccessToken(bearer)
+      } catch {
+        payload = null
+      }
+      if (payload) {
+        const row = await userById(payload.sub)
+        if (row && row.is_active !== 0) req.user = publicUser(row)
+        req.authMethod = 'jwt'
+      }
     } else if (apiKey) {
       const row = await userByApiKey(String(apiKey))
       if (row && row.is_active !== 0) req.user = publicUser(row)

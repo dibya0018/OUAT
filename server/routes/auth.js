@@ -57,8 +57,17 @@ function authResponse(row, token, apiKey) {
   }
 }
 
+// Brute-force protection. Per IP: every attempt counts. Per email: only wrong passwords count,
+// so one account can't be guessed at from many addresses, and a correct login clears it.
+const loginByIp = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 30 })
+const loginFailsByEmail = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 10 })
+const registerByIp = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 10 })
+
 router.post('/auth/register', async (req, res, next) => {
   try {
+    const ipLimit = registerByIp(clientIp(req))
+    if (!ipLimit.allowed) return tooMany(res, ipLimit.retryAfterSec)
+
     const { errors, name, email, password } = validateRegister(req.body)
     if (Object.keys(errors).length) return res.status(400).json({ ok: false, errors })
 
@@ -110,10 +119,17 @@ router.post('/auth/login', async (req, res, next) => {
     if (!password) errors.password = 'Password is required.'
     if (Object.keys(errors).length) return res.status(400).json({ ok: false, errors })
 
+    const ipLimit = loginByIp(clientIp(req))
+    if (!ipLimit.allowed) return tooMany(res, ipLimit.retryAfterSec)
+    const emailLimit = loginFailsByEmail.peek(email)
+    if (!emailLimit.allowed) return tooMany(res, emailLimit.retryAfterSec)
+
     const row = await findUserByEmail(email)
     if (!row || !(await verifyPassword(password, row.password_hash))) {
+      loginFailsByEmail(email)
       return res.status(401).json({ ok: false, error: 'Invalid email or password.' })
     }
+    loginFailsByEmail.reset(email)
     if (row.is_active === 0) {
       return res.status(403).json({ ok: false, error: 'This account is deactivated. Contact support.' })
     }

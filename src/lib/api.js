@@ -34,7 +34,11 @@ export async function apiGet(path, { auth = false } = {}) {
   const headers = auth ? authHeaders() : {}
   const res = await fetch(`${apiBase()}${path}`, { headers })
   const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(data.error || data.message || `API ${res.status}`)
+  if (!res.ok) {
+    const err = new Error(data.error || data.message || `API ${res.status}`)
+    err.status = res.status
+    throw err
+  }
   return data
 }
 

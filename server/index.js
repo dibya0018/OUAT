@@ -18,12 +18,17 @@ import courierWebhookRouter from './routes/courierWebhook.js'
 import passportRouter from './routes/passport.js'
 import instagramRouter from './routes/instagram.js'
 import { optionalAuth } from './middleware/auth.js'
+import { retryInterruptedOrderEmails } from './lib/orderEmails.js'
+import { securityHeaders, trustProxySetting } from './lib/securityHeaders.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const distDir = path.join(__dirname, '../dist')
 const clientIndex = path.join(distDir, 'index.html')
 const serveClient = fs.existsSync(clientIndex)
 const app = express()
+app.disable('x-powered-by')
+app.set('trust proxy', trustProxySetting())
+app.use(securityHeaders)
 const port = Number(process.env.PORT || 3001)
 
 const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173'
@@ -197,6 +202,11 @@ async function start() {
       console.error('[api] Could not verify/install stored procedures:', err.message)
       console.error('[api] Fix DB_* in .env, then run: npm run db:procedures')
     })
+
+  // Finish order emails a previous run was cut off in the middle of (e.g. a restart mid-send).
+  setTimeout(() => {
+    retryInterruptedOrderEmails().catch((err) => console.error('[mail] retry of interrupted emails failed:', err.message))
+  }, 15000).unref()
 }
 
 function shutdown() {
