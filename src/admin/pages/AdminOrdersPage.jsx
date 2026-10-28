@@ -191,12 +191,13 @@ export default function AdminOrdersPage() {
   return (
     <>
       <AdminPageHeader title="Orders" onRefresh={load} refreshing={loading} />
-      <div className="mb-4 flex flex-wrap gap-2">
+      {/* Phones: one row you can swipe sideways instead of four rows of buttons. */}
+      <div className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
         {FILTERS.map((f) => (
           <button
             key={f}
             type="button"
-            className="admin-filter-pill"
+            className="admin-filter-pill shrink-0 whitespace-nowrap"
             data-active={filter === f ? 'true' : 'false'}
             onClick={() => setFilter(f)}
           >
@@ -205,8 +206,8 @@ export default function AdminOrdersPage() {
         ))}
       </div>
 
-      <div className="mb-4 flex flex-wrap items-end gap-3">
-        <label>
+      <div className="mb-4 grid grid-cols-2 items-end gap-3 md:flex md:flex-wrap">
+        <label className="min-w-0">
           <span className="admin-field-label">From</span>
           <input
             type="date"
@@ -216,7 +217,7 @@ export default function AdminOrdersPage() {
             onChange={(e) => setFromDate(e.target.value)}
           />
         </label>
-        <label>
+        <label className="min-w-0">
           <span className="admin-field-label">To</span>
           <input
             type="date"
@@ -229,7 +230,7 @@ export default function AdminOrdersPage() {
         {(fromDate || toDate) && (
           <button
             type="button"
-            className="admin-filter-pill"
+            className="admin-filter-pill col-span-2 justify-self-start"
             onClick={() => {
               setFromDate('')
               setToDate('')

@@ -67,7 +67,7 @@ function CouponModal({ title, form, setForm, onClose, onSave, saving, error }) {
             />
           </label>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
             <label className="block">
               <span className="admin-field-label">Discount type</span>
               <select

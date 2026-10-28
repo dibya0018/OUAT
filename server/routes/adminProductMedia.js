@@ -69,7 +69,12 @@ adminApi.post('/products/:id/images', uploadJson, async (req, res, next) => {
   }
 })
 
-adminApi.delete('/products/:id/images/:sortOrder', async (req, res, next) => {
+// Same action on POST: some hosts (shared hosting firewalls) block DELETE requests outright,
+// which made the Delete button fail on the live site. The admin panel uses the POST form.
+adminApi.delete('/products/:id/images/:sortOrder', deleteImageHandler)
+adminApi.post('/products/:id/images/:sortOrder/delete', deleteImageHandler)
+
+async function deleteImageHandler(req, res, next) {
   try {
     const id = req.params.id
     const sortOrder = Number(req.params.sortOrder)
@@ -82,7 +87,9 @@ adminApi.delete('/products/:id/images/:sortOrder', async (req, res, next) => {
 
     const removed = await deleteProductImageAt(id, sortOrder)
     if (!removed) return res.status(404).json({ ok: false, error: 'Image not found' })
-    deleteUploadedImageSrc(removed.src)
+    // Only remove the file if no other photo row still points at it.
+    const stillUsed = await query('SELECT 1 FROM product_images WHERE image_src = :src LIMIT 1', { src: removed.src })
+    if (!stillUsed.length) deleteUploadedImageSrc(removed.src)
 
     const map = await imagesByProductIds([id])
     await logAdminActivity(`Admin removed image from product ${id}`, req.user.userId)
@@ -90,7 +97,7 @@ adminApi.delete('/products/:id/images/:sortOrder', async (req, res, next) => {
   } catch (err) {
     next(err)
   }
-})
+}
 
 adminApi.patch('/products/:id/images/cover', uploadJson, async (req, res, next) => {
   try {

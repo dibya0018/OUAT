@@ -1,4 +1,4 @@
-import { callProcedure } from '../config/db.js'
+import { callProcedure, query } from '../config/db.js'
 
 /** Load active images for many products; returns Map productId -> [{ src, alt, tone }] */
 export async function imagesByProductIds(productIds) {
@@ -55,14 +55,24 @@ export async function setCoverImage(productId, sortOrderOrImages) {
   await replaceProductImages(productId, next)
 }
 
+/**
+ * Remove the photo at position `sortOrder` (0 = cover) and close the gap.
+ * Deletes that one row and renumbers the rest, instead of deleting every photo and re-inserting
+ * the others, so a failure part-way can never wipe a product's whole gallery.
+ */
 export async function deleteProductImageAt(productId, sortOrder) {
-  const map = await imagesByProductIds([productId])
-  const current = map.get(productId) ?? []
-  if (sortOrder < 0 || sortOrder >= current.length) return null
-  const removed = current[sortOrder]
-  await replaceProductImages(
-    productId,
-    current.filter((_, i) => i !== sortOrder),
+  const rows = await query(
+    `SELECT id, image_src, alt_text, tone FROM product_images
+     WHERE product_id = :pid AND is_active = 1
+     ORDER BY sort_order ASC, id ASC`,
+    { pid: productId },
   )
-  return removed
+  if (sortOrder < 0 || sortOrder >= rows.length) return null
+  const target = rows[sortOrder]
+  await query('DELETE FROM product_images WHERE id = :id AND product_id = :pid', { id: target.id, pid: productId })
+  const rest = rows.filter((r) => r.id !== target.id)
+  for (let i = 0; i < rest.length; i++) {
+    await query('UPDATE product_images SET sort_order = :i WHERE id = :id', { i, id: rest[i].id })
+  }
+  return { src: target.image_src, alt: target.alt_text, tone: target.tone || 'sand' }
 }

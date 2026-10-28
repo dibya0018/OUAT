@@ -38,14 +38,14 @@ export default function AdminDashboard() {
   return (
     <>
       <AdminPageHeader title="Dashboard" onRefresh={load} refreshing={loading} />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {[
           { label: 'Total revenue', value: stats ? formatPrice(stats.totalRevenue) : '—' },
           { label: 'Customers', value: stats?.customers ?? '—' },
           { label: 'Pending orders', value: stats?.pendingOrders ?? '—' },
           { label: 'Completed orders', value: stats?.completedOrders ?? '—' },
         ].map((card) => (
-          <div key={card.label} className="admin-panel p-5">
+          <div key={card.label} className="admin-panel min-w-0 p-4 sm:p-5">
             <p className="text-xs uppercase tracking-widest text-admin-muted">{card.label}</p>
             <p className="admin-stat-value mt-3">{card.value}</p>
           </div>

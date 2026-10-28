@@ -42,7 +42,9 @@
 
 .admin-stat-value {
   font-family: var(--font-admin-display);
-  font-size: 2rem;
+  /* Shrinks on phones so a big revenue figure fits two cards per row. */
+  font-size: clamp(1.35rem, 5.5vw, 2rem);
+  overflow-wrap: anywhere;
   line-height: 1.1;
   color: var(--color-admin-text);
 }

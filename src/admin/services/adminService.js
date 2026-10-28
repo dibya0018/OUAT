@@ -35,7 +35,8 @@ export function uploadProductImage(id, body) {
 }
 
 export function deleteProductImage(id, sortOrder) {
-  return apiDelete(`/admin/products/${id}/images/${sortOrder}`, auth)
+  // POST, not DELETE: some hosts block DELETE requests (see adminProductMedia.js).
+  return apiPost(`/admin/products/${id}/images/${sortOrder}/delete`, {}, auth)
 }
 
 export function setProductCoverImage(id, sortOrder) {

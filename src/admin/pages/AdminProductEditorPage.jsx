@@ -280,9 +280,10 @@ export default function AdminProductEditorPage() {
     try {
       const res = await deleteProductImage(productId, sortOrder)
       if (res.ok) applyImages(res.images ?? [])
-      else setMediaError(res.error || 'Could not delete photo')
-    } catch {
-      setMediaError('Could not delete photo')
+      else if (res.status === 401) setMediaError('Your admin login has expired. Log in again, then delete the photo.')
+      else setMediaError(`Could not delete photo: ${res.error || `error ${res.status ?? ''}`}`.trim())
+    } catch (err) {
+      setMediaError(`Could not delete photo: ${err?.message || 'network error'}`)
     } finally {
       setMediaBusy(false)
     }
@@ -380,38 +381,45 @@ export default function AdminProductEditorPage() {
                 {form.images.length === 0 ? (
                   <p className="text-sm text-admin-muted">No photos yet. Use Add photos to upload gallery images.</p>
                 ) : (
-                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                  // Photo on top, buttons in their own row below: always visible and big enough to tap
+                  // on a phone (they used to sit on top of the photo, overlapping, in 10px text).
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                     {form.images.map((img, i) => (
                       <div
                         key={`${img.src}-${i}`}
-                        className="group relative aspect-square overflow-hidden rounded-lg border border-admin-border bg-admin-panel-2"
+                        className="overflow-hidden rounded-lg border border-admin-border bg-admin-panel-2"
                       >
-                        {i === 0 ? (
-                          <span className="absolute left-1 top-1 z-10 rounded bg-black/60 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-admin-gold">
-                            Cover
-                          </span>
-                        ) : null}
-                        {img.src ? (
-                          <img src={img.src} alt="" decoding="async" className="h-full w-full object-cover" />
-                        ) : (
-                          <div className="flex h-full items-center justify-center text-xs text-admin-muted">No src</div>
-                        )}
-                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/55 opacity-100 transition md:opacity-0 md:group-hover:opacity-100">
+                        <div className="relative aspect-square">
+                          {i === 0 ? (
+                            <span className="absolute left-1.5 top-1.5 z-10 rounded bg-black/70 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-admin-gold">
+                              Cover
+                            </span>
+                          ) : null}
+                          {img.src ? (
+                            <img src={img.src} alt="" decoding="async" className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="flex h-full items-center justify-center text-xs text-admin-muted">No src</div>
+                          )}
+                        </div>
+                        <div className="flex gap-1.5 p-1.5">
                           {i !== 0 ? (
                             <button
                               type="button"
-                              className="rounded border border-admin-border px-2 py-1 text-[10px] text-admin-text"
+                              className="flex-1 whitespace-nowrap rounded-md border border-admin-border px-2 py-2 text-xs text-admin-text disabled:opacity-50"
                               disabled={mediaBusy}
                               onClick={() => onUseAsThumbnail(i)}
+                              title="Make this the cover photo"
+                              aria-label={`Make photo ${i + 1} the cover`}
                             >
-                              Set as cover
+                              Cover
                             </button>
                           ) : null}
                           <button
                             type="button"
-                            className="rounded border border-red-400/60 px-2 py-1 text-[10px] text-red-300"
+                            className="flex-1 whitespace-nowrap rounded-md border border-red-400/60 px-2 py-2 text-xs text-red-300 disabled:opacity-50"
                             disabled={mediaBusy}
                             onClick={() => onDeletePhoto(i)}
+                            aria-label={`Delete photo ${i + 1}`}
                           >
                             Delete
                           </button>
@@ -595,7 +603,7 @@ export default function AdminProductEditorPage() {
               />
             </label>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
               <label className="block">
                 <span className="admin-field-label">Price (₹)</span>
                 <input
@@ -700,7 +708,7 @@ export default function AdminProductEditorPage() {
             </div>
             {form.packOptions.map((opt, i) => (
               <div key={i} className="mb-4 space-y-2 rounded-lg border border-admin-border p-3">
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2">
                   <input
                     className="admin-input"
                     placeholder="Size (e.g. Set of 4)"
@@ -816,6 +824,20 @@ export default function AdminProductEditorPage() {
             )}
           </section>
         </div>
+      </div>
+
+      {/* Phones: the save button above is at the very end of a long page, so keep one pinned to the
+          bottom of the screen too. The spacer stops it covering the last fields. */}
+      <div className="h-20 md:hidden" aria-hidden="true" />
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-admin-border bg-[var(--color-admin-bg)]/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] pt-3 backdrop-blur md:hidden">
+        {saveNote && (
+          <p className={saveNote.ok ? 'mb-2 text-xs text-green-400' : 'mb-2 text-xs text-red-400'} role="status">
+            {saveNote.text}
+          </p>
+        )}
+        <button type="button" className="admin-btn-gold w-full py-3" disabled={saving} onClick={onSave}>
+          {saving ? 'Saving…' : isNew ? 'Create product' : 'Save product'}
+        </button>
       </div>
     </>
   )
