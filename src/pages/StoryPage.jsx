@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Seo from '../components/Seo'
 import Container from '../components/ui/Container'
@@ -6,13 +7,15 @@ import ImagePlaceholder from '../components/ui/ImagePlaceholder'
 import Reveal from '../components/ui/Reveal'
 import Button from '../components/ui/Button'
 import founderPortrait from '../components/images/founder-atika.webp'
+import beforeBeachBottle from '../components/images/story-before-beach-bottle.webp'
+import afterOfficeTumbler from '../components/images/story-after-office-tumbler.webp'
 
 /**
- * Story film banner. Set `src` to a video (e.g. an import from ../components/videos/story.mp4)
- * and it plays in the banner; until then a plain "coming soon" frame shows. `poster` is optional.
+ * Story film banner. `src` is a file in public/videos; set it to null to show the plain
+ * "coming soon" frame instead. `poster` is optional.
  */
 const STORY_FILM = {
-  src: null,
+  src: '/videos/our-story.mp4',
   poster: undefined,
   alt: 'The O.U.A.T. story film',
 }
@@ -20,11 +23,58 @@ const STORY_FILM = {
 /** Before/after pairs: the bottle on the left, the finished piece on the right. */
 const PAIRS = [
   {
-    before: { alt: 'Empty green wine bottle on the studio bench', tone: 'olive' },
-    after: { alt: 'Tall green tumbler made from the same bottle', tone: 'sand' },
+    before: {
+      src: beforeBeachBottle,
+      alt: 'An empty green wine bottle lying as litter in the sand on a beach',
+      tone: 'olive',
+    },
+    after: {
+      src: afterOfficeTumbler,
+      alt: 'A hand holding an olive-green O.U.A.T. tumbler, cut from a wine bottle, at an office desk beside a laptop',
+      tone: 'sand',
+    },
     caption: 'Wine bottle → Tall tumbler',
   },
 ]
+
+/** Muted looping film. With reduced motion on it doesn't autoplay; the controls still let people play it. */
+function StoryFilm({ src, poster, alt }) {
+  const videoRef = useRef(null)
+  const [reduceMotion, setReduceMotion] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const sync = () => setReduceMotion(mq.matches)
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    if (reduceMotion) video.pause()
+    else video.play().catch(() => {})
+  }, [reduceMotion])
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      poster={poster}
+      className="absolute inset-0 h-full w-full object-cover"
+      autoPlay={!reduceMotion}
+      muted
+      loop
+      playsInline
+      controls
+      preload={reduceMotion ? 'metadata' : 'auto'}
+      aria-label={alt}
+    />
+  )
+}
 
 export default function StoryPage() {
   return (
@@ -44,17 +94,7 @@ export default function StoryPage() {
           <Reveal className="mt-6 md:mt-8">
             <div className="relative aspect-[4/3] overflow-hidden bg-ink sm:aspect-video lg:aspect-[21/9]">
               {STORY_FILM.src ? (
-                <video
-                  src={STORY_FILM.src}
-                  poster={STORY_FILM.poster}
-                  className="absolute inset-0 h-full w-full object-cover"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  controls
-                  aria-label={STORY_FILM.alt}
-                />
+                <StoryFilm {...STORY_FILM} />
               ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center text-cream">
                   <span className="inline-flex h-14 w-14 items-center justify-center rounded-full border border-cream/60 md:h-16 md:w-16">
@@ -125,8 +165,26 @@ export default function StoryPage() {
             {PAIRS.map((pair, i) => (
               <Reveal as="li" key={pair.caption} delay={i * 80}>
                 <div className="grid grid-cols-2 gap-4 md:gap-6">
-                  <ImagePlaceholder ratio="product" alt={pair.before.alt} tone={pair.before.tone} label="Before" />
-                  <ImagePlaceholder ratio="product" alt={pair.after.alt} tone={pair.after.tone} label="After" />
+                  {[
+                    { ...pair.before, label: 'Before' },
+                    { ...pair.after, label: 'After' },
+                  ].map((side) => (
+                    <div key={side.label} className="relative">
+                      <ImagePlaceholder
+                        ratio="product"
+                        src={side.src}
+                        alt={side.alt}
+                        tone={side.tone}
+                        label={side.label}
+                        sizes="(min-width: 768px) 40vw, 50vw"
+                      />
+                      {side.src && (
+                        <span className="absolute top-3 left-3 bg-cream/85 px-2.5 py-1 font-sans text-[0.6rem] uppercase tracking-eyebrow text-ink">
+                          {side.label}
+                        </span>
+                      )}
+                    </div>
+                  ))}
                 </div>
                 <p className="mt-4 text-sm text-ink-soft">{pair.caption}</p>
               </Reveal>

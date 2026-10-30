@@ -5,18 +5,24 @@ import Reveal from '../ui/Reveal'
 import Icon from '../ui/Icon'
 import { SITE } from '../../lib/site'
 import { apiGet } from '../../lib/api'
+import candleWritingImg from '../images/studio-candle-writing.webp'
+import sipperMorningImg from '../images/studio-sipper-morning.webp'
+import sproutGerminatorImg from '../images/studio-sprout-germinator.webp'
+import jarReadingImg from '../images/studio-jar-reading.webp'
+import drinksFriendsImg from '../images/studio-drinks-friends.webp'
+import sipperDeskImg from '../images/studio-sipper-desk.webp'
 
 /**
  * Fallback tiles, shown until recent posts load from /api/instagram/media
  * (and for good when the server has no Instagram token).
  */
 const TILES = [
-  { src: null, alt: 'Tumblers on a Goan balcony at dusk', tone: 'sand' },
-  { src: null, alt: 'Candle lit beside an open book', tone: 'olive' },
-  { src: null, alt: 'Artisan cutting a bottle in the studio', tone: 'deep' },
-  { src: null, alt: 'Storage jars filled with spices', tone: 'olive' },
-  { src: null, alt: 'Sea-glass pendant on a wooden tray', tone: 'sand' },
-  { src: null, alt: 'Stack of rescued bottles before sorting', tone: 'olive' },
+  { src: candleWritingImg, alt: 'An amber glass candle burning on a bed beside its cork lid while someone writes in a notebook', tone: 'sand' },
+  { src: sipperMorningImg, alt: 'A hand holding an olive glass sipper with a wooden lid and steel straw on a sunlit table', tone: 'olive' },
+  { src: sproutGerminatorImg, alt: 'A green glass sprout germinator full of microgreens tilted on its stand by a window', tone: 'deep' },
+  { src: jarReadingImg, alt: 'A hand dropping dried flowers into a green glass jar beside an open book', tone: 'olive' },
+  { src: drinksFriendsImg, alt: 'Friends clinking pink drinks in clear tumblers over chips and an open book', tone: 'sand' },
+  { src: sipperDeskImg, alt: 'A hand holding an olive glass sipper with a straw next to a laptop at a desk', tone: 'olive' },
 ]
 
 const FALLBACK = TILES.map((t) => ({ ...t, key: t.alt, href: SITE.instagramUrl }))

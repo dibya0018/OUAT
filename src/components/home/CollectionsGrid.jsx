@@ -7,17 +7,17 @@ import Reveal from '../ui/Reveal'
 import Icon from '../ui/Icon'
 import { getCollectionPath, shopMenuCollections } from '../../lib/collections'
 import { getCollections } from '../../services/productService'
-import candlesImg from '../images/collection-candles.webp'
-import kitchenImg from '../images/collection-kitchenware.webp'
-import glasswareImg from '../images/collection-glassware.webp'
-import jewelleryImg from '../images/collection-jewellery.webp'
+import candlesImg from '../images/collection-candles-pair.webp'
+import kitchenImg from '../images/collection-kitchenware-pair.webp'
+import glasswareImg from '../images/collection-glassware-row.webp'
+import jewelleryImg from '../images/collection-jewellery-earrings.webp'
 
 /** Tall photos for the home tiles; the catalogue's own collection images are wide banners. */
 const TILE_IMAGES = {
-  candles: { src: candlesImg, alt: 'A lit candle in an amber glass jar beside its cork lid marked Goa, in warm evening light' },
-  'kitchen-storage': { src: kitchenImg, alt: 'Green and olive glass storage jars with wooden lids, one tipped over spilling seeds' },
-  glassware: { src: glasswareImg, alt: 'Six green and amber tumblers cut from wine bottles on a sunlit stone counter' },
-  jewellery: { src: jewelleryImg, alt: 'A woman by the sea at sunset wearing flower earrings, ring, necklace and bracelet of clear and blue glass' },
+  candles: { src: candlesImg, alt: 'Two amber glass candle jars cut from bottles, one lit, with cork lids on a plain beige background' },
+  'kitchen-storage': { src: kitchenImg, alt: 'An olive and a green glass storage jar, cut from wine bottles, with wooden lids on a plain beige background' },
+  glassware: { src: glasswareImg, alt: 'Six olive-green tumblers cut from wine bottles, standing in two rows on a plain beige background' },
+  jewellery: { src: jewelleryImg, alt: 'A pair of gold drop earrings with aqua and navy teardrops of reclaimed glass, hanging on a cream stand against a plain beige background' },
 }
 
 export default function CollectionsGrid() {
