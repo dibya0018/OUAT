@@ -1,5 +1,5 @@
 import glasswareHero from '../components/images/glassware-hero.webp'
-import goaSunset from '../components/images/goa-sunset.webp'
+import candlesBeachHero from '../components/images/candles-beach-hero.webp'
 import processRescued from '../components/images/process-rescued.webp'
 import jewelleryHero from '../components/images/jewellery-hero.webp'
 
@@ -23,10 +23,10 @@ export const COLLECTION_BANNERS = {
   },
   candles: {
     variant: 'candles',
-    src: goaSunset,
-    alt: 'Golden hour light on the coast, an evening mood for soy candles in glass',
-    objectPosition: '55% center',
-    objectClass: 'object-[60%_center] lg:object-[65%_center]',
+    src: candlesBeachHero,
+    alt: 'Friends laughing on a Goa beach at sunset, raising green glass wine bottles in a toast',
+    objectPosition: '62% center',
+    objectClass: 'object-[62%_center] lg:object-[center_28%]',
   },
   'kitchen-storage': {
     variant: 'kitchen',

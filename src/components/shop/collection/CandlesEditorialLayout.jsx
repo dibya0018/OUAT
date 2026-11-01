@@ -36,7 +36,7 @@ export default function CandlesEditorialLayout({ collection, products, loading, 
           src={banner?.src}
           alt=""
           aria-hidden
-          className="absolute inset-0 -z-10 h-full w-full object-cover object-[60%_center]"
+          className={`absolute inset-0 -z-10 h-full w-full object-cover ${banner?.objectClass ?? 'object-[60%_center]'}`}
           fetchPriority="high"
         />
         <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-[#17130f]/70 via-[#17130f]/55 to-[#17130f]" />
