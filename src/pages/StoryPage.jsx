@@ -33,7 +33,7 @@ const PAIRS = [
       alt: 'A hand holding an olive-green O.U.A.T. tumbler, cut from a wine bottle, at an office desk beside a laptop',
       tone: 'sand',
     },
-    caption: 'Wine bottle → Tall tumbler',
+    caption: 'Wine bottle - Glass Tumbler',
   },
 ]
 

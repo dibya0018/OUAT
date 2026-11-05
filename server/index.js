@@ -20,7 +20,7 @@ import instagramRouter from './routes/instagram.js'
 import { optionalAuth } from './middleware/auth.js'
 import { retryInterruptedOrderEmails } from './lib/orderEmails.js'
 import { securityHeaders, trustProxySetting } from './lib/securityHeaders.js'
-import { UPLOAD_ROOT, usingDefaultUploadRoot } from './lib/productImageUpload.js'
+import { UPLOAD_ROOT, UPLOAD_SEED_ROOT, usingDefaultUploadRoot } from './lib/productImageUpload.js'
 import { isLocal } from './lib/appEnv.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -44,6 +44,8 @@ const IMAGE_UPLOAD_PATH = /^\/api\/admin\/products\/[^/]+\/images(\/|$)/
 app.use((req, res, next) => (IMAGE_UPLOAD_PATH.test(req.path) ? next() : jsonBody(req, res, next)))
 // Admin-uploaded photos: served from UPLOAD_DIR (outside the app on the live server, so deploys keep them).
 app.use('/uploads', express.static(UPLOAD_ROOT, { maxAge: '7d' }))
+// Fallback: photos saved in the repo (server/uploads-seed) still load if the copy above failed.
+app.use('/uploads', express.static(UPLOAD_SEED_ROOT, { maxAge: '7d' }))
 if (!isLocal() && usingDefaultUploadRoot) {
   console.warn(
     '[uploads] UPLOAD_DIR is not set: uploaded photos are saved inside the app folder and the next deploy will delete them. Set UPLOAD_DIR in .env to a folder outside the app.',

@@ -7,17 +7,17 @@ import Reveal from '../ui/Reveal'
 import Icon from '../ui/Icon'
 import { getCollectionPath, shopMenuCollections } from '../../lib/collections'
 import { getCollections } from '../../services/productService'
-import candlesImg from '../images/collection-candles-pair.webp'
-import kitchenImg from '../images/collection-kitchenware-pair.webp'
-import glasswareImg from '../images/collection-glassware-row.webp'
-import jewelleryImg from '../images/collection-jewellery-earrings.webp'
+import candlesImg from '../images/collection-candles-photo.webp'
+import kitchenImg from '../images/collection-kitchenware-photo.webp'
+import glasswareImg from '../images/collection-glassware-photo.webp'
+import jewelleryImg from '../images/collection-jewellery-photo.webp'
 
 /** Tall photos for the home tiles; the catalogue's own collection images are wide banners. */
 const TILE_IMAGES = {
-  candles: { src: candlesImg, alt: 'Two amber glass candle jars cut from bottles, one lit, with cork lids on a plain beige background' },
-  'kitchen-storage': { src: kitchenImg, alt: 'An olive and a green glass storage jar, cut from wine bottles, with wooden lids on a plain beige background' },
-  glassware: { src: glasswareImg, alt: 'Six olive-green tumblers cut from wine bottles, standing in two rows on a plain beige background' },
-  jewellery: { src: jewelleryImg, alt: 'A pair of gold drop earrings with aqua and navy teardrops of reclaimed glass, hanging on a cream stand against a plain beige background' },
+  candles: { src: candlesImg, alt: 'Two amber O.U.A.T. candles cut from bottles, one lit, with cork lids stamped Goa' },
+  'kitchen-storage': { src: kitchenImg, alt: 'A green and an olive glass storage jar cut from wine bottles, one tipped on its side beside its wooden lid' },
+  glassware: { src: glasswareImg, alt: 'Four amber tumblers cut from bottles, with frosted bases, in soft leaf-shadow light' },
+  jewellery: { src: jewelleryImg, alt: 'Gold drop earrings, a pendant and a ring set with aqua and navy teardrops of reclaimed glass, on a pale stone' },
 }
 
 export default function CollectionsGrid() {

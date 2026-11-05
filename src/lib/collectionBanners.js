@@ -1,6 +1,6 @@
-import glasswareHero from '../components/images/glassware-hero.webp'
+import glasswareHero from '../components/images/glassware-tumblers-hero.webp'
 import candlesBeachHero from '../components/images/candles-beach-hero.webp'
-import processRescued from '../components/images/process-rescued.webp'
+import kitchenBeachHero from '../components/images/kitchen-beach-bottles-hero.webp'
 import jewelleryHero from '../components/images/jewellery-hero.webp'
 
 /**
@@ -17,9 +17,9 @@ export const COLLECTION_BANNERS = {
   glassware: {
     variant: 'glassware',
     src: glasswareHero,
-    alt: 'Reclaimed green glass tumblers and carafe on a stone ledge in sunlight',
-    objectPosition: '88% center',
-    objectClass: 'object-[82%_center] lg:object-[right_center]',
+    alt: 'Green, amber and clear tumblers cut from bottles on a sunlit beige table, with tulips in two bottle vases',
+    objectPosition: '80% 60%',
+    objectClass: 'object-[80%_60%]',
   },
   candles: {
     variant: 'candles',
@@ -30,10 +30,10 @@ export const COLLECTION_BANNERS = {
   },
   'kitchen-storage': {
     variant: 'kitchen',
-    src: processRescued,
-    alt: 'Rescued glass bottles gathered before reshaping into kitchen vessels',
-    objectPosition: '65% center',
-    objectClass: 'object-[70%_center] lg:object-[right_center]',
+    src: kitchenBeachHero,
+    alt: 'Green and amber wine bottles washed up in the sand on a Goa beach at sunset, palms and rocks behind',
+    objectPosition: '72% 70%',
+    objectClass: 'object-[72%_70%]',
   },
   jewellery: {
     variant: 'jewellery',
