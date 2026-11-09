@@ -4,18 +4,28 @@ import { isLocal } from './appEnv.js'
 let transporter = null
 
 export function isMailConfigured() {
-  return Boolean(process.env.SMTP_HOST && process.env.MAIL_FROM)
+  const hasHost = Boolean(process.env.SMTP_HOST && process.env.MAIL_FROM)
+  const user = String(process.env.SMTP_USER || '').trim()
+  const pass = String(process.env.SMTP_PASS || '').trim()
+  if (user && !pass) return false
+  return hasHost
 }
 
 function getTransporter() {
   if (transporter) return transporter
   const port = Number(process.env.SMTP_PORT || 587)
   const secure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === 'true' : port === 465
+  const user = String(process.env.SMTP_USER || '').trim()
+  const pass = String(process.env.SMTP_PASS || '').trim()
+  if (user && !pass) {
+    console.error(`[mail] SMTP_USER is set to "${user}" but SMTP_PASS is missing or empty in your live .env file.`)
+  }
+  const auth = user && pass ? { user, pass } : undefined
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port,
     secure,
-    auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined,
+    auth,
     connectionTimeout: 15000,
     greetingTimeout: 15000,
     socketTimeout: 30000,

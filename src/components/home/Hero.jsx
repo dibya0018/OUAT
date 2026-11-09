@@ -13,10 +13,10 @@ const PARALLAX = 0.22
 const SLIDES = [
   {
     src: goaAerial,
-    alt: 'Aerial view of a Goa beach with palm trees and turquoise water',
-    objectPosition: 'center 35%',
-    // Phones: keep the carafe and glasses on the ledge in frame.
-    mobilePosition: '88% center',
+    alt: 'Handcrafted upcycled glassware, flower vases and drinking glasses on a table in warm sunlight',
+    objectPosition: 'center center',
+    // Phones: keep the vases and glasses in frame.
+    mobilePosition: '75% center',
     accent: 'Once upon a time,',
     rest: 'this was a bottle.',
     lede: 'Now handcrafted into thoughtful pieces for conscious living.',
