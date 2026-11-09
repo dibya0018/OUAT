@@ -262,13 +262,9 @@ export function renderConfirmationEmail(order) {
 /* ------------------------------------------------------------------ */
 
 function stamp(p) {
-  // Divs (not table cells) so border-radius works; Outlook desktop shows a square stamp, which is fine.
-  return `<div style="width:100px;height:100px;border:2px solid ${C.stamp};border-radius:52px;margin-left:auto;">
-    <div style="margin:7px;width:82px;height:82px;border:1px dashed ${C.stamp};border-radius:42px;text-align:center;font-family:${SANS};color:${C.stamp};">
-      <div style="padding-top:20px;font-size:9px;line-height:12px;letter-spacing:1.5px;text-transform:uppercase;">${esc(p.village)}</div>
-      <div style="font-family:${SERIF};font-style:italic;font-size:16px;line-height:20px;">Rescued</div>
-      <div style="font-size:9px;line-height:12px;">${esc(formatDate(p.rescuedOn))}</div>
-    </div>
+  const stampUrl = `${siteUrl()}/api/passport-stamp/${encodeURIComponent(p.village || 'Goa')}.svg`
+  return `<div style="display:inline-block;width:130px;height:130px;transform:rotate(-6deg);-webkit-transform:rotate(-6deg);text-align:right;">
+    <img src="${stampUrl}" width="130" height="130" alt="Rescued in ${esc(p.village)}" style="display:block;width:130px;height:130px;max-width:130px;border:0;outline:none;margin-left:auto;" />
   </div>`
 }
 
@@ -276,14 +272,9 @@ function passportCard(p) {
   const nowLower = p.now.toLowerCase()
 
   return card(`
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-      <td class="stack" valign="top">
-        ${label('Bottle passport')}
-        <div style="font-family:${MONO};font-size:15px;color:${C.sage};padding-top:4px;">${esc(p.id)}</div>
-        <h1 class="h1" style="margin:14px 0 0;font-family:${SERIF};font-weight:normal;font-size:34px;line-height:40px;color:${C.green};">${esc(p.headline)}</h1>
-      </td>
-      <td class="stack stamp-cell" width="112" valign="top" align="right" style="padding-left:8px;">${stamp(p)}</td>
-    </tr></table>
+    ${label('Bottle passport')}
+    <div style="font-family:${MONO};font-size:15px;color:${C.sage};padding-top:4px;">${esc(p.id)}</div>
+    <h1 class="h1" style="margin:14px 0 0;font-family:${SERIF};font-weight:normal;font-size:34px;line-height:40px;color:${C.green};">${esc(p.headline)}</h1>
 
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px;"><tr>
       <td valign="top" width="45%">${label('Once upon a time')}<div style="font-family:${SERIF};font-size:18px;color:${C.green};padding-top:3px;">${esc(p.was)}</div></td>
@@ -293,12 +284,25 @@ function passportCard(p) {
 
     <p style="margin:24px 0 0;font-family:${SERIF};font-size:17px;line-height:27px;color:${C.ink};">Thank you for your order. This <em style="color:${C.sage};">${esc(p.was.toLowerCase())}</em> was rescued in <em style="color:${C.sage};">${esc(p.village)}</em> and given a second life as your ${esc(nowLower)}. By choosing reclaimed glass you kept one more bottle out of landfill and off Goa's roadsides and beaches. Every bottle has a past. Thank you for giving this one a future.</p>
 
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:22px;"><tr>
-      <td valign="top" style="border-top:1px solid ${C.line};padding-top:10px;">${label('Rescued in')}<div style="font-family:${SANS};font-size:14px;color:${C.ink};padding-top:3px;">${esc(p.village)}</div></td>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px;border-top:1px solid ${C.line};"><tr>
+      <td class="stack" valign="middle" style="padding-top:16px;">
+        ${label('Rescued in')}
+        <div style="font-family:${SANS};font-size:15px;color:${C.ink};padding-top:3px;">${esc(p.village)}</div>
+        <div style="padding-top:16px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+            <td>${button(p.url, 'Open and share your passport')}</td>
+            <td style="padding-left:10px;">
+              <a href="${siteUrl()}/api/passport/${encodeURIComponent(p.id)}/pdf?download=1" style="display:inline-block;padding:10px 16px;font-family:${SANS};font-size:13px;font-weight:500;color:${C.sage};text-decoration:none;border:1px solid ${C.sage};border-radius:6px;">Download PDF</a>
+            </td>
+          </tr></table>
+        </div>
+        <div style="font-family:${SANS};font-size:12px;line-height:18px;color:${C.muted};padding-top:8px;">Passport link: <a href="${esc(p.url)}" style="color:${C.sage};word-break:break-all;">${esc(p.url)}</a></div>
+      </td>
+      <td class="stack stamp-cell" width="140" align="right" valign="middle" style="padding-top:16px;padding-left:12px;">
+        ${stamp(p)}
+      </td>
     </tr></table>
 
-    <div style="padding-top:22px;">${button(p.url, 'Open and share your passport')}</div>
-    <div style="font-family:${SANS};font-size:12px;line-height:18px;color:${C.muted};padding-top:8px;">Passport link: <a href="${esc(p.url)}" style="color:${C.sage};word-break:break-all;">${esc(p.url)}</a></div>
     <p style="margin:26px 0 0;padding-top:20px;border-top:1px solid ${C.line};font-family:${SERIF};font-style:italic;font-size:18px;line-height:26px;color:${C.green};text-align:center;">Small choices. Lighter footprints. A kinder planet.</p>
   `)
 }

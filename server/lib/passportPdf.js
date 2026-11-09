@@ -20,14 +20,14 @@ function formatDate(d) {
 }
 
 /** Round "Rescued" stamp with the village name running around the ring. */
-function drawStamp(doc, cx, cy, village, date) {
+function drawStamp(doc, cx, cy, village) {
   doc.save()
-  doc.lineWidth(2).strokeColor(C.stamp).circle(cx, cy, 50).stroke()
-  doc.lineWidth(0.8).circle(cx, cy, 35).stroke()
+  doc.lineWidth(2).strokeColor(C.stamp).circle(cx, cy, 48).stroke()
+  doc.lineWidth(0.8).circle(cx, cy, 33).stroke()
 
   // Repeat the village name until it fills the ring evenly.
   const unit = `${village} · `.toUpperCase()
-  const ring = unit.repeat(Math.max(2, Math.round(46 / unit.length)))
+  const ring = unit.repeat(Math.max(2, Math.round(44 / unit.length)))
   doc.font('Helvetica').fontSize(7).fillColor(C.stamp)
   const step = 360 / ring.length
   for (let i = 0; i < ring.length; i++) {
@@ -35,14 +35,12 @@ function drawStamp(doc, cx, cy, village, date) {
     const w = doc.widthOfString(ch)
     doc.save()
     doc.translate(cx, cy).rotate(i * step)
-    doc.text(ch, -w / 2, -46.5, { lineBreak: false })
+    doc.text(ch, -w / 2, -44.5, { lineBreak: false })
     doc.restore()
   }
 
-  doc.font('Times-Italic').fontSize(14).fillColor(C.stamp)
-  doc.text('Rescued', cx - 35, cy - 10, { width: 70, align: 'center', lineBreak: false })
-  doc.font('Helvetica').fontSize(6.5)
-  doc.text(date, cx - 35, cy + 6, { width: 70, align: 'center', lineBreak: false })
+  doc.font('Times-Italic').fontSize(15).fillColor(C.stamp)
+  doc.text('Rescued', cx - 35, cy - 8, { width: 70, align: 'center', lineBreak: false })
   doc.restore()
 }
 
@@ -68,12 +66,11 @@ function drawPassportPage(doc, p) {
   const width = right - left - 52
   let y = top + 26
 
-  // Title block + stamp
+  // Title block
   label(doc, 'Bottle passport', x, y)
   doc.font('Courier').fontSize(12).fillColor(C.sage).text(p.id, x, y + 13)
-  doc.font('Times-Roman').fontSize(28).fillColor(C.green).text(p.headline, x, y + 36, { width: width - 130, lineGap: 2 })
-  drawStamp(doc, x + width - 52, y + 52, p.village, formatDate(p.rescuedOn))
-  y = Math.max(doc.y, y + 110) + 18
+  doc.font('Times-Roman').fontSize(28).fillColor(C.green).text(p.headline, x, y + 36, { width, lineGap: 2 })
+  y = doc.y + 24
 
   // Once upon a time → Now
   const colW = (width - 40) / 2
@@ -107,11 +104,12 @@ function drawPassportPage(doc, p) {
     )
   y = doc.y + 18
 
-  // Rescued in
+  // Rescued in + Stamp
   doc.lineWidth(0.8).strokeColor(C.line).moveTo(x, y).lineTo(x + width, y).stroke()
   label(doc, 'Rescued in', x, y + 8)
-  doc.font('Helvetica').fontSize(11).fillColor(C.ink).text(p.village, x, y + 21)
-  const ry = y + 52
+  doc.font('Helvetica').fontSize(12).fillColor(C.ink).text(p.village, x, y + 22)
+  drawStamp(doc, x + width - 56, y + 36, p.village)
+  const ry = y + 74
 
   // Closing line
   doc.lineWidth(0.8).strokeColor(C.line).moveTo(x, ry + 14).lineTo(x + width, ry + 14).stroke()
