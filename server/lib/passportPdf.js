@@ -107,28 +107,11 @@ function drawPassportPage(doc, p) {
     )
   y = doc.y + 18
 
-  // Rescued in / Rescue date
-  const half = (width - 20) / 2
-  doc.lineWidth(0.8).strokeColor(C.line)
-  doc.moveTo(x, y).lineTo(x + half, y).stroke()
-  doc.moveTo(x + half + 20, y).lineTo(x + width, y).stroke()
+  // Rescued in
+  doc.lineWidth(0.8).strokeColor(C.line).moveTo(x, y).lineTo(x + width, y).stroke()
   label(doc, 'Rescued in', x, y + 8)
-  label(doc, 'Rescue date', x + half + 20, y + 8)
-  doc.font('Helvetica').fontSize(11).fillColor(C.ink)
-  doc.text(p.village, x, y + 21)
-  doc.text(formatDate(p.rescuedOn), x + half + 20, y + 21)
-  y += 52
-
-  // Where our bottles come from (full width)
-  doc.font('Times-Roman').fontSize(17).fillColor(C.green).text('Where our bottles come from', x, y, { width })
-  let ry = doc.y + 10
-  for (const v of p.villages) {
-    const mine = v.name === p.village
-    doc.lineWidth(0.6).strokeColor(C.line).moveTo(x, ry).lineTo(x + width, ry).stroke()
-    doc.font(mine ? 'Helvetica-Bold' : 'Helvetica').fontSize(10.5).fillColor(mine ? C.green : C.ink).text(v.name, x, ry + 7)
-    doc.font('Helvetica').fontSize(9.5).fillColor(C.muted).text(`${v.bottles} bottles`, x, ry + 8, { width, align: 'right' })
-    ry += 25
-  }
+  doc.font('Helvetica').fontSize(11).fillColor(C.ink).text(p.village, x, y + 21)
+  const ry = y + 52
 
   // Closing line
   doc.lineWidth(0.8).strokeColor(C.line).moveTo(x, ry + 14).lineTo(x + width, ry + 14).stroke()
@@ -143,19 +126,6 @@ function drawPassportPage(doc, p) {
   doc.lineWidth(0.8).strokeColor(C.line).moveTo(x, fy - 10).lineTo(x + width, fy - 10).stroke()
   label(doc, 'Passport link', x, fy)
   doc.font('Courier').fontSize(9.5).fillColor(C.sage).text(p.url, x, fy + 12, { width, link: p.url, underline: true })
-
-  if (p.isSample) {
-    doc
-      .font('Helvetica')
-      .fontSize(7.5)
-      .fillColor(C.muted)
-      .text(
-        'Village and dates are illustrative while we finish recording each batch. Every piece is made from a bottle rescued in Goa.',
-        left,
-        doc.page.height - 45,
-        { width: right - left, align: 'center', lineBreak: true },
-      )
-  }
 }
 
 /**

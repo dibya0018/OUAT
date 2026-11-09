@@ -166,7 +166,14 @@ function ProductDetail({ product, collection, related }) {
   }
 
   const isJewellery = collection?.slug === 'jewellery'
+  const isCandle =
+    collection?.slug === 'candles' || product.collection === 'candles' || product.collection_slug === 'candles'
+  const isGerminator = product.slug === 'sproutcycled-glass-germinator' || product.id === 'p-002'
   const titleParts = productTitleParts(product.name)
+
+  const shortStory = isGerminator
+    ? product.shortStory?.replace(/^Grow fresh\.\s*Waste less\.\s*/i, '')
+    : product.shortStory
 
   // Per-product tabs (Key Features, Care Instructions, …) when the catalogue has them; else the four basics.
   const accordionItems = product.details.sections?.length
@@ -179,8 +186,11 @@ function ProductDetail({ product, collection, related }) {
       ].filter((item) => item.content)
 
   // Show the description only when it adds something beyond the lead line.
+  // For candles, keep only the 1st description (shortStory) and remove the 2nd one.
   const showDescription =
-    product.description && !product.description.trim().startsWith(product.shortStory?.trim() || '\u0000')
+    !isCandle &&
+    product.description &&
+    !product.description.trim().startsWith(product.shortStory?.trim() || '\u0000')
 
   return (
     <>
@@ -237,12 +247,15 @@ function ProductDetail({ product, collection, related }) {
             <div className="md:col-span-4 md:col-start-9">
               <div className="md:sticky md:top-28">
                 <EditorialTitle as="h1" size="md" {...splitEditorialTitle(titleParts.title)} />
-                {titleParts.details && (
+                {titleParts.details ? (
                   <p className="mt-2 text-sm leading-relaxed tracking-wide text-ink-soft">
                     {/* Sizes ("Set of 4 · 250 ml each") share a line; wording without numbers gets its own line,
                         tinted like the bottle it came from: amber for beer, blue for clear glass, else green. */}
                     {[
-                      { text: titleParts.details.split(' · ').filter((part) => /\d/.test(part)).join(' · ') },
+                      {
+                        text: titleParts.details.split(' · ').filter((part) => /\d/.test(part)).join(' · '),
+                        tint: isGerminator ? 'text-primary' : undefined,
+                      },
                       ...titleParts.details
                         .split(' · ')
                         .filter((part) => !/\d/.test(part))
@@ -262,6 +275,15 @@ function ProductDetail({ product, collection, related }) {
                         </span>
                       ))}
                   </p>
+                ) : isCandle ? (
+                  <p className="mt-2 text-sm leading-relaxed tracking-wide text-primary">
+                    Handpoured Soy Candle
+                  </p>
+                ) : null}
+                {isGerminator && (
+                  <p className="mt-1 text-sm tracking-wide text-accent" style={{ color: '#a05d49' }}>
+                    Grow fresh. Waste less.
+                  </p>
                 )}
                 <p className="mt-4 font-sans text-lg">
                   <PriceTag product={product} option={option} />
@@ -273,8 +295,16 @@ function ProductDetail({ product, collection, related }) {
                   </a>
                 )}
 
-                {product.shortStory && (
-                  <p className="mt-8 text-[0.8125rem] leading-relaxed text-ink-soft italic md:text-sm">{product.shortStory}</p>
+                {shortStory && (
+                  <p
+                    className={cx(
+                      'mt-8 text-[0.8125rem] leading-relaxed italic md:text-sm',
+                      isCandle ? 'text-accent' : 'text-ink-soft',
+                    )}
+                    style={isCandle ? { color: '#a05d49' } : undefined}
+                  >
+                    {shortStory}
+                  </p>
                 )}
                 {showDescription && (
                   <RichText text={product.description} className="mt-4 text-sm leading-relaxed text-ink-soft" />

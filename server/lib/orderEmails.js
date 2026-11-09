@@ -274,15 +274,6 @@ function stamp(p) {
 
 function passportCard(p) {
   const nowLower = p.now.toLowerCase()
-  const villages = p.villages
-    .map((v) => {
-      const mine = v.name === p.village
-      return `<tr>
-      <td style="padding:9px 0;border-top:1px solid ${C.line};font-family:${SANS};font-size:14px;color:${mine ? C.green : C.ink};${mine ? 'font-weight:bold;' : ''}">${esc(v.name)}</td>
-      <td align="right" style="padding:9px 0;border-top:1px solid ${C.line};font-family:${SANS};font-size:13px;color:${C.muted};">${v.bottles} bottles</td>
-    </tr>`
-    })
-    .join('')
 
   return card(`
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
@@ -303,13 +294,8 @@ function passportCard(p) {
     <p style="margin:24px 0 0;font-family:${SERIF};font-size:17px;line-height:27px;color:${C.ink};">Thank you for your order. This <em style="color:${C.sage};">${esc(p.was.toLowerCase())}</em> was rescued in <em style="color:${C.sage};">${esc(p.village)}</em> and given a second life as your ${esc(nowLower)}. By choosing reclaimed glass you kept one more bottle out of landfill and off Goa's roadsides and beaches. Every bottle has a past. Thank you for giving this one a future.</p>
 
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:22px;"><tr>
-      <td width="48%" valign="top" style="border-top:1px solid ${C.line};padding-top:10px;">${label('Rescued in')}<div style="font-family:${SANS};font-size:14px;color:${C.ink};padding-top:3px;">${esc(p.village)}</div></td>
-      <td width="4%">&nbsp;</td>
-      <td width="48%" valign="top" style="border-top:1px solid ${C.line};padding-top:10px;">${label('Rescue date')}<div style="font-family:${SANS};font-size:14px;color:${C.ink};padding-top:3px;">${esc(formatDate(p.rescuedOn))}</div></td>
+      <td valign="top" style="border-top:1px solid ${C.line};padding-top:10px;">${label('Rescued in')}<div style="font-family:${SANS};font-size:14px;color:${C.ink};padding-top:3px;">${esc(p.village)}</div></td>
     </tr></table>
-
-    <h2 style="margin:28px 0 8px;font-family:${SERIF};font-weight:normal;font-size:22px;color:${C.green};">Where our bottles come from</h2>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${villages}</table>
 
     <div style="padding-top:22px;">${button(p.url, 'Open and share your passport')}</div>
     <div style="font-family:${SANS};font-size:12px;line-height:18px;color:${C.muted};padding-top:8px;">Passport link: <a href="${esc(p.url)}" style="color:${C.sage};word-break:break-all;">${esc(p.url)}</a></div>
@@ -318,16 +304,12 @@ function passportCard(p) {
 }
 
 export function renderPassportEmail(order, passports) {
-  const isSample = passports.some((p) => p.isSample)
-  const note = isSample
-    ? `<tr><td class="pad" style="padding:14px 28px 0;font-family:${SANS};font-size:11px;line-height:17px;color:${C.muted};text-align:center;">Village and dates are illustrative while we finish recording each batch. Your piece is made from a bottle rescued in Goa.</td></tr>`
-    : ''
   const intro = `<tr><td class="pad" style="padding:0 28px 16px;font-family:${SERIF};font-size:17px;line-height:26px;color:${C.ink};">${
     passports.length > 1
       ? `Your order ${esc(order.orderNumber)} holds ${passports.length} pieces, so here are ${passports.length} passports, one for each.`
       : `Here is the passport for the piece in your order ${esc(order.orderNumber)}.`
   } A printable PDF copy is attached.</td></tr>`
-  const body = intro + passports.map((p, i) => (i ? spacer(20) : '') + passportCard(p)).join('') + note
+  const body = intro + passports.map((p, i) => (i ? spacer(20) : '') + passportCard(p)).join('')
 
   const first = passports[0]
   const html = shell({
@@ -341,14 +323,13 @@ export function renderPassportEmail(order, passports) {
     ...passports.flatMap((p) => [
       `${p.id}: ${p.headline}`,
       `Once upon a time: ${p.was} -> Now: ${p.now}${p.quantity > 1 ? ` x ${p.quantity}` : ''}`,
-      `Rescued in ${p.village} on ${formatDate(p.rescuedOn)}`,
+      `Rescued in ${p.village}`,
       `View: ${p.url}`,
       '',
     ]),
     'A printable PDF copy is attached.',
     '',
     'Small choices. Lighter footprints. A kinder planet.',
-    ...(isSample ? ['Village and dates are illustrative while we finish recording each batch.'] : []),
   ].join('\n')
 
   const subject =
